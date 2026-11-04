@@ -1,0 +1,5 @@
+std = "roblox"
+
+[lints]
+# Konfig-Dateien nutzen bewusst lange Tabellen
+shadowing = "allow"
