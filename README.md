@@ -9,11 +9,13 @@ Die Welt ist ein kaputtes Uhrwerk – repariert es mit Obby-Strecken, Zeit-Energ
    ```
    rokit install        # oder: aftman install
    ```
-2. **Rojo-Plugin** in Roblox Studio installieren (Toolbox → Plugins → „Rojo“ oder über `rojo plugin install`).
+2. **Rojo-Plugin** in Roblox Studio installieren (Toolbox → Plugins → „Rojo“ oder über `.\rojo plugin install`).
 3. **Server starten**:
    ```
-   rojo serve
+   .\rojo serve
    ```
+   ⚠️ **PowerShell:** Liegt `rojo.exe` im Projektordner, muss `.\` davor stehen (`.\rojo serve`),
+   sonst kommt „nicht erkannt“. Oder einfach **`aktualisieren.bat`** doppelklicken – das startet Rojo auch.
 4. In Studio eine **neue leere Baseplate** öffnen → Rojo-Plugin → **Connect**.
 5. **Welt bauen** (empfohlen, damit ihr sie im Editor seht):
    Ansicht → *Command Bar* öffnen und eingeben:

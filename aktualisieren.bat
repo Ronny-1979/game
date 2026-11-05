@@ -33,7 +33,7 @@ echo.
 where rojo >nul 2>nul
 if errorlevel 1 (
   if exist "rojo.exe" (
-    rojo.exe serve
+    .\rojo.exe serve
   ) else (
     echo rojo wurde nicht gefunden. Lege rojo.exe in diesen Ordner.
     pause

@@ -6,7 +6,7 @@ Tipp: Mit dem 🔧-Admin-Menü (im Studio immer da) kommt man schnell an Energie
 ## 0. Vorbereitung
 - [ ] `rokit install` (oder `aftman install`), dann `selene src` → keine Fehler/Warnungen (sonst melden/beheben)
 - [ ] `stylua --check src` → ggf. `stylua src` ausführen
-- [ ] `rojo serve`, Studio verbunden, keine roten Fehler im Output
+- [ ] `.\rojo serve` (PowerShell) oder `aktualisieren.bat`, Studio verbunden, keine roten Fehler im Output
 - [ ] WorldBuilder per Command Bar ausgeführt → Output: „Welt gebaut: … Teile“
 - [ ] Workspace → *StreamingEnabled* an (Standard bei neuen Orten)
 
