@@ -46,7 +46,7 @@ local Zones = {
 		},
 		Gegner = { { Typ = "RostBot", Anzahl = 5 }, { Typ = "Zahnradkaefer", Anzahl = 3 } },
 		-- Stimmung: Tageszeit (0–24), Nebelfarbe, Nebeldichte (0–1), Farbtönung, Glühwürmchen-Farbe
-		Stimmung = { Uhrzeit = 14.5, Nebel = Color3.fromRGB(255, 240, 210), Dichte = 0.26, Toenung = Color3.fromRGB(255, 250, 235), Funken = Color3.fromRGB(255, 240, 150) },
+		Stimmung = { Uhrzeit = 14.5, Nebel = Color3.fromRGB(235, 245, 245), Dichte = 0.24, Toenung = Color3.fromRGB(252, 255, 250), Funken = Color3.fromRGB(255, 240, 150) },
 		Boss = "ZahnradKoenig",
 		Ei = "WiesenEi",
 		Coop = {},
@@ -70,7 +70,7 @@ local Zones = {
 			{ Name = "Rostige Rampe", Abschnitte = 13, Hindernisse = { "Bewegt", "Wackel", "Foerderband", "Sprungpad" }, Belohnung = { Energie = 1800, XP = 200 } },
 		},
 		Gegner = { { Typ = "SchraubenBot", Anzahl = 5 }, { Typ = "Schweissdrohne", Anzahl = 3 } },
-		Stimmung = { Uhrzeit = 16.5, Nebel = Color3.fromRGB(255, 215, 180), Dichte = 0.32, Toenung = Color3.fromRGB(255, 238, 220), Funken = Color3.fromRGB(255, 170, 90) },
+		Stimmung = { Uhrzeit = 16.5, Nebel = Color3.fromRGB(245, 228, 210), Dichte = 0.3, Toenung = Color3.fromRGB(255, 250, 242), Funken = Color3.fromRGB(255, 170, 90) },
 		Boss = "RostRudi",
 		Ei = "WerkstattEi",
 		Coop = { "Tuer", "Bruecke" },
@@ -142,7 +142,7 @@ local Zones = {
 			{ Name = "Mitternacht", Abschnitte = 18, Hindernisse = { "Zahnrad", "Pendel", "Laser", "Drehring", "Zeitplattform", "Sprungpad", "Foerderband" }, Belohnung = { Energie = 2000000, XP = 1200 } },
 		},
 		Gegner = { { Typ = "UhrwerkWaechter", Anzahl = 5 }, { Typ = "Zeigerschuetze", Anzahl = 3 }, { Typ = "Schweissdrohne", Anzahl = 2 } },
-		Stimmung = { Uhrzeit = 18.4, Nebel = Color3.fromRGB(255, 200, 150), Dichte = 0.34, Toenung = Color3.fromRGB(255, 235, 210), Funken = Color3.fromRGB(255, 215, 120) },
+		Stimmung = { Uhrzeit = 18.4, Nebel = Color3.fromRGB(245, 225, 200), Dichte = 0.32, Toenung = Color3.fromRGB(255, 248, 238), Funken = Color3.fromRGB(255, 215, 120) },
 		Boss = "MeisterUnruh",
 		Ei = "UhrwerkEi",
 		Coop = { "Tuer", "Bruecke", "Konsole" },
@@ -198,7 +198,7 @@ local Zones = {
 }
 
 -- 🏝️ Stimmung im Hub
-Zones.HubStimmung = { Uhrzeit = 13.5, Nebel = Color3.fromRGB(255, 236, 215), Dichte = 0.24, Toenung = Color3.fromRGB(255, 248, 238), Funken = Color3.fromRGB(255, 230, 160) }
+Zones.HubStimmung = { Uhrzeit = 13.5, Nebel = Color3.fromRGB(238, 242, 250), Dichte = 0.22, Toenung = Color3.fromRGB(255, 255, 255), Funken = Color3.fromRGB(255, 230, 160) }
 -- 🗼 Stimmung im Endlos-Turm (Abendrot) und 🏡 auf der eigenen Werkstatt-Insel (gemütlicher Vormittag)
 Zones.TurmStimmung = { Uhrzeit = 18.9, Nebel = Color3.fromRGB(230, 190, 255), Dichte = 0.3, Toenung = Color3.fromRGB(250, 238, 255), Funken = Color3.fromRGB(220, 190, 255) }
 Zones.InselStimmung = { Uhrzeit = 10.5, Nebel = Color3.fromRGB(230, 245, 255), Dichte = 0.2, Toenung = Color3.fromRGB(255, 250, 240), Funken = Color3.fromRGB(255, 240, 170) }
