@@ -222,6 +222,11 @@ function IslandController.Init()
 	highlight.FillTransparency = 0.6
 	highlight.OutlineTransparency = 0
 	highlight.DepthMode = Enum.HighlightDepthMode.Occluded
+	-- Ohne Ziel würde ein Highlight die ganze Welt einfärben → nur an, wenn etwas markiert ist
+	highlight.Enabled = false
+	highlight:GetPropertyChangedSignal("Adornee"):Connect(function()
+		highlight.Enabled = highlight.Adornee ~= nil
+	end)
 	highlight.Parent = workspace
 end
 
