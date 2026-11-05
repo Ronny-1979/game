@@ -26,6 +26,16 @@ local GAMEPAD = {
 	[Enum.KeyCode.ButtonL1] = "Hilfsplattform",
 }
 
+-- Controller-Taste einer Fähigkeit (für die Anzeige im HUD)
+function AbilityController.GamepadKey(name: string): Enum.KeyCode?
+	for code, n in GAMEPAD do
+		if n == name then
+			return code
+		end
+	end
+	return nil
+end
+
 -- Welche Fähigkeiten hat der Spieler gerade?
 function AbilityController.Available(): { string }
 	local list = {}
@@ -55,8 +65,9 @@ function AbilityController.Use(name: string)
 	lastSent[name] = os.clock()
 	local cam = workspace.CurrentCamera
 	local dir = if cam then cam.CFrame.LookVector else Vector3.zAxis
-	-- auf dem Handy: in Laufrichtung werfen
-	if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
+	-- Handy und Controller: in Laufrichtung werfen
+	local lastInput = UserInputService:GetLastInputType()
+	if lastInput == Enum.UserInputType.Touch or lastInput.Name:match("^Gamepad") then
 		local char = Players.LocalPlayer.Character
 		local root = char and char:FindFirstChild("HumanoidRootPart") :: BasePart?
 		if root then

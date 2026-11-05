@@ -4,6 +4,8 @@
 	- Platzieren: durchsichtige Vorschau folgt Maus/Finger im Raster (grün = frei, rot = belegt)
 	  Klick/Tippen = platzieren, T oder ↻ = drehen, ✖ = fertig
 	- Abbauen: Deko unter der Maus leuchtet, Klick/Tippen = abbauen
+	- Controller (Xbox/PlayStation): Zielkreuz in der Bildschirmmitte,
+	  X/□ = bauen bzw. abbauen, LT/L2 = drehen, B/○ = fertig
 ]]
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -18,6 +20,7 @@ local Util = require(Shared:WaitForChild("Util"))
 local Progression = require(Shared:WaitForChild("Progression"))
 local DataController = require(script.Parent:WaitForChild("DataController"))
 local UI = require(script.Parent.Parent:WaitForChild("UI"):WaitForChild("UIController"))
+local Device = require(script.Parent.Parent:WaitForChild("UI"):WaitForChild("Device"))
 
 local IslandController = {}
 
@@ -34,6 +37,17 @@ local panel: Frame? = nil
 local panelLabel: TextLabel? = nil
 local busy = false
 local previewSet = false
+local crosshair: Frame? = nil
+local panelScale: UIScale? = nil
+
+-- wird weiter unten festgelegt (StartPlace braucht sie schon vorher)
+local updatePlace: (pos: Vector2?) -> ()
+
+-- Controller zielt mit der Bildschirmmitte
+local function screenCenter(): Vector2?
+	local cam = workspace.CurrentCamera
+	return if cam then cam.ViewportSize / 2 else nil
+end
 
 local function onOwnIsland(): boolean
 	return player:GetAttribute("Ort") == "Insel" and player:GetAttribute("IslandOwnerId") == player.UserId
@@ -92,15 +106,33 @@ function IslandController.Stop()
 	hovered = nil
 	highlight.Adornee = nil
 	setPanel(nil)
+	if crosshair then
+		crosshair.Visible = false
+	end
 end
 
 local function updatePanelText()
+	local kind = Device.Kind()
+	if crosshair then
+		crosshair.Visible = mode ~= nil and kind == "Gamepad"
+	end
+	if panelScale then
+		panelScale.Scale = math.clamp(UI.HudScale(), 0.75, 1.3)
+	end
 	if mode == "place" and current then
 		local data = DataController.Data
 		local price = if data then Progression.DecoPrice(current, data) else 0
-		setPanel(("%s %s – %s   ·   Tippen = platzieren, T = drehen"):format(current.Symbol, current.Name, if price > 0 then Util.FormatNumber(price) .. " ⚡" else "gratis"))
+		local how = if kind == "Touch"
+			then "Tippen = Vorschau, nochmal tippen = bauen"
+			elseif kind == "Gamepad" then ("%s = bauen, %s = drehen, %s = fertig"):format(Device.ButtonText(Enum.KeyCode.ButtonX), Device.ButtonText(Enum.KeyCode.ButtonL2), Device.ButtonText(Enum.KeyCode.ButtonB))
+			else "Klicken = bauen, T = drehen"
+		setPanel(("%s %s – %s   ·   %s"):format(current.Symbol, current.Name, if price > 0 then Util.FormatNumber(price) .. " ⚡" else "gratis", how))
 	elseif mode == "remove" then
-		setPanel("🔨 Abbauen: tippe auf ein Deko-Stück (du bekommst den Preis zurück)")
+		local how = if kind == "Touch"
+			then "tippe auf ein Deko-Stück"
+			elseif kind == "Gamepad" then ("ziele mit dem Kreuz, %s = abbauen"):format(Device.ButtonText(Enum.KeyCode.ButtonX))
+			else "klicke auf ein Deko-Stück"
+		setPanel(("🔨 Abbauen: %s (du bekommst den Preis zurück)"):format(how))
 	end
 end
 
@@ -127,7 +159,7 @@ function IslandController.StartPlace(item: any)
 	ghost = m
 	highlight.Adornee = m
 	cellX, cellZ = math.floor(Deco.Zellen / 2), math.floor(Deco.Zellen / 2)
-	updatePlace(nil)
+	updatePlace(if Device.IsGamepad() then screenCenter() else nil)
 	updatePanelText()
 end
 
@@ -153,7 +185,7 @@ local function hitTest(pos: Vector2?): RaycastResult?
 	return workspace:Raycast(origin, dir, params)
 end
 
-local function updatePlace(pos: Vector2?)
+function updatePlace(pos: Vector2?)
 	if not ghost or not current then
 		return
 	end
@@ -244,6 +276,9 @@ function IslandController.Start()
 			Parent = hud,
 		})
 		C.Stroke(f, Theme.Brass, 3)
+		local ps = Instance.new("UIScale")
+		ps.Parent = f
+		panelScale = ps
 		panelLabel = C.Label({ Text = "", Size = UDim2.new(1, -230, 1, -8), Position = UDim2.fromOffset(10, 4), TextXAlignment = Enum.TextXAlignment.Left, MaxTextSize = 18, Parent = f })
 		C.Button({ Text = "↻ Drehen", AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, -116, 0.5, 0), Size = UDim2.fromOffset(104, 40), BackgroundColor3 = Theme.Info, OnClick = function()
 			rotation = (rotation + 1) % 4
@@ -253,6 +288,30 @@ function IslandController.Start()
 		end, Parent = f })
 		panel = f
 	end
+
+	-- Zielkreuz für den Controller (ganzer Bildschirm, damit die Mitte genau stimmt)
+	local aimGui = Instance.new("ScreenGui")
+	aimGui.Name = "UhrwerkZiel"
+	aimGui.ResetOnSpawn = false
+	aimGui.ScreenInsets = Enum.ScreenInsets.None
+	aimGui.DisplayOrder = 1
+	aimGui.Parent = player:WaitForChild("PlayerGui")
+	local cross = Instance.new("Frame")
+	cross.AnchorPoint = Vector2.new(0.5, 0.5)
+	cross.Position = UDim2.fromScale(0.5, 0.5)
+	cross.Size = UDim2.fromOffset(18, 18)
+	cross.BackgroundColor3 = Color3.new(1, 1, 1)
+	cross.BackgroundTransparency = 0.2
+	cross.Visible = false
+	cross.Parent = aimGui
+	C.Corner(cross, 9)
+	C.Stroke(cross, Theme.Copper, 3)
+	crosshair = cross
+	Device.Changed:Connect(function()
+		if mode then
+			updatePanelText()
+		end
+	end)
 
 	UserInputService.InputBegan:Connect(function(input, processed)
 		if not mode or processed then
@@ -277,6 +336,12 @@ function IslandController.Start()
 			end
 		elseif input.KeyCode == Enum.KeyCode.T and mode == "place" then
 			rotation = (rotation + 1) % 4
+		elseif input.KeyCode == Enum.KeyCode.ButtonX then
+			task.spawn(confirm, screenCenter())
+		elseif input.KeyCode == Enum.KeyCode.ButtonL2 and mode == "place" then
+			rotation = (rotation + 1) % 4
+		elseif input.KeyCode == Enum.KeyCode.ButtonB then
+			IslandController.Stop()
 		end
 	end)
 
@@ -288,10 +353,14 @@ function IslandController.Start()
 			IslandController.Stop()
 			return
 		end
-		if mode == "place" and not UI.IsTouch() then
-			updatePlace(nil)
-		elseif mode == "remove" and not UI.IsTouch() then
-			updateRemove(nil)
+		if UI.IsTouch() then
+			return -- Touch: Vorschau springt nur beim Tippen
+		end
+		local pos = if Device.IsGamepad() then screenCenter() else nil
+		if mode == "place" then
+			updatePlace(pos)
+		elseif mode == "remove" then
+			updateRemove(pos)
 		end
 	end)
 

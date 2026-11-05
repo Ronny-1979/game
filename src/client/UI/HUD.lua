@@ -2,12 +2,14 @@
 --[[
 	HUD: Energie, XP-Leiste, Level, Zone, Streckenzeit, Boss-Leiste,
 	Menü-Knöpfe (links) und Skill-Leiste mit Abklingzeit-Kreisen (unten).
-	Passt sich an PC, Tablet und Handy an (UIScale + größere Knöpfe bei Touch).
+	Passt sich an PC, Tablet, Handy und Konsole an:
+	- alles wird passend zur Bildschirmgröße skaliert und untereinander angeordnet
+	- passen nicht alle Menü-Knöpfe auf den Bildschirm, gibt es „☰ Mehr“ (öffnet das große Menü)
+	- Tasten-Hinweise je nach Steuerung: Taste (PC), Controller-Taste (Xbox/PlayStation), keine (Touch)
 ]]
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
-local SocialService = game:GetService("SocialService")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Config = Shared:WaitForChild("Config")
@@ -24,6 +26,7 @@ local SoundController = require(Controllers:WaitForChild("SoundController"))
 local QuestController = require(Controllers:WaitForChild("QuestController"))
 local Quests = require(Config:WaitForChild("Quests")) :: any
 local Events = require(Config:WaitForChild("Events")) :: any
+local Device = require(script.Parent:WaitForChild("Device"))
 
 local HUD = {}
 
@@ -40,11 +43,10 @@ function HUD.Build(UI: any)
 	local Theme = UI.Theme
 	local root: Frame = UI.Hud
 	local rescaleNow: () -> () = function() end
-	local touch = UI.IsTouch()
 	local scales: { UIScale } = {}
 
 	-- ===== Oben links: Energie, Level, XP =====
-	local stats = C.Frame({ Position = UDim2.fromOffset(12, 12), Size = UDim2.fromOffset(270, 112), BackgroundColor3 = Theme.Panel, BackgroundTransparency = 0.08, Parent = root })
+	local stats = C.Frame({ Size = UDim2.fromOffset(270, 112), BackgroundColor3 = Theme.Panel, BackgroundTransparency = 0.08, Parent = root })
 	C.Stroke(stats, Theme.Brass, 3)
 	table.insert(scales, addScale(stats))
 	local energy = C.Label({ Text = "⚡ 0", Size = UDim2.new(1, -16, 0, 40), Position = UDim2.fromOffset(10, 6), TextXAlignment = Enum.TextXAlignment.Left, TextColor3 = Color3.fromRGB(40, 140, 200), MaxTextSize = 34, Parent = stats })
@@ -57,7 +59,6 @@ function HUD.Build(UI: any)
 	-- ===== Aufgaben-Anzeige (unter Energie) =====
 	local quest = C.Button({
 		Text = "",
-		Position = UDim2.fromOffset(12, 132),
 		Size = UDim2.fromOffset(270, 66),
 		BackgroundColor3 = Color3.fromRGB(255, 248, 215),
 		OnClick = function()
@@ -73,7 +74,7 @@ function HUD.Build(UI: any)
 	local lastQuestIndex = -1
 
 	-- ===== Event- und Freunde-Banner (unter der Aufgabe) =====
-	local banner = C.Frame({ Position = UDim2.fromOffset(12, 206), Size = UDim2.fromOffset(270, 34), BackgroundColor3 = Color3.fromRGB(255, 225, 150), Visible = false, Parent = root })
+	local banner = C.Frame({ Size = UDim2.fromOffset(270, 34), BackgroundColor3 = Color3.fromRGB(255, 225, 150), Visible = false, Parent = root })
 	C.Stroke(banner, Theme.Boss, 3)
 	table.insert(scales, addScale(banner))
 	local bannerLabel = C.Label({ Text = "", Size = UDim2.new(1, -12, 1, -6), Position = UDim2.fromOffset(6, 3), TextXAlignment = Enum.TextXAlignment.Left, MaxTextSize = 16, Parent = banner })
@@ -90,6 +91,7 @@ function HUD.Build(UI: any)
 		banner.Visible = #parts > 0
 		bannerLabel.Text = table.concat(parts, "\n")
 		banner.Size = UDim2.fromOffset(270, if #parts > 1 or (names and #tostring(names) > 34) then 52 else 34)
+		rescaleNow()
 	end
 	ReplicatedStorage:GetAttributeChangedSignal("EventNames"):Connect(updateBanner)
 	player:GetAttributeChangedSignal("FriendCount"):Connect(updateBanner)
@@ -115,57 +117,20 @@ function HUD.Build(UI: any)
 
 	-- ===== Links: Menü-Knöpfe =====
 	local menu = Instance.new("Frame")
+	menu.Name = "MenueLeiste"
 	menu.BackgroundTransparency = 1
-	menu.AnchorPoint = Vector2.new(0, 0.5)
-	menu.Position = UDim2.new(0, 12, 0.62, 0)
-	menu.Size = UDim2.new(0, 150, 0.54, 0)
 	menu.Parent = root
-	table.insert(scales, addScale(menu))
 	local grid = Instance.new("UIGridLayout")
-	local cell = if touch then 64 else 60
-	grid.CellSize = UDim2.fromOffset(cell, cell)
-	grid.CellPadding = UDim2.fromOffset(8, 8)
-	grid.FillDirection = Enum.FillDirection.Vertical
+	grid.FillDirection = Enum.FillDirection.Horizontal
 	grid.SortOrder = Enum.SortOrder.LayoutOrder
 	grid.Parent = menu
 
-	local buttons = {
-		{ "🎁", "Bonus", "Bonus" },
-		{ "🏅", "Erfolge", "Erfolge" },
-		{ "🛒", "Shop", "Shop" },
-		{ "🐾", "Pets", "Pets" },
-		{ "🌳", "Skills", "Skills" },
-		{ "♻️", "Rebirth", "Rebirth" },
-		{ "🗺️", "Karte", "Karte" },
-		{ "🏆", "Beste", "Bestenliste" },
-		{ "💬", "Chat", "Chat" },
-		{ "👥", "Einladen", "__invite" },
-		{ "⚙️", "Optionen", "Einstellungen" },
-	}
-	local function invite()
-		local ok, can = pcall(function()
-			return SocialService:CanSendGameInviteAsync(player)
-		end)
-		if ok and can then
-			pcall(function()
-				SocialService:PromptGameInvite(player)
-			end)
-		else
-			UI.Toast("Einladen ist hier gerade nicht möglich.", "info")
-		end
-	end
-	local function menuButton(icon: string, caption: string, target: string, order: number): TextButton
+	local function menuButton(icon: string, caption: string, order: number, onClick: () -> ()): TextButton
 		local b = C.Button({
 			Text = "",
 			BackgroundColor3 = Theme.Panel,
 			LayoutOrder = order,
-			OnClick = function()
-				if target == "__invite" then
-					invite()
-				else
-					UI.Toggle(target)
-				end
-			end,
+			OnClick = onClick,
 			Parent = menu,
 		})
 		C.Stroke(b, Theme.Brass, 3)
@@ -173,46 +138,55 @@ function HUD.Build(UI: any)
 		C.Label({ Text = caption, Size = UDim2.new(1, 0, 0.32, 0), Position = UDim2.fromScale(0, 0.66), MaxTextSize = 13, Parent = b })
 		return b
 	end
+	type Entry = { Button: TextButton, Admin: boolean? }
+	local entries: { Entry } = {}
 	local bonusButton: TextButton? = nil
-	for i, def in buttons do
-		local b = menuButton(def[1], def[2], def[3], i)
-		if def[3] == "Bonus" then
+	for i, def in UI.MenuButtons do
+		local b = menuButton(def.Icon, def.Name, i, function()
+			UI.RunTarget(def.Target)
+		end)
+		table.insert(entries, { Button = b })
+		if def.Target == "Bonus" then
 			bonusButton = b
 		end
 	end
-	-- roter Punkt, wenn der Tagesbonus bereit ist
+	local adminButton = menuButton("🔧", "Admin", 99, function()
+		UI.Toggle("Admin")
+	end)
+	table.insert(entries, { Button = adminButton, Admin = true })
+	local moreButton = menuButton("☰", "Mehr", 1000, function()
+		UI.Toggle("Menue")
+	end)
+	player:GetAttributeChangedSignal("IsAdmin"):Connect(function()
+		rescaleNow()
+	end)
+	-- roter Punkt, wenn der Tagesbonus bereit ist (auch am ☰, falls der Bonus-Knopf nicht passt)
 	local dot = C.Frame({ Size = UDim2.fromOffset(16, 16), Position = UDim2.new(1, -12, 0, -4), BackgroundColor3 = Theme.Bad, Radius = 8, Visible = false, ZIndex = 5, Parent = bonusButton })
+	local moreDot = C.Frame({ Size = UDim2.fromOffset(16, 16), Position = UDim2.new(1, -12, 0, -4), BackgroundColor3 = Theme.Bad, Radius = 8, Visible = false, ZIndex = 5, Parent = moreButton })
 	local DailyMenu = require(script.Parent:WaitForChild("Menus"):WaitForChild("DailyMenu"))
 	task.spawn(function()
 		while true do
-			dot.Visible = DailyMenu.IsAvailable(DataController.Data)
+			local ready = DailyMenu.IsAvailable(DataController.Data)
+			dot.Visible = ready
+			moreDot.Visible = ready and bonusButton ~= nil and not bonusButton.Visible
 			task.wait(2)
 		end
 	end)
-	local adminButton = menuButton("🔧", "Admin", "Admin", 99)
-	adminButton.Visible = player:GetAttribute("IsAdmin") == true
-	player:GetAttributeChangedSignal("IsAdmin"):Connect(function()
-		adminButton.Visible = player:GetAttribute("IsAdmin") == true
-	end)
+
+	-- Controller-Hinweis über der Leiste
+	local padHint = C.Frame({ Size = UDim2.fromOffset(180, 30), BackgroundColor3 = Theme.Panel, BackgroundTransparency = 0.1, Visible = false, Parent = root })
+	C.Stroke(padHint, Theme.Brass, 2)
+	table.insert(scales, addScale(padHint))
+	local padHintLabel = C.Label({ Text = "", Size = UDim2.new(1, -10, 1, -4), Position = UDim2.fromOffset(5, 2), MaxTextSize = 18, Parent = padHint })
 
 	-- ===== Unten: Skill-Leiste =====
 	local bar = Instance.new("Frame")
+	bar.Name = "SkillLeiste"
 	bar.BackgroundTransparency = 1
-	local size = if touch then 74 else 68
-	if touch then
-		-- über dem Sprung-Knopf von Roblox
-		bar.AnchorPoint = Vector2.new(1, 1)
-		bar.Position = UDim2.new(1, -14, 1, -168)
-	else
-		bar.AnchorPoint = Vector2.new(0.5, 1)
-		bar.Position = UDim2.new(0.5, 0, 1, -18)
-	end
-	bar.Size = UDim2.fromOffset(5 * (size + 10), size + 22)
 	bar.Parent = root
 	table.insert(scales, addScale(bar))
 	local list = Instance.new("UIListLayout")
 	list.FillDirection = Enum.FillDirection.Horizontal
-	list.HorizontalAlignment = if touch then Enum.HorizontalAlignment.Right else Enum.HorizontalAlignment.Center
 	list.VerticalAlignment = Enum.VerticalAlignment.Bottom
 	list.Padding = UDim.new(0, 10)
 	list.SortOrder = Enum.SortOrder.LayoutOrder
@@ -220,11 +194,28 @@ function HUD.Build(UI: any)
 
 	type Slot = { Name: string, Frame: GuiObject, Radial: any, Time: TextLabel }
 	local slots: { Slot } = {}
+	local function placeBar(): number
+		local touch = UI.IsTouch()
+		local size = if touch then 74 else 68
+		if touch then
+			-- über dem Sprung-Knopf von Roblox
+			bar.AnchorPoint = Vector2.new(1, 1)
+			bar.Position = UDim2.new(1, -14, 1, -168)
+		else
+			bar.AnchorPoint = Vector2.new(0.5, 1)
+			bar.Position = UDim2.new(0.5, 0, 1, -18)
+		end
+		bar.Size = UDim2.fromOffset(5 * (size + 10), size + 22)
+		list.HorizontalAlignment = if touch then Enum.HorizontalAlignment.Right else Enum.HorizontalAlignment.Center
+		return size
+	end
 	local function buildSlots()
 		for _, s in slots do
 			s.Frame:Destroy()
 		end
 		table.clear(slots)
+		local size = placeBar()
+		local kind = Device.Kind()
 		for i, name in AbilityController.Available() do
 			local def = Skills.Faehigkeiten[name]
 			local b = C.Button({
@@ -240,9 +231,18 @@ function HUD.Build(UI: any)
 			})
 			C.Stroke(b, Theme.Brass, 3)
 			C.Label({ Text = def.Symbol, Size = UDim2.fromScale(0.62, 0.62), Position = UDim2.fromScale(0.19, 0.12), MaxTextSize = 34, Parent = b })
-			if not touch then
-				local key = C.Frame({ Size = UDim2.fromOffset(22, 22), Position = UDim2.new(0, -4, 0, -4), BackgroundColor3 = Theme.Copper, Radius = 6, ZIndex = 5, Parent = b })
-				C.Label({ Text = def.Taste, Size = UDim2.fromScale(1, 1), TextColor3 = Theme.TextLight, MaxTextSize = 16, ZIndex = 6, Parent = key })
+			-- Tasten-Hinweis: PC = Taste, Controller = Controller-Taste, Touch = keiner
+			local keyText: string? = nil
+			if kind == "Maus" then
+				keyText = def.Taste
+			elseif kind == "Gamepad" then
+				local code = AbilityController.GamepadKey(name)
+				keyText = if code then Device.ButtonText(code) else nil
+			end
+			if keyText then
+				local w = if utf8.len(keyText) and (utf8.len(keyText) :: number) > 1 then 30 else 22
+				local key = C.Frame({ Size = UDim2.fromOffset(w, 22), Position = UDim2.new(0, -4, 0, -4), BackgroundColor3 = Theme.Copper, Radius = 6, ZIndex = 5, Parent = b })
+				C.Label({ Text = keyText, Size = UDim2.fromScale(1, 1), TextColor3 = Theme.TextLight, MaxTextSize = 16, ZIndex = 6, Parent = key })
 			end
 			C.Label({ Text = if def.Kosten > 0 then (def.Kosten .. "⚡") else def.Name, Size = UDim2.new(1, 8, 0, 16), Position = UDim2.new(0, -4, 1, 2), MaxTextSize = 13, Parent = b })
 			local radial = C.Radial(b)
@@ -253,22 +253,74 @@ function HUD.Build(UI: any)
 	buildSlots()
 
 	-- ===== Responsiv =====
+	-- linke Spalte untereinander anordnen + Menü-Leiste so groß, wie Platz ist
+	local function layout(sc: number)
+		local y = 12
+		stats.Position = UDim2.fromOffset(12, y)
+		y += math.floor(112 * sc) + 8
+		quest.Position = UDim2.fromOffset(12, y)
+		y += math.floor(66 * sc) + 8
+		if banner.Visible then
+			banner.Position = UDim2.fromOffset(12, y)
+			y += math.floor(banner.Size.Y.Offset * sc) + 8
+		end
+		-- Controller-Hinweis
+		local gamepad = Device.IsGamepad()
+		padHint.Visible = gamepad
+		if gamepad then
+			padHintLabel.Text = ("%s Menü    %s Zurück"):format(Device.ButtonText(Enum.KeyCode.ButtonY), Device.ButtonText(Enum.KeyCode.ButtonB))
+			padHint.Position = UDim2.fromOffset(12, y)
+			y += math.floor(30 * sc) + 8
+		end
+		-- Menü-Leiste
+		local touch = UI.IsTouch()
+		local isAdmin = player:GetAttribute("IsAdmin") == true
+		local visible: { TextButton } = {}
+		for _, e in entries do
+			if e.Admin and not isAdmin then
+				e.Button.Visible = false
+			else
+				table.insert(visible, e.Button)
+			end
+		end
+		-- Touch: mindestens 46 px, damit man die Knöpfe gut mit dem Finger trifft
+		local cellPx = if touch then math.max(46, math.floor(64 * sc)) else math.floor(60 * sc)
+		local pad = math.max(4, math.floor(8 * sc))
+		local screenH = UI.ScreenSize().Y
+		-- Touch: unten links ist der Steuer-Stick, also nicht bis ganz nach unten
+		local yEnd = if touch then screenH * 0.74 else screenH - 16
+		local rows = math.max(1, math.floor((yEnd - y + pad) / (cellPx + pad)))
+		local cols = 2
+		if rows * cols < #visible then
+			cols = 3
+		end
+		local capacity = rows * cols
+		local showAll = capacity >= #visible
+		for i, b in visible do
+			b.Visible = showAll or i <= capacity - 1
+		end
+		moreButton.Visible = not showAll
+		grid.CellSize = UDim2.fromOffset(cellPx, cellPx)
+		grid.CellPadding = UDim2.fromOffset(pad, pad)
+		grid.FillDirectionMaxCells = cols
+		menu.Position = UDim2.fromOffset(12, y)
+		menu.Size = UDim2.fromOffset(cols * (cellPx + pad), rows * (cellPx + pad))
+	end
+
 	local function rescale()
-		local cam = workspace.CurrentCamera
-		if not cam then
-			return
+		local sc = UI.HudScale()
+		for _, scale in scales do
+			scale.Scale = sc
 		end
-		local vp = cam.ViewportSize
-		local s = math.clamp(math.min(vp.X / 1150, vp.Y / 680), 0.62, 1.3)
-		for _, sc in scales do
-			sc.Scale = s
-		end
+		layout(sc)
 	end
 	rescaleNow = rescale
 	rescale()
-	if workspace.CurrentCamera then
-		workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(rescale)
-	end
+	root:GetPropertyChangedSignal("AbsoluteSize"):Connect(rescale)
+	Device.Changed:Connect(function()
+		buildSlots()
+		rescale()
+	end)
 
 	-- ===== Werte aktualisieren =====
 	local lastClass = ""
@@ -371,7 +423,8 @@ function HUD.Build(UI: any)
 			elseif QuestController.Distance then
 				table.insert(parts, ("🧭 %d m"):format(math.floor(QuestController.Distance / 3.5 + 0.5)))
 			else
-				table.insert(parts, "Tippen für Infos")
+				local kind = Device.Kind()
+				table.insert(parts, if kind == "Touch" then "Tippen für Infos" elseif kind == "Gamepad" then Device.ButtonText(Enum.KeyCode.ButtonY) .. " → Menü → Aufgabe" else "Klicken für Infos")
 			end
 			questInfo.Text = table.concat(parts, "  ·  ")
 		end

@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.3.1] – 2026-11-05
+### Neu
+- **Alle Geräte**: Oberfläche passt sich an Handy (iOS/Android), Tablet, PC und Konsole (Xbox/PlayStation) an
+  und wechselt live, wenn die Steuerung wechselt (`UI/Device.lua`)
+  - alles bleibt im sicheren Bereich (Notch, Roblox-Leiste), Fenster und HUD skalieren mit der Bildschirmgröße,
+    auf dem Fernseher größer
+  - Menü-Leiste nimmt nur so viele Knöpfe, wie Platz ist, der Rest steckt im neuen **☰-Menü** (große Kacheln)
+  - Controller: Y/△ = Menü, B/○ = zurück, Steuerkreuz/Stick = auswählen, Auswahlrahmen,
+    Tasten-Symbole passend zu Xbox oder PlayStation an den Fähigkeiten
+  - PC: Taste M = Menü
+  - Werkstatt-Insel mit Controller bebaubar (Zielkreuz, X/□ = bauen, LT/L2 = drehen)
+### Behoben
+- Rotstich im ganzen Spiel (Bau-Vorschau ohne Ziel färbte alles ein), doppelte Licht-Effekte aus der Studio-Vorlage
+- Bauen in der Werkstatt startete mit einem Fehler
+- HUD-Teile oben links überlappten sich bei großen Bildschirmen
+
 ## [1.3.0] – 2026-11-05
 ### Neu
 - **Zone 6 „Sternen-Sternwarte“ und Zone 7 „Versunkenes Uhrwerk“** – je 3 Strecken, 3 Gegner-Arten, Boss

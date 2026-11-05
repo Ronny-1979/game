@@ -44,7 +44,7 @@ Quests.Liste = {
 	{
 		Titel = "Ab in die Zahnrad-Wiese!",
 		Text = "Folge dem goldenen Wegweiser zum Teleporter 1 und stell dich drauf.",
-		Tipp = "Du kannst auch links auf 🗺️ Karte tippen.",
+		Tipp = "Du kannst auch die 🗺️ Karte öffnen (links oder im ☰-Menü).",
 		Art = "Zone",
 		Wert = 1,
 		Belohnung = { Energie = 20, XP = 15 },
@@ -87,7 +87,7 @@ Quests.Liste = {
 	},
 	{
 		Titel = "Zeit verlangsamen",
-		Text = "Benutze Verlangsamen 🐢 (Taste Q oder Knopf unten). Hindernisse und Gegner werden langsam!",
+		Text = "Benutze Verlangsamen 🐢 (Taste Q, Knopf unten oder ◀ am Controller). Hindernisse und Gegner werden langsam!",
 		Tipp = "Kostet 10 ⚡ – perfekt bei schnellen Pendeln.",
 		Art = "Faehigkeit",
 		Wert = "Verlangsamen",
@@ -95,7 +95,7 @@ Quests.Liste = {
 	},
 	{
 		Titel = "Zurückspulen",
-		Text = "Benutze Zurückspulen ⏪ (Taste X). Du springst dahin zurück, wo du vor 3 Sekunden warst.",
+		Text = "Benutze Zurückspulen ⏪ (Taste X, Knopf unten oder ▲ am Controller). Du springst dahin zurück, wo du vor 3 Sekunden warst.",
 		Tipp = "Rettet dich nach einem Fehlsprung!",
 		Art = "Faehigkeit",
 		Wert = "Zurueckspulen",
@@ -308,7 +308,7 @@ Quests.Liste = {
 -- 👋 Einführung beim ersten Start (Seiten zum Durchblättern)
 Quests.Einfuehrung = {
 	{ Symbol = "⚙️", Titel = "Willkommen auf der Uhrwerk-Insel!", Text = "Die Insel ist ein riesiges, kaputtes Uhrwerk. Du reparierst es, indem du Strecken schaffst, Zeit-Energie sammelst und Bosse besiegst." },
-	{ Symbol = "📜", Titel = "Folge den Aufgaben", Text = "Oben links steht immer deine nächste Aufgabe. Der goldene Wegweiser zeigt dir den Weg. Tippe auf die Aufgabe für mehr Infos." },
+	{ Symbol = "📜", Titel = "Folge den Aufgaben", Text = "Oben links steht immer deine nächste Aufgabe. Der goldene Wegweiser zeigt dir den Weg. Tippe oder klicke auf die Aufgabe für mehr Infos (Controller: Y → Aufgabe)." },
 	{ Symbol = "🏁", Titel = "Strecken", Text = "Jede Strecke hat drei Bahnen: 🟢 Leicht, 🟡 Normal, 🔴 Profi. Je schwerer, desto mehr Belohnung. Checkpoints 🚩 speichern deinen Fortschritt." },
 	{ Symbol = "⏳", Titel = "Zeit-Fähigkeiten", Text = "Q = Verlangsamen 🐢   X = Zurückspulen ⏪   R = Sprint ⚡   F = Zeit-Wurf 🌀\nAuf Handy und Tablet sind es die runden Knöpfe unten rechts." },
 	{ Symbol = "🐾", Titel = "Pets & Upgrades", Text = "Im Hub gibt es den Shop 🛒 und die Eier-Station 🥚. Pets folgen dir und geben mehr Energie. Die Menü-Knöpfe sind links." },
