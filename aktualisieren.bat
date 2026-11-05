@@ -20,8 +20,11 @@ if not exist ".git" (
 git pull origin master
 if errorlevel 1 (
   echo.
-  echo Konnte nicht aktualisieren - vermutlich gibt es eigene Aenderungen in den Dateien.
-  echo Frag Claude im Terminal: "Hol die neueste Version von GitHub und behalte meine Aenderungen."
+  echo Konnte nicht aktualisieren. Lies die Meldung oben:
+  echo  - "dubious ownership": einmal in PowerShell eingeben:
+  echo      git config --global --add safe.directory C:/Roblox/game
+  echo  - "local changes" / "conflict": Frag Claude im Terminal:
+  echo      "Hol die neueste Version von GitHub und behalte meine Aenderungen."
   pause
   exit /b 1
 )
