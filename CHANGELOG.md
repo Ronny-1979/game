@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1] – 2026-11-05
+### Neu
+- Hintergrundmusik für Hub, alle 5 Zonen und den Bosskampf (APM Music, Creator Store)
+### Behoben
+- Die meisten Soundeffekte waren stumm: `electronicpingshort.wav` und `clickfast.wav` gibt es in Roblox nicht mehr.
+  Alle Töne haben jetzt eigene, getestete Creator-Store-IDs.
+
 ## [1.2.0] – 2026-11-05
 ### Neu
 - Tagesbonus mit 7-Tage-Serie (`Daily.lua`), automatisch beim Beitreten, roter Punkt im HUD
