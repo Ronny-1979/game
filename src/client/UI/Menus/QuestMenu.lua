@@ -45,6 +45,19 @@ function QuestMenu.Build(UI: any)
 		Parent = content,
 	})
 
+	local skip = C.Button({
+		Text = "⏭ Überspringen",
+		AnchorPoint = Vector2.new(1, 0),
+		Position = UDim2.new(1, 0, 0, 196),
+		Size = UDim2.fromOffset(180, 34),
+		BackgroundColor3 = Theme.Locked,
+		Visible = false,
+		OnClick = function()
+			UI.Request("SkipQuest")
+		end,
+		Parent = content,
+	})
+
 	local function refresh(data: any)
 		guide.Text = if QuestController.Enabled then "🧭 Wegweiser: AN" else "🧭 Wegweiser: AUS"
 		local index = data.Quest and data.Quest.Index or 1
@@ -55,10 +68,12 @@ function QuestMenu.Build(UI: any)
 			tip.Text = ""
 			reward.Text = ""
 			upcoming.Text = ""
+			skip.Visible = false
 			bar.Set(1)
 			barText.Text = ("%d/%d"):format(#Quests.Liste, #Quests.Liste)
 			return
 		end
+		skip.Visible = q.Optional == true
 		title.Text = ("Aufgabe %d/%d: %s"):format(index, #Quests.Liste, q.Titel)
 		text.Text = q.Text
 		local hint = QuestController.Hint

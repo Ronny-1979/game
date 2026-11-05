@@ -142,6 +142,21 @@ function QuestService.Start()
 			QuestService.Progress(player, kind, info, amount)
 		end
 	end)
+	-- optionale Aufgaben (z.B. Co-op) dürfen übersprungen werden
+	Remotes.OnInvoke("SkipQuest", 0.5, function(player)
+		local data = DataService.Get(player)
+		local q = data and current(data)
+		if not q or not q.Optional then
+			return { ok = false, msg = "Diese Aufgabe kann man nicht überspringen." }
+		end
+		DataService.Update(player, function(d)
+			d.Quest.Index += 1
+			d.Quest.Progress = 0
+		end)
+		QuestService.CheckState(player)
+		return { ok = true, msg = "⏭ Aufgabe übersprungen" }
+	end)
+
 	DataService.OnLoaded(function(player)
 		task.wait(2)
 		QuestService.CheckState(player)

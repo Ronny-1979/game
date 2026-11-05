@@ -10,6 +10,7 @@
 	  Anzahl    = wie oft (Standard 1)
 	  Wert      = (bei manchen Arten) z.B. Zonennummer, Level oder Fähigkeit
 	  Belohnung = { Energie = ..., XP = ..., Ei = "WiesenEi" }
+	  Optional  = true → Aufgabe kann im Aufgaben-Fenster übersprungen werden (ohne Belohnung)
 	  Ziel      = wohin der Wegweiser zeigt (optional)
 	              Zone = 0 (Hub) oder 1–5, Tag = Art des Ziels, Attr = genaues Ziel
 

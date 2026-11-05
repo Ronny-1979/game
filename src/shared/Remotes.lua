@@ -42,6 +42,7 @@ Remotes.Functions = {
 	"TeleportZone",
 	"StartTrack",
 	"GetLeaderboard",
+	"SkipQuest",
 	"Admin",
 }
 
