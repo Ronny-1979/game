@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.3.2] – 2026-11-05
+### Behoben
+- Sprungfedern lösten nicht aus (die Erkennung reichte nicht bis zu den Füßen) – dahinter lag eine
+  Plattform 12 Studs höher, die man so nicht erreichen konnte. Funken-Felder am Boden werden jetzt auch erkannt.
+### Geändert
+- Alle Schwierigkeiten leichter (`Difficulty.lua`): kürzere Lücken, größere Plattformen, langsamere Hindernisse,
+  Zeitplattformen länger sichtbar, mehr Checkpoints
+- Spätere Zonen werden nur noch sanft schwerer; Plattform nach der Sprungfeder 10 statt 12 Studs höher
+- ⚠️ Welt neu bauen nötig (Command Bar)
+
 ## [1.3.1] – 2026-11-05
 ### Neu
 - **Alle Geräte**: Oberfläche passt sich an Handy (iOS/Android), Tablet, PC und Konsole (Xbox/PlayStation) an

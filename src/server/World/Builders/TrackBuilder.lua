@@ -105,9 +105,10 @@ function TrackBuilder.BuildLane(parent: Instance, o: LaneOptions): Model
 		LaneX = o.LaneX,
 		LastX = o.LaneX,
 		StartY = o.Y,
-		Size = math.clamp(P.Plattformgroesse * o.F ^ -0.15, Difficulty.MinPlattform, 20),
-		Speed = P.Tempo * o.F ^ 0.5 * turbo,
-		Takt = P.Takt / o.F ^ 0.3 / turbo,
+		-- spätere Zonen (F bis 2.4) werden nur sanft schwerer
+		Size = math.clamp(P.Plattformgroesse * o.F ^ -0.1, Difficulty.MinPlattform, 20),
+		Speed = P.Tempo * o.F ^ 0.3 * turbo,
+		Takt = P.Takt / o.F ^ 0.15 / turbo,
 		Hints = o.Hints and o.Diff == "Leicht",
 		HintsShown = {},
 	}

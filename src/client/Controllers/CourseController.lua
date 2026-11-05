@@ -70,8 +70,12 @@ local function step()
 		CourseController.ResetToCheckpoint()
 		return
 	end
-	-- Gefahren und Sprungfedern
-	probe.CFrame = root.CFrame * CFrame.new(0, -0.6, 0)
+	-- Gefahren und Sprungfedern: die Sonde reicht vom Kopf bis knapp unter die Füße
+	-- (sonst werden flache Sprungfedern und Funken-Felder am Boden nicht erkannt)
+	local below = hum.HipHeight + root.Size.Y / 2 + 0.5
+	local above = 2
+	probe.Size = Vector3.new(1.6, below + above, 1.2)
+	probe.CFrame = CFrame.new(root.Position + Vector3.new(0, (above - below) / 2, 0)) * root.CFrame.Rotation
 	local hits = workspace:GetPartsInPart(probe, overlap)
 	for _, part in hits do
 		if CollectionService:HasTag(part, Tags.Hazard) then

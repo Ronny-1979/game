@@ -48,7 +48,7 @@ export type Ctx = {
 
 function Obstacles.Gap(ctx: Ctx, factor: number?): number
 	local P = ctx.P
-	local g = Util.Lerp(P.LueckeMin, P.LueckeMax, ctx.Rng:NextNumber()) * ctx.F ^ 0.15 * (factor or 1)
+	local g = Util.Lerp(P.LueckeMin, P.LueckeMax, ctx.Rng:NextNumber()) * ctx.F ^ 0.08 * (factor or 1)
 	return math.clamp(g, 2, Difficulty.MaxLuecke)
 end
 
@@ -122,7 +122,7 @@ B.Zahnrad = function(ctx, cur)
 		Phase = ctx.Rng:NextNumber(0, 6),
 	})
 	Parts.Gear(m, pivot, R, THICK, 12, ctx.Colors.Akzent)
-	if ctx.P.Tempo >= 1 then
+	if ctx.P.Name ~= "Leicht" then
 		local armCf = CFrame.new(center + Vector3.new(0, 1.4, 0))
 		local sweep = Parts.Obstacle(ctx.Folder, "Kehrbalken", "Spin", armCf, {
 			Axis = Vector3.yAxis,
@@ -162,7 +162,7 @@ B.Pendel = function(ctx, cur)
 	local y = cur.Y
 	local z0 = cur.Z + gap
 	plat(ctx, Vector3.new(ctx.LaneX, y, z0 + L / 2), W, L, ctx.Colors.Plattform)
-	local n = if ctx.P.Tempo >= 1 then 3 else 2
+	local n = if ctx.P.Name ~= "Leicht" then 3 else 2
 	local amp = math.rad(ctx.P.PendelWinkel)
 	local period = 2.8 / ctx.Speed
 	local armLen = 18
@@ -271,7 +271,7 @@ B.Bewegt = function(ctx, cur)
 		Parts.Part({ Name = "Plattform", Size = Vector3.new(s, THICK, s), CFrame = base, Color = ctx.Colors.Deko, Parent = m })
 		cur = Vector3.new(ctx.LaneX, y, zc + s / 2)
 	end
-	if ctx.P.Tempo >= 1 then
+	if ctx.P.Name ~= "Leicht" then
 		local D = 14 + 4 * ctx.P.Tempo
 		local y = cur.Y
 		local z0 = cur.Z + 2.5 + s / 2
@@ -405,7 +405,7 @@ B.Sprungpad = function(ctx, cur)
 		Parent = ctx.Folder,
 	})
 	local s2 = math.max(ctx.Size * 1.2, 8)
-	local y2 = y + 12
+	local y2 = y + 10
 	local z2 = padTop.Z + 9 + s2 / 2
 	plat(ctx, Vector3.new(ctx.LaneX, y2, z2), s2, s2, ctx.Colors.Akzent)
 	ctx.LastX = ctx.LaneX
