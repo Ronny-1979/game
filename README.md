@@ -23,6 +23,16 @@ Die Welt ist ein kaputtes Uhrwerk – repariert es mit Obby-Strecken, Zeit-Energ
    Danach speichern (Strg+S). Ohne diesen Schritt baut der Server die Welt beim Start automatisch.
 6. **Spielen**: ▶ Play. Für Co-op-Tests: Test → *Clients and Servers* → 2 Spieler → *Start*.
 
+### Updates holen (neue Versionen von GitHub)
+**Einmal einrichten** (statt ZIP-Download), in PowerShell:
+```
+cd C:\Roblox
+git clone https://github.com/Ronny-1979/game.git
+```
+Danach liegt das Projekt in `C:\Roblox\game` (rojo.exe wieder hineinlegen).
+**Jedes Mal:** Doppelklick auf **`aktualisieren.bat`** → holt die neueste Version und startet Rojo.
+In Studio dann *Plugins → Rojo → Connect*. Sind Zonen, Strecken oder Deko neu: Welt neu bauen (Schritt 5).
+
 ### Speichern im Studio aktivieren
 Game Settings → Security → **Enable Studio Access to API Services** einschalten (Spiel muss veröffentlicht sein).
 Ohne das läuft das Spiel im **Test-Modus** (Hinweis oben rechts) und speichert nichts.
