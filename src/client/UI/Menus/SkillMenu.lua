@@ -109,7 +109,7 @@ function SkillMenu.Build(UI: any)
 				Parent = footer,
 			})
 		else
-			C.Label({ Text = "Klasse wechseln & Punkte zurücksetzen: beim 🎓 Skill-Lehrer im Hub", Size = UDim2.fromScale(1, 1), TextColor3 = Theme.BrassDark, MaxTextSize = 18, Parent = footer })
+			C.Label({ Text = "Klasse wechseln & Punkte zurücksetzen: beim 🎓 Skill-Lehrer am Uhrturm-Platz", Size = UDim2.fromScale(1, 1), TextColor3 = Theme.BrassDark, MaxTextSize = 18, Parent = footer })
 		end
 	end
 

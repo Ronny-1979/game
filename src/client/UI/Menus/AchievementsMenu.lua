@@ -162,7 +162,7 @@ function AchievementsMenu.Build(UI: any)
 				C.Label({ Text = (if ok then "✅ " else "❓ ") .. e.Hinweis, Size = UDim2.new(1, -16, 1, -4), Position = UDim2.fromOffset(12, 2), TextXAlignment = Enum.TextXAlignment.Left, MaxTextSize = 16, Parent = row })
 			end
 		end
-		place("🏝️ Hub-Insel", Theme.Brass, "Hub_", Secrets.Hub)
+		place("🕰️ Uhrturm-Platz", Theme.Brass, "Hub_", Secrets.Hub)
 		for i, z in ipairs(Zones) do
 			if Progression.IsZoneUnlocked(data, i) then
 				place(("%d · %s"):format(i, z.Name), z.Farben.Akzent, ("Z%d_"):format(i), Secrets.Zone)

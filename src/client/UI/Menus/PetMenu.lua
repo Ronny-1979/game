@@ -128,7 +128,7 @@ function PetMenu.Build(UI: any)
 		local pet = selected and findPet(data, selected)
 		if not pet then
 			dName.Text = "Wähle ein Pet"
-			dInfo.Text = "Pets geben dir mehr Energie. Öffne Eier im Hub!"
+			dInfo.Text = "Pets geben dir mehr Energie. Öffne Eier am Uhrturm-Platz!"
 			return
 		end
 		local def = Pets.Liste[pet.Type]

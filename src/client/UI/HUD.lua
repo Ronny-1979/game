@@ -113,7 +113,7 @@ function HUD.Build(UI: any)
 	top.Parent = root
 	table.insert(scales, addScale(top))
 	local zoneFrame = C.Frame({ AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromScale(0.5, 0), Size = UDim2.fromOffset(300, 38), BackgroundColor3 = Theme.Brass, Parent = top })
-	local zoneLabel = C.Label({ Text = "📍 Hub-Insel", Size = UDim2.new(1, -12, 1, -6), Position = UDim2.fromOffset(6, 3), TextColor3 = Theme.TextLight, MaxTextSize = 24, Parent = zoneFrame })
+	local zoneLabel = C.Label({ Text = "📍 Uhrturm-Platz", Size = UDim2.new(1, -12, 1, -6), Position = UDim2.fromOffset(6, 3), TextColor3 = Theme.TextLight, MaxTextSize = 24, Parent = zoneFrame })
 	local timer = C.Frame({ AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, 44), Size = UDim2.fromOffset(320, 44), BackgroundColor3 = Theme.Panel, Visible = false, Parent = top })
 	C.Stroke(timer, Theme.Copper, 3)
 	local timerLabel = C.Label({ Text = "⏱ 0:00,00", Size = UDim2.new(1, -12, 1, -6), Position = UDim2.fromOffset(6, 3), TextColor3 = Theme.Copper, MaxTextSize = 30, Parent = timer })
@@ -121,6 +121,34 @@ function HUD.Build(UI: any)
 	C.Stroke(boss, Theme.Boss, 3)
 	local bossName = C.Label({ Text = "", Size = UDim2.new(1, -12, 0, 24), Position = UDim2.fromOffset(6, 3), MaxTextSize = 22, Parent = boss })
 	local bossBar = C.Bar({ Position = UDim2.fromOffset(10, 30), Size = UDim2.new(1, -20, 0, 20), Parent = boss }, Theme.Boss)
+
+	-- Handy: Zonen-Name sitzt in der freien Fläche der Roblox-Leiste ganz oben (verdeckt so nichts vom Spiel)
+	local barGui = Instance.new("ScreenGui")
+	barGui.Name = "UhrwerkLeiste"
+	barGui.ResetOnSpawn = false
+	barGui.DisplayOrder = 1
+	barGui.ScreenInsets = Enum.ScreenInsets.TopbarSafeInsets
+	barGui.Parent = player:WaitForChild("PlayerGui")
+	local function placeZone()
+		local free = barGui.AbsoluteSize
+		local inBar = UI.IsTouch() and GuiService.TopbarInset.Height > 0 and free.X >= 160 and free.Y >= 24
+		if inBar then
+			zoneFrame.Parent = barGui
+			zoneFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+			zoneFrame.Position = UDim2.fromScale(0.5, 0.5)
+			zoneFrame.Size = UDim2.new(0, math.min(300, free.X - 8), 1, -10)
+			timer.Position = UDim2.new(0.5, 0, 0, 0)
+			boss.Position = UDim2.new(0.5, 0, 0, 50)
+		else
+			zoneFrame.Parent = top
+			zoneFrame.AnchorPoint = Vector2.new(0.5, 0)
+			zoneFrame.Position = UDim2.fromScale(0.5, 0)
+			zoneFrame.Size = UDim2.fromOffset(300, 38)
+			timer.Position = UDim2.new(0.5, 0, 0, 44)
+			boss.Position = UDim2.new(0.5, 0, 0, 94)
+		end
+	end
+	barGui:GetPropertyChangedSignal("AbsoluteSize"):Connect(placeZone)
 
 	-- ===== Links: Menü-Knöpfe =====
 	local menu = Instance.new("Frame")
@@ -331,6 +359,7 @@ function HUD.Build(UI: any)
 			scale.Scale = sc
 		end
 		layout(sc)
+		placeZone()
 		-- oben Mitte (Zone/Zeit/Boss) ebenfalls unter die Roblox-Knöpfe, falls nötig
 		local w = 420 * sc
 		top.Position = UDim2.new(0.5, 0, 0, safeTop(root.AbsoluteSize.X / 2 - w / 2, w) - 2)
@@ -399,7 +428,7 @@ function HUD.Build(UI: any)
 		end
 		local z = (player:GetAttribute("Zone") :: number?) or 0
 		local zone = Zones[z]
-		zoneLabel.Text = if zone then ("📍 %s"):format(zone.Name) else "📍 Hub-Insel"
+		zoneLabel.Text = if zone then ("📍 %s"):format(zone.Name) else "📍 Uhrturm-Platz"
 	end
 	player:GetAttributeChangedSignal("Zone"):Connect(updateZone)
 	player:GetAttributeChangedSignal("Ort"):Connect(updateZone)

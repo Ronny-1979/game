@@ -99,7 +99,7 @@ function TowerBuilder.BuildFloor(parent: Instance, week: number, n: number): (Fo
 		Tags = { "TowerLeave" },
 		Parent = folder,
 	})
-	Parts.Billboard(back, "↩ Hub", 2.5, Vector2.new(90, 32))
+	Parts.Billboard(back, "↩ Uhrturm-Platz", 2.5, Vector2.new(170, 32))
 
 	-- Hindernisse
 	local count = math.min(Tower.AbschnitteStart + math.floor(n / Tower.AbschnitteAlle), Tower.AbschnitteMax)

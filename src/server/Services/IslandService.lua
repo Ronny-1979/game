@@ -76,7 +76,7 @@ local function buildBase(index: number, owner: Player): Folder
 		Tags = { "IslandLeave" },
 		Parent = folder,
 	})
-	Parts.Billboard(back, "↩ Zurück zum Hub", 3, Vector2.new(170, 40))
+	Parts.Billboard(back, "↩ Zurück zum Uhrturm-Platz", 3, Vector2.new(250, 40))
 	local signPos = center + Vector3.new(0, 0, -58)
 	local sign = Parts.Sign(folder, signPos, ("🏡 Werkstatt von\n%s"):format(owner.DisplayName), 14, 5, Vector3.new(0, 0, 1))
 	sign.Name = "Namensschild"
@@ -138,11 +138,11 @@ local function release(player: Player)
 	if not index then
 		return
 	end
-	-- Besucher auf dieser Insel zurück in den Hub schicken
+	-- Besucher auf dieser Insel zurück zum Uhrturm-Platz schicken
 	for _, p in Players:GetPlayers() do
 		if p ~= player and p:GetAttribute("Ort") == "Insel" and p:GetAttribute("IslandOwnerId") == player.UserId then
 			ZoneService.TeleportToZone(p, 0)
-			Remotes.Event("Toast"):FireClient(p, "Die Werkstatt wurde geschlossen – zurück im Hub.", "info")
+			Remotes.Event("Toast"):FireClient(p, "Die Werkstatt wurde geschlossen – zurück am Uhrturm-Platz.", "info")
 		end
 	end
 	if plotFolders[index] then

@@ -1,6 +1,6 @@
 --!strict
 --[[
-	ZoneService: Teleporter im Hub, Portale in den Zonen, Karten-Teleport, Schnellstart von Strecken.
+	ZoneService: Teleporter am Uhrturm-Platz, Portale in den Zonen, Karten-Teleport, Schnellstart von Strecken.
 	Merkt sich die aktuelle Zone im Spieler-Attribut "Zone" (0 = Hub).
 ]]
 local Players = game:GetService("Players")
@@ -91,7 +91,7 @@ function ZoneService.TeleportToZone(player: Player, index: number): (boolean, st
 	if index > 0 then
 		toast(player, ("📍 %s – %s"):format(Zones[index].Name, Zones[index].Beschreibung), "info")
 	else
-		toast(player, "📍 Hub-Insel", "info")
+		toast(player, "📍 Uhrturm-Platz", "info")
 	end
 	return true, nil
 end

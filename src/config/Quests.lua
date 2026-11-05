@@ -71,7 +71,7 @@ Quests.Liste = {
 	},
 	{
 		Titel = "Upgrade kaufen",
-		Text = "Reise zurück in den Hub (Portal oder 🗺️ Karte) und kaufe im Shop 🛒 ein Upgrade.",
+		Text = "Reise zurück zum Uhrturm-Platz (Portal oder 🗺️ Karte) und kaufe im Shop 🛒 ein Upgrade.",
 		Tipp = "„Klickkraft“ ist am Anfang am besten.",
 		Art = "Upgrade",
 		Belohnung = { Energie = 80, XP = 25 },
@@ -221,7 +221,7 @@ Quests.Liste = {
 	},
 	{
 		Titel = "Neu geboren ♻️",
-		Text = "Mache deinen ersten Rebirth am Rebirth-Altar im Hub (ab Level 15).",
+		Text = "Mache deinen ersten Rebirth am Rebirth-Altar am Uhrturm-Platz (ab Level 15).",
 		Tipp = "Rebirth-Punkte bekommst du für das besondere Rebirth-Ei.",
 		Art = "Rebirth",
 		Belohnung = { XP = 1000 },
@@ -229,7 +229,7 @@ Quests.Liste = {
 	},
 	{
 		Titel = "Deine eigene Werkstatt 🏡",
-		Text = "Geh im Hub zu „Meine Werkstatt“ und stelle 3 Deko-Stücke auf deine Insel.",
+		Text = "Geh am Uhrturm-Platz zu „Meine Werkstatt“ und stelle 3 Deko-Stücke auf deine Insel.",
 		Tipp = "Jedes Deko-Stück gibt dir dauerhaft etwas mehr Energie!",
 		Art = "Deko",
 		Anzahl = 3,
@@ -255,7 +255,7 @@ Quests.Liste = {
 	},
 	{
 		Titel = "Geheimnis-Jäger 🔍",
-		Text = "Finde 5 versteckte goldene Zahnräder (im Hub und in den Zonen).",
+		Text = "Finde 5 versteckte goldene Zahnräder (am Uhrturm-Platz und in den Zonen).",
 		Tipp = "Im Erfolge-Menü 🏅 → Geheimnisse stehen Rätsel-Tipps.",
 		Art = "Geheimnis",
 		Anzahl = 5,
@@ -311,8 +311,8 @@ Quests.Einfuehrung = {
 	{ Symbol = "📜", Titel = "Folge den Aufgaben", Text = "Oben links steht immer deine nächste Aufgabe. Der goldene Wegweiser zeigt dir den Weg. Tippe oder klicke auf die Aufgabe für mehr Infos (Controller: Y → Aufgabe)." },
 	{ Symbol = "🏁", Titel = "Strecken", Text = "Jede Strecke hat drei Bahnen: 🟢 Leicht, 🟡 Normal, 🔴 Profi. Je schwerer, desto mehr Belohnung. Checkpoints 🚩 speichern deinen Fortschritt." },
 	{ Symbol = "⏳", Titel = "Zeit-Fähigkeiten", Text = "Q = Verlangsamen 🐢   X = Zurückspulen ⏪   R = Sprint ⚡   F = Zeit-Wurf 🌀\nAuf Handy und Tablet sind es die runden Knöpfe unten rechts." },
-	{ Symbol = "🐾", Titel = "Pets & Upgrades", Text = "Im Hub gibt es den Shop 🛒 und die Eier-Station 🥚. Pets folgen dir und geben mehr Energie. Die Menü-Knöpfe sind links." },
-	{ Symbol = "🗼", Titel = "Turm & Werkstatt", Text = "Im Hub wartet der Endlos-Turm 🗼 – jede Woche ein neuer! Und in „Meine Werkstatt“ 🏡 baust du dir deine eigene Insel. Jedes Deko-Stück gibt dir mehr Energie." },
+	{ Symbol = "🐾", Titel = "Pets & Upgrades", Text = "Am Uhrturm-Platz gibt es den Shop 🛒 und die Eier-Station 🥚. Pets folgen dir und geben mehr Energie. Die Menü-Knöpfe sind links." },
+	{ Symbol = "🗼", Titel = "Turm & Werkstatt", Text = "Am Uhrturm-Platz wartet der Endlos-Turm 🗼 – jede Woche ein neuer! Und in „Meine Werkstatt“ 🏡 baust du dir deine eigene Insel. Jedes Deko-Stück gibt dir mehr Energie." },
 	{ Symbol = "🤝", Titel = "Zusammen spielen", Text = "Ab Zone 2 gibt es Rätsel, die nur zu zweit gehen. Lade Freunde mit 👥 ein und schickt euch Schnellnachrichten mit 💬. Viel Spaß!" },
 }
 

@@ -1,6 +1,6 @@
 --!strict
 --[[
-	ClassService: Klasse wählen (am Anfang gratis), Klasse wechseln (im Hub beim Skill-Lehrer, kostet Energie),
+	ClassService: Klasse wählen (am Anfang gratis), Klasse wechseln (am Uhrturm-Platz beim Skill-Lehrer, kostet Energie),
 	Skill-Baum freischalten und zurücksetzen.
 ]]
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -60,7 +60,7 @@ function ClassService.Start()
 		end
 		if data.Class ~= "" then
 			if not nearTeacher(player) then
-				return { ok = false, msg = "Klassenwechsel nur beim Skill-Lehrer im Hub 🎓" }
+				return { ok = false, msg = "Klassenwechsel nur beim Skill-Lehrer am Uhrturm-Platz 🎓" }
 			end
 			if not DataService.Spend(player, Settings.ClassChangeCost) then
 				return { ok = false, msg = ("Klassenwechsel kostet %s ⚡"):format(Util.FormatNumber(Settings.ClassChangeCost)) }
@@ -115,7 +115,7 @@ function ClassService.Start()
 			return { ok = false }
 		end
 		if not nearTeacher(player) then
-			return { ok = false, msg = "Zurücksetzen nur beim Skill-Lehrer im Hub 🎓" }
+			return { ok = false, msg = "Zurücksetzen nur beim Skill-Lehrer am Uhrturm-Platz 🎓" }
 		end
 		DataService.Update(player, refundSkills)
 		return { ok = true, msg = "Skill-Punkte zurückbekommen!" }

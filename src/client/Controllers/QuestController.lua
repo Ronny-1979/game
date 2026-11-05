@@ -85,7 +85,7 @@ local function resolve(from: Vector3): (BasePart?, string?)
 	if goal.Zone == zone + 1 then
 		return nearest("Portal", { Target = goal.Zone }, from), "Geh durch das Portal zur nächsten Zone ➡️"
 	end
-	return nearest("Portal", { Target = 0 }, from), "Erst zurück in den Hub (Portal 🏝️ oder 🗺️ Karte)"
+	return nearest("Portal", { Target = 0 }, from), "Erst zurück zum Uhrturm-Platz (Portal 🏝️ oder 🗺️ Karte)"
 end
 
 local function ensureRootAttachment(): Attachment?

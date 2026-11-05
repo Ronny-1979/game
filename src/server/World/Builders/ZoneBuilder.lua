@@ -116,7 +116,7 @@ local function buildPlaza(folder: Instance, index: number, zone: any, O: Vector3
 		ZoneBuilder.SpinningGear(folder, CFrame.new(O + Vector3.new(math.cos(a) * 85, 18, math.sin(a) * 85)) * CFrame.Angles(math.rad(70), 0, 0), 8, C.Akzent, 0.3 * (if i % 2 == 0 then 1 else -1))
 	end
 	-- Portale
-	ZoneBuilder.Portal(folder, O + Vector3.new(-40, 0, -40), O, 0, "🏝️ Zurück zum Hub", C.Akzent)
+	ZoneBuilder.Portal(folder, O + Vector3.new(-40, 0, -40), O, 0, "🕰️ Zurück zum Uhrturm-Platz", C.Akzent)
 	local nextZone = Zones[index + 1]
 	if nextZone then
 		ZoneBuilder.Portal(

@@ -103,7 +103,7 @@ function ClassMenu.Build(UI: any)
 		self.Modal = args.Forced == true
 		closeBtn.Visible = not self.Modal
 		if self.Modal then
-			hint.Text = "Willkommen! Wähle eine Klasse – du kannst sie später im Hub wechseln."
+			hint.Text = "Willkommen! Wähle eine Klasse – du kannst sie später am Uhrturm-Platz wechseln."
 		else
 			hint.Text = ("Klassenwechsel kostet %s ⚡ (Skill-Punkte bekommst du zurück)"):format(Util.FormatNumber(Settings.ClassChangeCost))
 		end
