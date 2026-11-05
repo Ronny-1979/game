@@ -34,6 +34,10 @@ local Template = {
 	CoopSolved = {},
 	Settings = { Music = 0.5, Sfx = 0.8, Graphics = "Hoch", Difficulty = "Normal", IntroSeen = false },
 	Quest = { Index = 1, Progress = 0 }, -- Aufgaben-Fortschritt (Quests.lua)
+	Daily = { LastDay = 0, Streak = 0, BestStreak = 0 }, -- tägliche Belohnung
+	ZoneStats = {}, -- ["Wiese"] = { Gegner = 0, Kristall = 0, Boss = 0 }
+	Challenges = {}, -- ["Z1_Profi"] = true
+	Badges = {}, -- ["Level10"] = true
 	Stats = { PlayTime = 0, Defeated = 0, Courses = 0, Hatched = 0 },
 }
 

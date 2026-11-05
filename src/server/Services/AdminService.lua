@@ -88,6 +88,13 @@ Commands.Ei = function(player, eggId)
 	return "Ei geöffnet"
 end
 
+Commands.Bonus = function(player)
+	DataService.Update(player, function(d)
+		d.Daily.LastDay = 0
+	end)
+	return "Tagesbonus wieder verfügbar"
+end
+
 Commands.Reset = function(player)
 	DataService.ResetProfile(player)
 	PetService.UpdateAttribute(player)

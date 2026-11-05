@@ -43,6 +43,7 @@ Remotes.Functions = {
 	"StartTrack",
 	"GetLeaderboard",
 	"SkipQuest",
+	"ClaimDaily",
 	"Admin",
 }
 

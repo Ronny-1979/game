@@ -106,6 +106,8 @@ function HUD.Build(UI: any)
 	grid.Parent = menu
 
 	local buttons = {
+		{ "🎁", "Bonus", "Bonus" },
+		{ "🏅", "Erfolge", "Erfolge" },
 		{ "🛒", "Shop", "Shop" },
 		{ "🐾", "Pets", "Pets" },
 		{ "🌳", "Skills", "Skills" },
@@ -147,9 +149,22 @@ function HUD.Build(UI: any)
 		C.Label({ Text = caption, Size = UDim2.new(1, 0, 0.32, 0), Position = UDim2.fromScale(0, 0.66), MaxTextSize = 13, Parent = b })
 		return b
 	end
+	local bonusButton: TextButton? = nil
 	for i, def in buttons do
-		menuButton(def[1], def[2], def[3], i)
+		local b = menuButton(def[1], def[2], def[3], i)
+		if def[3] == "Bonus" then
+			bonusButton = b
+		end
 	end
+	-- roter Punkt, wenn der Tagesbonus bereit ist
+	local dot = C.Frame({ Size = UDim2.fromOffset(16, 16), Position = UDim2.new(1, -12, 0, -4), BackgroundColor3 = Theme.Bad, Radius = 8, Visible = false, ZIndex = 5, Parent = bonusButton })
+	local DailyMenu = require(script.Parent:WaitForChild("Menus"):WaitForChild("DailyMenu"))
+	task.spawn(function()
+		while true do
+			dot.Visible = DailyMenu.IsAvailable(DataController.Data)
+			task.wait(2)
+		end
+	end)
 	local adminButton = menuButton("🔧", "Admin", "Admin", 99)
 	adminButton.Visible = player:GetAttribute("IsAdmin") == true
 	player:GetAttributeChangedSignal("IsAdmin"):Connect(function()

@@ -25,6 +25,14 @@ Tipp: Mit dem 🔧-Admin-Menü (im Studio immer da) kommt man schnell an Energie
 - [ ] Aufgabe erledigt → Toast + Belohnung + nächste Aufgabe; Tipps 💡 erscheinen ab und zu
 - [ ] Alter Spielstand: bereits erfüllte Aufgaben (Klasse, Level, Boss) werden sofort abgehakt
 
+## 1c. Bonus, Erfolge, Grafik
+- [ ] Nach der Einführung öffnet sich 🎁 Tagesbonus, Abholen gibt Belohnung, danach „Heute abgeholt“ + Countdown
+- [ ] Roter Punkt am 🎁-Knopf, solange der Bonus bereit ist (Admin: „Bonus zurücksetzen“ zum erneuten Testen)
+- [ ] 🏅 Erfolge: Herausforderungen pro Zone mit Fortschrittsbalken; Abzeichen werden automatisch vergeben (Toast)
+- [ ] Neue Gegner: Zahnrad-Käfer (Zone 1), Drohnen mit Sturzflug (Warnfläche!), Schützen mit Zahnrad-Wurf (Warnfläche!)
+- [ ] Welt neu gebaut: Blumen, Felsen, Wolken unter den Inseln, schwebende Mini-Inseln – nichts blockiert Wege
+- [ ] Zonenwechsel: Licht/Nebel/Tageszeit gleiten um, Glühwürmchen-Funken (bei Grafik „Niedrig“ aus)
+
 ## 2. Hub
 - [ ] Shop (Prompt an der Theke): Upgrade kaufen, Preis steigt, „MAX“ bei Maximalstufe
 - [ ] Eier: Wiesen-Ei öffnen (150 ⚡), Pet erscheint und folgt; anderes Ei ohne Zone → Fehlermeldung

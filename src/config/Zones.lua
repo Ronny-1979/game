@@ -44,7 +44,9 @@ local Zones = {
 			{ Name = "Zahnrad-Hüpfer", Abschnitte = 10, Hindernisse = { "Sprung", "Zahnrad", "Wackel" }, Belohnung = { Energie = 120, XP = 60 } },
 			{ Name = "Funkelpfad", Abschnitte = 12, Hindernisse = { "Sprung", "Zahnrad", "Zeitplattform", "Funken" }, Belohnung = { Energie = 180, XP = 90 } },
 		},
-		Gegner = { Typ = "RostBot", Anzahl = 5 },
+		Gegner = { { Typ = "RostBot", Anzahl = 5 }, { Typ = "Zahnradkaefer", Anzahl = 3 } },
+		-- Stimmung: Tageszeit (0–24), Nebelfarbe, Nebeldichte (0–1), Farbtönung, Glühwürmchen-Farbe
+		Stimmung = { Uhrzeit = 14.5, Nebel = Color3.fromRGB(255, 240, 210), Dichte = 0.26, Toenung = Color3.fromRGB(255, 250, 235), Funken = Color3.fromRGB(255, 240, 150) },
 		Boss = "ZahnradKoenig",
 		Ei = "WiesenEi",
 		Coop = {},
@@ -67,7 +69,8 @@ local Zones = {
 			{ Name = "Funkenhalle", Abschnitte = 12, Hindernisse = { "Foerderband", "Zahnrad", "Funken" }, Belohnung = { Energie = 1300, XP = 150 } },
 			{ Name = "Rostige Rampe", Abschnitte = 13, Hindernisse = { "Bewegt", "Wackel", "Foerderband", "Sprungpad" }, Belohnung = { Energie = 1800, XP = 200 } },
 		},
-		Gegner = { Typ = "SchraubenBot", Anzahl = 6 },
+		Gegner = { { Typ = "SchraubenBot", Anzahl = 5 }, { Typ = "Schweissdrohne", Anzahl = 3 } },
+		Stimmung = { Uhrzeit = 16.5, Nebel = Color3.fromRGB(255, 215, 180), Dichte = 0.32, Toenung = Color3.fromRGB(255, 238, 220), Funken = Color3.fromRGB(255, 170, 90) },
 		Boss = "RostRudi",
 		Ei = "WerkstattEi",
 		Coop = { "Tuer", "Bruecke" },
@@ -90,7 +93,8 @@ local Zones = {
 			{ Name = "Schwingende Brücken", Abschnitte = 13, Hindernisse = { "Pendel", "Bewegt", "Wackel" }, Belohnung = { Energie = 13000, XP = 280 } },
 			{ Name = "Echo-Abgrund", Abschnitte = 15, Hindernisse = { "Pendel", "Zeitplattform", "Funken", "Sprungpad" }, Belohnung = { Energie = 18000, XP = 350 } },
 		},
-		Gegner = { Typ = "PendelBot", Anzahl = 6 },
+		Gegner = { { Typ = "PendelBot", Anzahl = 5 }, { Typ = "Glockenschuetze", Anzahl = 3 } },
+		Stimmung = { Uhrzeit = 17.6, Nebel = Color3.fromRGB(225, 200, 255), Dichte = 0.36, Toenung = Color3.fromRGB(245, 235, 255), Funken = Color3.fromRGB(200, 170, 255) },
 		Boss = "PendelPaula",
 		Ei = "SchluchtEi",
 		Coop = { "Konsole", "Tuer" },
@@ -113,7 +117,8 @@ local Zones = {
 			{ Name = "Laser-Labyrinth", Abschnitte = 14, Hindernisse = { "Laser", "Zahnrad", "Bewegt" }, Belohnung = { Energie = 130000, XP = 500 } },
 			{ Name = "Prismen-Gipfel", Abschnitte = 16, Hindernisse = { "Drehring", "Laser", "Pendel", "Wackel" }, Belohnung = { Energie = 180000, XP = 620 } },
 		},
-		Gegner = { Typ = "KristallBot", Anzahl = 7 },
+		Gegner = { { Typ = "KristallBot", Anzahl = 5 }, { Typ = "Prismadrohne", Anzahl = 4 } },
+		Stimmung = { Uhrzeit = 20.5, Nebel = Color3.fromRGB(170, 225, 255), Dichte = 0.3, Toenung = Color3.fromRGB(230, 245, 255), Funken = Color3.fromRGB(140, 240, 255) },
 		Boss = "KristallKoloss",
 		Ei = "KristallEi",
 		Coop = { "Bruecke", "Konsole", "Tuer" },
@@ -136,12 +141,16 @@ local Zones = {
 			{ Name = "Unruh-Wirbel", Abschnitte = 16, Hindernisse = { "Drehring", "Bewegt", "Laser", "Wackel", "Funken" }, Belohnung = { Energie = 1300000, XP = 950 } },
 			{ Name = "Mitternacht", Abschnitte = 18, Hindernisse = { "Zahnrad", "Pendel", "Laser", "Drehring", "Zeitplattform", "Sprungpad", "Foerderband" }, Belohnung = { Energie = 2000000, XP = 1200 } },
 		},
-		Gegner = { Typ = "UhrwerkWaechter", Anzahl = 8 },
+		Gegner = { { Typ = "UhrwerkWaechter", Anzahl = 5 }, { Typ = "Zeigerschuetze", Anzahl = 3 }, { Typ = "Schweissdrohne", Anzahl = 2 } },
+		Stimmung = { Uhrzeit = 18.4, Nebel = Color3.fromRGB(255, 200, 150), Dichte = 0.34, Toenung = Color3.fromRGB(255, 235, 210), Funken = Color3.fromRGB(255, 215, 120) },
 		Boss = "MeisterUnruh",
 		Ei = "UhrwerkEi",
 		Coop = { "Tuer", "Bruecke", "Konsole" },
 	},
 }
+
+-- 🏝️ Stimmung im Hub
+Zones.HubStimmung = { Uhrzeit = 13.5, Nebel = Color3.fromRGB(255, 236, 215), Dichte = 0.24, Toenung = Color3.fromRGB(255, 248, 238), Funken = Color3.fromRGB(255, 230, 160) }
 
 -- 📋 Hinweis-Schilder (erscheinen in Zonen mit Tutorial = true vor dem ersten Hindernis jeder Art)
 Zones.Hinweise = {

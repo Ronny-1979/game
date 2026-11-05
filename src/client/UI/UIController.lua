@@ -407,6 +407,8 @@ function UI.Init()
 		Admin = "AdminMenu",
 		Aufgabe = "QuestMenu",
 		Intro = "IntroMenu",
+		Bonus = "DailyMenu",
+		Erfolge = "AchievementsMenu",
 	}
 	for name, moduleName in list do
 		local ok, mod = pcall(require, Menus:WaitForChild(moduleName))
@@ -430,6 +432,7 @@ function UI.Start()
 		end
 	end)
 	local introShown = false
+	local dailyShown = false
 	local function checkClass(data: any)
 		-- Noch keine Klasse? → Klassenwahl erzwingen
 		if data.Class == "" and openName ~= "Klasse" then
@@ -447,6 +450,18 @@ function UI.Start()
 					UI.Open("Intro", {})
 				end
 			end)
+		end
+		-- Tagesbonus einmal pro Besuch automatisch zeigen (nach Klasse + Einführung)
+		if not dailyShown and data.Class ~= "" and data.Settings.IntroSeen and openName == nil then
+			dailyShown = true
+			local DailyMenu = require(script.Parent:WaitForChild("Menus"):WaitForChild("DailyMenu"))
+			if DailyMenu.IsAvailable(data) then
+				task.delay(2, function()
+					if openName == nil then
+						UI.Open("Bonus", {})
+					end
+				end)
+			end
 		end
 	end
 	if DataController.Data then

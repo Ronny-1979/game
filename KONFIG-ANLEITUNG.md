@@ -65,7 +65,7 @@ Angriffe: `"Stampfen"`, `"Zahnradregen"`, `"Schockwelle"` (drüberspringen!), `"
   ```
   Hindernisse: `"Sprung"`, `"Zahnrad"`, `"Pendel"`, `"Foerderband"`, `"Bewegt"`, `"Zeitplattform"`, `"Wackel"`,
   `"Laser"`, `"Sprungpad"`, `"Funken"`, `"Drehring"`.
-* `Gegner = { Typ = "RostBot", Anzahl = 5 }` – Typen aus `Enemies.lua`.
+* `Gegner = { { Typ = "RostBot", Anzahl = 5 }, { Typ = "Zahnradkaefer", Anzahl = 3 } }` – mehrere Arten möglich, Typen aus `Enemies.lua`.
 * `Coop = { "Tuer", "Bruecke", "Konsole" }` – bis zu 3 Zwei-Spieler-Rätsel.
 * `Zones.Hinweise` (unten): Texte der Hinweis-Schilder in Zone 1.
 
@@ -86,6 +86,23 @@ Alle Arten und Ziel-Tags stehen oben in der Datei. `Quests.Einfuehrung` = Willko
 `Quests.Tipps` = Tipps, die alle `TippIntervall` Sekunden erscheinen.
 ⚠️ Aufgaben nur hinten anhängen oder einfügen, wenn noch niemand weit gespielt hat – gespeichert wird die Nummer der Aufgabe.
 
+## 🎁 Tagesbonus (`Daily.lua`)
+7 Tage, danach geht es von vorne los. Energie wird automatisch mit der besten Zone und dem
+Energie-Multiplikator verrechnet. `Ei = "BestesEi"` = Ei der besten freigeschalteten Zone.
+
+## 🎯 Zonen-Herausforderungen (`Challenges.lua`)
+Pro Zone eine Liste. Arten: `"AlleStrecken"` (mit `Diff`), `"Strecke"` (mit `Strecke` und `Diff`),
+`"Gegner"`, `"Kristall"`, `"Boss"` (mit `Anzahl`), `"Coop"`. Die `Id` nie mehr ändern!
+
+## 🏅 Abzeichen (`Badges.lua`)
+`Art` + `Wert` = Bedingung (z. B. `Art = "Level", Wert = 10`). Alle Arten stehen oben in der Datei.
+**Echte Roblox-Badges:** Im Creator Dashboard → euer Spiel → *Badges* → *Create a Badge* (Bild hochladen).
+Die Badge-ID bei `RobloxBadgeId` eintragen – dann bekommt man zusätzlich das echte Roblox-Badge.
+
+## 🌅 Stimmung (`Zones.lua` → `Stimmung`)
+`Uhrzeit` (0–24, z. B. 20.5 = Abend), `Nebel` (Farbe), `Dichte` (0–1), `Toenung` (Farbfilter),
+`Funken` (Farbe der Glühwürmchen). `Zones.HubStimmung` gilt für die Hub-Insel.
+
 ## 🎚️ Schwierigkeit (`Difficulty.lua`)
 Pro Stufe (Leicht/Normal/Profi): `Plattformgroesse`, `LueckeMin/LueckeMax` (Sprungweite), `Tempo` der Hindernisse,
 `Takt` der Zeitplattformen, `CheckpointAlle`, `Belohnung`, `EiChance`.
@@ -94,6 +111,8 @@ Pro Stufe (Leicht/Normal/Profi): `Plattformgroesse`, `LueckeMin/LueckeMax` (Spru
 ## 🤖 Gegner (`Enemies.lua`)
 `Leben`, `Schaden`, `Tempo`, `XP`, `Energie`, `Sichtweite`, `Angriffsmuster` (`"Ramme"`, `"Huepfer"`, `"Kreisel"`),
 `Groesse`, `Farbe`, `Respawnzeit`.
+Neu: `"Flieger"` (schwebt, Sturzflug mit Warnfläche) und `"Schuetze"` (wirft Zahnräder auf eine Warnfläche),
+dazu `Form` (`"Kasten"`, `"Kugel"`, `"Turm"`) und `Abklingzeit` (Sekunden zwischen Angriffen).
 
 ## 🛒 Upgrades (`Upgrades.lua`)
 Kosten der nächsten Stufe = `Basiskosten × Kostenfaktor ^ Stufe`. `Effekt = { Stat = "...", Plus = ... }`.

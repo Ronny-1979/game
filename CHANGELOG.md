@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.2.0] – 2026-11-05
+### Neu
+- Tagesbonus mit 7-Tage-Serie (`Daily.lua`), automatisch beim Beitreten, roter Punkt im HUD
+- 30 Zonen-Herausforderungen (`Challenges.lua`), z. B. „alle 3 Strecken auf Profi“
+- 27 Sammel-Abzeichen (`Badges.lua`), optional als echte Roblox-Badges
+- 5 neue Gegner-Arten, neue Muster „Flieger“ (Sturzflug) und „Schütze“ (Zahnrad-Wurf) – beide mit Warnfläche
+- Mehrere Gegner-Arten pro Zone, neue Gegner-Formen (Drohne, Turm)
+- Grafik: Stimmung pro Zone (Tageszeit, Nebel, Farbtönung), Glühwürmchen, Blumen/Felsen/Büsche/Pilze,
+  Wolken unter den Inseln, schwebende Mini-Inseln
+- Menü 🏅 Erfolge (Herausforderungen + Abzeichen), Admin-Befehl „Bonus zurücksetzen“
+
 ## [1.1.0] – 2026-11-05
 ### Neu
 - Aufgaben-Kette (23 Aufgaben in `Quests.lua`) führt vom ersten Schritt bis zum Endboss und Rebirth

@@ -18,6 +18,7 @@ local Tags = require(Shared:WaitForChild("Tags"))
 local Parts = require(script.Parent:WaitForChild("Parts"))
 local TrackBuilder = require(script.Parent:WaitForChild("TrackBuilder"))
 local CoopBuilder = require(script.Parent:WaitForChild("CoopBuilder"))
+local Decor = require(script.Parent:WaitForChild("Decor"))
 
 local ZoneBuilder = {}
 
@@ -215,19 +216,29 @@ local function buildEnemies(folder: Instance, index: number, zone: any, O: Vecto
 	local dir = (Vector3.new(G.X, O.Y, G.Z) - O).Unit
 	Parts.Island(folder, G, 52, C.Boden:Lerp(Color3.fromRGB(190, 150, 120), 0.4), C.Akzent)
 	Parts.Bridge(folder, O + dir * 66, G - dir * 48, 14, WOOD)
-	local cfg = Enemies[zone.Gegner.Typ]
-	Parts.Part({
-		Name = "GegnerSpawn",
-		Size = Vector3.new(2, 1, 2),
-		CFrame = CFrame.new(G + Vector3.new(0, 0.5, 0)),
-		Transparency = 1,
-		CanCollide = false,
-		CanQuery = false,
-		CanTouch = false,
-		Tags = { Tags.EnemySpawn },
-		Attrs = { EnemyType = zone.Gegner.Typ, Count = zone.Gegner.Anzahl, Radius = 38, ZoneIndex = index },
-		Parent = folder,
-	})
+	-- mehrere Gegner-Arten erlaubt: { {Typ, Anzahl}, ... } (alte Form {Typ, Anzahl} geht auch)
+	local list = if zone.Gegner.Typ then { zone.Gegner } else zone.Gegner
+	local names = {}
+	for k, entry in list do
+		local cfg = Enemies[entry.Typ]
+		if cfg then
+			table.insert(names, cfg.Name)
+		end
+		local a = (k - 1) / #list * math.pi * 2
+		local offset = if k == 1 then Vector3.zero else Vector3.new(math.cos(a) * 12, 0, math.sin(a) * 12)
+		Parts.Part({
+			Name = "GegnerSpawn_" .. entry.Typ,
+			Size = Vector3.new(2, 1, 2),
+			CFrame = CFrame.new(G + offset + Vector3.new(0, 0.5, 0)),
+			Transparency = 1,
+			CanCollide = false,
+			CanQuery = false,
+			CanTouch = false,
+			Tags = { Tags.EnemySpawn },
+			Attrs = { EnemyType = entry.Typ, Count = entry.Anzahl, Radius = if k == 1 then 38 else 30, ZoneIndex = index },
+			Parent = folder,
+		})
+	end
 	for i = 1, 16 do
 		local a = i / 16 * math.pi * 2
 		Parts.Part({
@@ -239,7 +250,7 @@ local function buildEnemies(folder: Instance, index: number, zone: any, O: Vecto
 			Parent = folder,
 		})
 	end
-	Parts.Sign(folder, O + dir * 62 + Vector3.new(0, 0, 10), ("🤖 %s-Arena"):format(cfg and cfg.Name or "Gegner"), 10, 4, -dir)
+	Parts.Sign(folder, O + dir * 62 + Vector3.new(0, 0, 10), "🤖 Gegner-Arena\n" .. table.concat(names, ", "), 12, 4.5, -dir)
 	if zone.Tutorial then
 		Parts.Sign(folder, O + dir * 62 + Vector3.new(0, 0, -10), Zones.Hinweise.Gegner, 11, 4.5, -dir)
 	end
@@ -297,6 +308,49 @@ local function buildCoop(folder: Instance, index: number, zone: any, O: Vector3)
 	end
 end
 
+-- Blumen, Felsen, Wolken und Mini-Inseln (nicht auf Wegen und Brücken)
+local function buildDecor(folder: Instance, index: number, zone: any, O: Vector3)
+	local C = zone.Farben
+	local flat = Vector3.new(O.X, O.Y, O.Z)
+	local E = O + Vector3.new(-215, 0, -60)
+	local G = O + Vector3.new(215, 0, -60)
+	local Bp = O + Vector3.new(0, 0, -255)
+	local dirE = (E - flat).Unit
+	local dirG = (G - flat).Unit
+	local portals = { Vector3.new(-40, 0, -40), Vector3.new(40, 0, -40) }
+	Decor.Scatter(folder, O, 44, 68, 28, C, index * 100 + 1, function(rel)
+		if rel.Z > 50 or (math.abs(rel.X) < 12 and rel.Z < -40) then
+			return true
+		end
+		local u = rel.Unit
+		if u:Dot(dirE) > 0.96 or u:Dot(dirG) > 0.96 then
+			return true
+		end
+		for _, p in portals do
+			if (rel - p).Magnitude < 10 then
+				return true
+			end
+		end
+		return false
+	end)
+	Decor.Scatter(folder, E, 41, 48, 10, C, index * 100 + 2, function(rel)
+		return rel.Unit:Dot(-dirE) > 0.9
+	end)
+	Decor.Scatter(folder, G, 40, 46, 10, C, index * 100 + 3, function(rel)
+		return rel.Unit:Dot(-dirG) > 0.9
+	end)
+	Decor.Scatter(folder, Bp, 56, 61, 12, C, index * 100 + 4, function(rel)
+		return rel.Z > 40 and math.abs(rel.X) < 14
+	end)
+	for k, island in { { O, 72 }, { E, 50 }, { G, 52 }, { Bp, 64 } } do
+		Decor.Clouds(folder, island[1], island[2], index * 100 + 10 + k)
+	end
+	-- nicht über den Strecken (die gehen nach +Z)
+	Decor.FloatingIslands(folder, O, 380, 9, C, index * 100 + 20, function(rel)
+		return rel.Z > 40 and math.abs(rel.X) < 320
+	end)
+end
+
 function ZoneBuilder.Build(world: Instance, index: number, zone: any)
 	local O = ZoneBuilder.Origin(index)
 	local folder = Parts.Folder(("Zone%d_%s"):format(index, zone.Id), world)
@@ -306,6 +360,7 @@ function ZoneBuilder.Build(world: Instance, index: number, zone: any)
 	buildEnemies(folder, index, zone, O)
 	buildBoss(folder, index, zone, O)
 	buildCoop(folder, index, zone, O)
+	buildDecor(folder, index, zone, O)
 end
 
 return ZoneBuilder

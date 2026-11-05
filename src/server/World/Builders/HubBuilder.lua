@@ -14,6 +14,7 @@ local Tags = require(Shared:WaitForChild("Tags"))
 local Util = require(Shared:WaitForChild("Util"))
 local Parts = require(script.Parent:WaitForChild("Parts"))
 local ZoneBuilder = require(script.Parent:WaitForChild("ZoneBuilder"))
+local Decor = require(script.Parent:WaitForChild("Decor"))
 
 local HubBuilder = {}
 
@@ -218,6 +219,14 @@ function HubBuilder.Build(world: Instance)
 		local r = 128
 		tree(folder, H + Vector3.new(math.cos(a) * r, 0, math.sin(a) * r), Color3.fromRGB(150 + (i % 3) * 30, 210, 140 + (i % 2) * 60))
 	end
+	-- Deko: Blumen & Co. am Rand, Wolken darunter, Mini-Inseln drumherum
+	local hubColors = { Boden = GRASS, Akzent = BRASS, Deko = Color3.fromRGB(255, 180, 200) }
+	Decor.Scatter(folder, H, 112, 146, 50, hubColors, 7, function(rel)
+		return rel.Z < -90 or (math.abs(rel.X) < 16 and rel.Z > 40)
+	end)
+	Decor.Clouds(folder, H, 150, 8)
+	Decor.FloatingIslands(folder, H, 250, 9, hubColors, 9)
+
 	for i = 1, 6 do
 		local a = i / 6 * math.pi * 2 + 0.3
 		ZoneBuilder.SpinningGear(folder, CFrame.new(H + Vector3.new(math.cos(a) * 175, 25, math.sin(a) * 175)) * CFrame.Angles(math.rad(80), a, 0), 12, if i % 2 == 0 then BRASS else COPPER, 0.2 * (if i % 2 == 0 then 1 else -1))

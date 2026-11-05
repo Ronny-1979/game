@@ -6,6 +6,7 @@
 local order = {
 	"Controllers/DataController",
 	"Controllers/QuestController",
+	"Controllers/AmbienceController",
 	"Controllers/SoundController",
 	"UI/UIController",
 	"Controllers/ObstacleController",

@@ -6,9 +6,13 @@
 	XP/Energie= Belohnung beim Besiegen
 	Sichtweite= ab dieser Entfernung verfolgen sie dich
 	Angriffsmuster:
-	  "Ramme"   – bleibt kurz stehen (blinkt!) und rammt dann geradeaus
+	  "Ramme"   – bleibt kurz stehen (zittert!) und rammt dann geradeaus
 	  "Huepfer" – hüpft auf dich zu
 	  "Kreisel" – dreht sich und hat einen größeren Trefferbereich
+	  "Flieger" – schwebt, zeigt eine Warnfläche unter dir und macht dann einen Sturzflug
+	  "Schuetze"– hält Abstand, zeigt eine Warnfläche und wirft dann ein Zahnrad dorthin
+	Form      = "Kasten", "Kugel" (Flieger) oder "Turm" (Schütze)
+	Abklingzeit = Sekunden zwischen Sturzflügen/Schüssen (größer = leichter)
 	Groesse   = Größe in Studs
 ]]
 
@@ -82,6 +86,86 @@ local Enemies = {
 		Farbe = Color3.fromRGB(225, 180, 90),
 		Augenfarbe = Color3.fromRGB(120, 255, 170),
 		Respawnzeit = 10,
+	},
+
+	-- ===== neue Gegner-Arten =====
+	Zahnradkaefer = {
+		Name = "Zahnrad-Käfer",
+		Leben = 20,
+		Schaden = 5,
+		Tempo = 13,
+		XP = 8,
+		Energie = 12,
+		Sichtweite = 30,
+		Angriffsmuster = "Huepfer",
+		Groesse = 2.6,
+		Farbe = Color3.fromRGB(120, 200, 110),
+		Augenfarbe = Color3.fromRGB(255, 240, 120),
+		Respawnzeit = 6,
+	},
+	Schweissdrohne = {
+		Name = "Schweiß-Drohne",
+		Leben = 70,
+		Schaden = 9,
+		Tempo = 10,
+		XP = 35,
+		Energie = 200,
+		Sichtweite = 45,
+		Angriffsmuster = "Flieger",
+		Form = "Kugel",
+		Abklingzeit = 4,
+		Groesse = 3.5,
+		Farbe = Color3.fromRGB(240, 150, 90),
+		Augenfarbe = Color3.fromRGB(120, 240, 255),
+		Respawnzeit = 9,
+	},
+	Glockenschuetze = {
+		Name = "Glocken-Schütze",
+		Leben = 150,
+		Schaden = 12,
+		Tempo = 8,
+		XP = 70,
+		Energie = 1900,
+		Sichtweite = 55,
+		Angriffsmuster = "Schuetze",
+		Form = "Turm",
+		Abklingzeit = 3,
+		Groesse = 4.5,
+		Farbe = Color3.fromRGB(230, 200, 110),
+		Augenfarbe = Color3.fromRGB(255, 120, 160),
+		Respawnzeit = 10,
+	},
+	Prismadrohne = {
+		Name = "Prisma-Drohne",
+		Leben = 260,
+		Schaden = 13,
+		Tempo = 12,
+		XP = 120,
+		Energie = 16000,
+		Sichtweite = 50,
+		Angriffsmuster = "Flieger",
+		Form = "Kugel",
+		Abklingzeit = 3.5,
+		Groesse = 4,
+		Farbe = Color3.fromRGB(200, 160, 255),
+		Augenfarbe = Color3.fromRGB(140, 255, 230),
+		Respawnzeit = 10,
+	},
+	Zeigerschuetze = {
+		Name = "Zeiger-Schütze",
+		Leben = 480,
+		Schaden = 15,
+		Tempo = 9,
+		XP = 210,
+		Energie = 130000,
+		Sichtweite = 60,
+		Angriffsmuster = "Schuetze",
+		Form = "Turm",
+		Abklingzeit = 2.6,
+		Groesse = 5,
+		Farbe = Color3.fromRGB(210, 120, 80),
+		Augenfarbe = Color3.fromRGB(255, 230, 120),
+		Respawnzeit = 11,
 	},
 }
 
