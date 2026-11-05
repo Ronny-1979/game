@@ -119,6 +119,10 @@ local function updatePanelText()
 	if panelScale then
 		panelScale.Scale = math.clamp(UI.HudScale(), 0.75, 1.3)
 	end
+	if panel then
+		-- über der Skill-Leiste (die liegt unten in der Mitte)
+		panel.Position = UDim2.new(0.5, 0, 1, -math.floor(24 + 96 * UI.HudScale()))
+	end
 	if mode == "place" and current then
 		local data = DataController.Data
 		local price = if data then Progression.DecoPrice(current, data) else 0

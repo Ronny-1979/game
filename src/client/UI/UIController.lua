@@ -120,6 +120,20 @@ local function layoutAll()
 	for _, win in windows do
 		layoutWindow(win)
 	end
+	-- Meldungen oben rechts: unter Roblox-Knöpfe rutschen, falls die dort im Bild liegen (manche Handys)
+	if toastLayer and gui then
+		local tb = GuiService.TopbarInset
+		local y = 12
+		if tb.Height > 0 then
+			local inset = GuiService:GetGuiInset()
+			local right = gui.AbsolutePosition.X + inset.X + gui.AbsoluteSize.X - 12
+			local top = gui.AbsolutePosition.Y + inset.Y
+			if right > tb.Max.X and top + 12 < tb.Max.Y then
+				y = math.ceil(tb.Max.Y - top) + 8
+			end
+		end
+		toastLayer.Position = UDim2.new(1, -12, 0, y)
+	end
 end
 
 -- Einladen (Roblox-Fenster)
@@ -603,6 +617,7 @@ end
 function UI.Start()
 	-- Bildschirmgröße ändert sich (Handy drehen, Fenster am PC) → Fenster neu anpassen
 	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(layoutAll)
+	GuiService:GetPropertyChangedSignal("TopbarInset"):Connect(layoutAll)
 	layoutAll()
 
 	-- Steuerung gewechselt: mit Controller sofort etwas im offenen Fenster auswählen

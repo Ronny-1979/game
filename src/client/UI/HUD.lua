@@ -9,6 +9,7 @@
 ]]
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local GuiService = game:GetService("GuiService")
 local RunService = game:GetService("RunService")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
@@ -57,18 +58,24 @@ function HUD.Build(UI: any)
 	local multi = C.Label({ Text = "", Size = UDim2.new(1, -16, 0, 24), Position = UDim2.fromOffset(10, 84), TextXAlignment = Enum.TextXAlignment.Left, MaxTextSize = 18, Parent = stats })
 
 	-- ===== Aufgaben-Anzeige (unter Energie) =====
+	-- Halter trägt die Größen-Anpassung (der Knopf selbst hat schon eine UIScale für die Klick-Animation)
+	local questHolder = Instance.new("Frame")
+	questHolder.Name = "Aufgabe"
+	questHolder.BackgroundTransparency = 1
+	questHolder.Size = UDim2.fromOffset(270, 66)
+	questHolder.Parent = root
+	local questScale = addScale(questHolder)
+	table.insert(scales, questScale)
 	local quest = C.Button({
 		Text = "",
-		Size = UDim2.fromOffset(270, 66),
+		Size = UDim2.fromScale(1, 1),
 		BackgroundColor3 = Color3.fromRGB(255, 248, 215),
 		OnClick = function()
 			UI.Toggle("Aufgabe")
 		end,
-		Parent = root,
+		Parent = questHolder,
 	})
 	C.Stroke(quest, Theme.Copper, 3)
-	local questScale = addScale(quest)
-	table.insert(scales, questScale)
 	local questTitle = C.Label({ Text = "", Size = UDim2.new(1, -12, 0, 28), Position = UDim2.fromOffset(6, 3), TextXAlignment = Enum.TextXAlignment.Left, MaxTextSize = 20, Parent = quest })
 	local questInfo = C.Label({ Text = "", Size = UDim2.new(1, -12, 0, 26), Position = UDim2.fromOffset(6, 33), TextXAlignment = Enum.TextXAlignment.Left, TextColor3 = Theme.BrassDark, MaxTextSize = 16, Parent = quest })
 	local lastQuestIndex = -1
@@ -195,18 +202,12 @@ function HUD.Build(UI: any)
 	type Slot = { Name: string, Frame: GuiObject, Radial: any, Time: TextLabel }
 	local slots: { Slot } = {}
 	local function placeBar(): number
-		local touch = UI.IsTouch()
-		local size = if touch then 74 else 68
-		if touch then
-			-- über dem Sprung-Knopf von Roblox
-			bar.AnchorPoint = Vector2.new(1, 1)
-			bar.Position = UDim2.new(1, -14, 1, -168)
-		else
-			bar.AnchorPoint = Vector2.new(0.5, 1)
-			bar.Position = UDim2.new(0.5, 0, 1, -18)
-		end
+		-- unten in der Mitte (Handy: zwischen Steuer-Stick links und Sprung-Knopf rechts)
+		local size = if UI.IsTouch() then 74 else 68
+		bar.AnchorPoint = Vector2.new(0.5, 1)
+		bar.Position = UDim2.new(0.5, 0, 1, -12)
 		bar.Size = UDim2.fromOffset(5 * (size + 10), size + 22)
-		list.HorizontalAlignment = if touch then Enum.HorizontalAlignment.Right else Enum.HorizontalAlignment.Center
+		list.HorizontalAlignment = Enum.HorizontalAlignment.Center
 		return size
 	end
 	local function buildSlots()
@@ -254,11 +255,28 @@ function HUD.Build(UI: any)
 
 	-- ===== Responsiv =====
 	-- linke Spalte untereinander anordnen + Menü-Leiste so groß, wie Platz ist
+	-- Abstand von oben, damit ein Element (x von links, Breite w) nicht unter den Roblox-Knöpfen liegt.
+	-- Am PC liegt unser HUD schon unter der Roblox-Leiste → 12. Auf manchen Handys liegen die Knöpfe im Bild.
+	local function safeTop(x: number, w: number): number
+		local tb = GuiService.TopbarInset
+		if tb.Height <= 0 then
+			return 12
+		end
+		local inset = GuiService:GetGuiInset()
+		local left = root.AbsolutePosition.X + inset.X + x
+		local top = root.AbsolutePosition.Y + inset.Y
+		local blocked = left < tb.Min.X or left + w > tb.Max.X
+		if blocked and top + 12 < tb.Max.Y then
+			return math.ceil(tb.Max.Y - top) + 8
+		end
+		return 12
+	end
+
 	local function layout(sc: number)
-		local y = 12
+		local y = safeTop(12, 270 * sc)
 		stats.Position = UDim2.fromOffset(12, y)
 		y += math.floor(112 * sc) + 8
-		quest.Position = UDim2.fromOffset(12, y)
+		questHolder.Position = UDim2.fromOffset(12, y)
 		y += math.floor(66 * sc) + 8
 		if banner.Visible then
 			banner.Position = UDim2.fromOffset(12, y)
@@ -313,10 +331,14 @@ function HUD.Build(UI: any)
 			scale.Scale = sc
 		end
 		layout(sc)
+		-- oben Mitte (Zone/Zeit/Boss) ebenfalls unter die Roblox-Knöpfe, falls nötig
+		local w = 420 * sc
+		top.Position = UDim2.new(0.5, 0, 0, safeTop(root.AbsoluteSize.X / 2 - w / 2, w) - 2)
 	end
 	rescaleNow = rescale
 	rescale()
 	root:GetPropertyChangedSignal("AbsoluteSize"):Connect(rescale)
+	GuiService:GetPropertyChangedSignal("TopbarInset"):Connect(rescale)
 	Device.Changed:Connect(function()
 		buildSlots()
 		rescale()

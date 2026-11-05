@@ -15,6 +15,8 @@
 - Rotstich im ganzen Spiel (Bau-Vorschau ohne Ziel färbte alles ein), doppelte Licht-Effekte aus der Studio-Vorlage
 - Bauen in der Werkstatt startete mit einem Fehler
 - HUD-Teile oben links überlappten sich bei großen Bildschirmen
+- Handy: Aufgaben-Kachel wurde nicht verkleinert und lag über den Menü-Knöpfen; Anzeige oben links rutscht
+  unter die Roblox-Knöpfe, falls die im Bild liegen; Skill-Leiste auch auf dem Handy unten in der Mitte
 
 ## [1.3.0] – 2026-11-05
 ### Neu
