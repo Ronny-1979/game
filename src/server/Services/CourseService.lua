@@ -22,6 +22,7 @@ local LevelService = require(script.Parent:WaitForChild("LevelService"))
 local PetService = require(script.Parent:WaitForChild("PetService"))
 local ZoneService = require(script.Parent:WaitForChild("ZoneService"))
 local LeaderboardService = require(script.Parent:WaitForChild("LeaderboardService"))
+local QuestEvents = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("QuestEvents"))
 
 local CourseService = {}
 
@@ -168,6 +169,7 @@ local function onFinish(part: BasePart, player: Player)
 	end
 
 	LevelService.Grant(player, track.Belohnung, factor)
+	QuestEvents.Fire(player, "Strecke", { Zone = c.Zone, Track = c.Track, Diff = c.Diff })
 	if math.random() < diffCfg.EiChance and zone.Ei then
 		PetService.Hatch(player, zone.Ei, true)
 	end

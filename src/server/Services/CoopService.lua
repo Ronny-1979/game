@@ -20,6 +20,7 @@ local Util = require(Shared:WaitForChild("Util"))
 local DataService = require(script.Parent:WaitForChild("DataService"))
 local LevelService = require(script.Parent:WaitForChild("LevelService"))
 local TimeScaleService = require(script.Parent:WaitForChild("TimeScaleService"))
+local QuestEvents = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("QuestEvents"))
 
 local CoopService = {}
 
@@ -122,6 +123,7 @@ local function reward(pz: Puzzle, toucher: Player)
 				d.CoopSolved[pz.Id] = true
 			end)
 			LevelService.Grant(p, base, if first then 3 else 1.5)
+			QuestEvents.Fire(p, "Coop", { Id = pz.Id })
 			Remotes.Event("Toast"):FireClient(p, ("🤝 Team-Belohnung! (%d Spieler)"):format(#team), "gut")
 			Remotes.Event("Effect"):FireClient(p, "Finish", { Pos = pz.Center })
 		end

@@ -25,7 +25,8 @@ export type Profile = {
 	Titles: { string },
 	ActiveTitle: string,
 	CoopSolved: { [string]: boolean },
-	Settings: { Music: number, Sfx: number, Graphics: string, Difficulty: string },
+	Settings: { Music: number, Sfx: number, Graphics: string, Difficulty: string, IntroSeen: boolean },
+	Quest: { Index: number, Progress: number },
 	Stats: { PlayTime: number, Defeated: number, Courses: number, Hatched: number },
 }
 

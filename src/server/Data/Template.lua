@@ -32,7 +32,8 @@ local Template = {
 	Titles = {},
 	ActiveTitle = "",
 	CoopSolved = {},
-	Settings = { Music = 0.5, Sfx = 0.8, Graphics = "Hoch", Difficulty = "Normal" },
+	Settings = { Music = 0.5, Sfx = 0.8, Graphics = "Hoch", Difficulty = "Normal", IntroSeen = false },
+	Quest = { Index = 1, Progress = 0 }, -- Aufgaben-Fortschritt (Quests.lua)
 	Stats = { PlayTime = 0, Defeated = 0, Courses = 0, Hatched = 0 },
 }
 

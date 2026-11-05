@@ -18,6 +18,7 @@ local Util = require(Shared:WaitForChild("Util"))
 local Progression = require(Shared:WaitForChild("Progression"))
 local DataService = require(script.Parent:WaitForChild("DataService"))
 local PlayerService = require(script.Parent:WaitForChild("PlayerService"))
+local QuestEvents = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("QuestEvents"))
 local Validate = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("Validate"))
 
 local ZoneService = {}
@@ -54,6 +55,7 @@ function ZoneService.TeleportTo(player: Player, pos: Vector3, zoneIndex: number,
 	char:PivotTo(CFrame.new(pos + Vector3.new(0, 3, 0)))
 	PlayerService.ClearHistory(player)
 	ZoneService.Teleported:Fire(player, zoneIndex)
+	QuestEvents.Fire(player, "Zone", { Zone = zoneIndex })
 	Remotes.Event("Effect"):FireClient(player, "Portal", {})
 end
 
@@ -84,7 +86,7 @@ function ZoneService.TeleportToZone(player: Player, index: number): (boolean, st
 	end
 	ZoneService.TeleportTo(player, pos, index)
 	if index > 0 then
-		toast(player, ("📍 %s"):format(Zones[index].Name), "info")
+		toast(player, ("📍 %s – %s"):format(Zones[index].Name, Zones[index].Beschreibung), "info")
 	else
 		toast(player, "📍 Hub-Insel", "info")
 	end

@@ -28,6 +28,7 @@ local order = {
 	"PlayerService",
 	"LevelService",
 	"PetService",
+	"QuestService",
 	"ZoneService",
 	"TimeScaleService",
 	"ObstacleService",

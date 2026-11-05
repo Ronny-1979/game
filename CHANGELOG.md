@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.1.0] – 2026-11-05
+### Neu
+- Aufgaben-Kette (23 Aufgaben in `Quests.lua`) führt vom ersten Schritt bis zum Endboss und Rebirth
+- Aufgaben-Anzeige im HUD mit Fortschritt und Entfernung, Aufgaben-Fenster mit Tipp und Belohnung
+- Goldener Wegweiser (Leuchtstrahl + hüpfender Pfeil), führt auch über Teleporter/Portale in andere Zonen
+- Willkommens-Einführung nach der Klassenwahl (jederzeit erneut über 📜)
+- Regelmäßige Tipps, Zonen-Beschreibung beim Betreten
+### Geändert
+- Profil um `Quest` und `Settings.IntroSeen` erweitert (alte Spielstände werden automatisch ergänzt)
+
 ## [1.0.0] – 2026-11-04
 ### Neu
 - Rojo-Projekt mit Services/Controller-Muster (ein Server-Script, ein Client-Script)

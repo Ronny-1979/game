@@ -50,6 +50,7 @@ Die Architektur (Module, Datenfluss, Remotes) steht in [ARCHITEKTUR.md](ARCHITEK
 | Menüs | Knöpfe links | Knöpfe links | – |
 
 ## Spielablauf (kurz)
+* **Aufgaben** oben links + goldener Wegweiser zeigen immer, was als Nächstes zu tun ist.
 * **Hub-Insel**: Upgrade-Shop, Pet-Eier, Rebirth-Altar, Skill-Lehrer, Bestenliste, 5 Zonen-Teleporter.
 * **Zonen 1–5**: je 3 Strecken mit 🟢 Leicht / 🟡 Normal / 🔴 Profi (nebeneinander), Energie-Insel, Gegner-Insel,
   Boss-Arena, Portal zur nächsten Zone (ab Level X **oder** nach Boss-Sieg), ab Zone 2 Co-op-Rätsel.

@@ -29,7 +29,7 @@ local toastLayer: Frame
 local flash: Frame
 local effectHandler: ((string, Vector3) -> ())? = nil
 
-type Menu = { Frame: GuiObject, Refresh: ((any) -> ())?, OnOpen: ((any) -> ())?, Modal: boolean? }
+type Menu = { Frame: GuiObject, Refresh: ((any) -> ())?, OnOpen: ((any) -> ())?, OnClose: (() -> ())?, Modal: boolean? }
 local menus: { [string]: Menu } = {}
 local openName: string? = nil
 
@@ -266,6 +266,9 @@ function UI.Close()
 		end
 		if menu then
 			menu.Frame.Visible = false
+			if menu.OnClose then
+				task.spawn(menu.OnClose)
+			end
 		end
 	end
 	openName = nil
@@ -292,6 +295,9 @@ function UI.Open(name: string, args: any?)
 		end
 		if cur then
 			cur.Frame.Visible = false
+			if cur.OnClose then
+				task.spawn(cur.OnClose)
+			end
 		end
 	end
 	openName = name
@@ -399,6 +405,8 @@ function UI.Init()
 		Bestenliste = "LeaderboardMenu",
 		Chat = "ChatMenu",
 		Admin = "AdminMenu",
+		Aufgabe = "QuestMenu",
+		Intro = "IntroMenu",
 	}
 	for name, moduleName in list do
 		local ok, mod = pcall(require, Menus:WaitForChild(moduleName))
@@ -421,6 +429,7 @@ function UI.Start()
 			UI.Toast(text, kind)
 		end
 	end)
+	local introShown = false
 	local function checkClass(data: any)
 		-- Noch keine Klasse? → Klassenwahl erzwingen
 		if data.Class == "" and openName ~= "Klasse" then
@@ -430,10 +439,35 @@ function UI.Start()
 			menus.Klasse.Modal = false
 			UI.Close()
 		end
+		-- Nach der Klassenwahl einmal die Einführung zeigen
+		if data.Class ~= "" and not data.Settings.IntroSeen and not introShown and openName == nil then
+			introShown = true
+			task.delay(0.6, function()
+				if openName == nil then
+					UI.Open("Intro", {})
+				end
+			end)
+		end
 	end
 	if DataController.Data then
 		checkClass(DataController.Data)
 	end
+	-- ab und zu ein Tipp
+	task.spawn(function()
+		local Quests = require(Shared:WaitForChild("Config"):WaitForChild("Quests")) :: any
+		local last = 0
+		while true do
+			task.wait(Quests.TippIntervall)
+			if #Quests.Tipps > 0 and openName == nil then
+				local i = math.random(1, #Quests.Tipps)
+				if i == last then
+					i = (i % #Quests.Tipps) + 1
+				end
+				last = i
+				UI.Toast("💡 " .. Quests.Tipps[i], "info")
+			end
+		end
+	end)
 	DataController.Changed:Connect(function(data)
 		if openName and menus[openName] and menus[openName].Refresh then
 			local ok, err = pcall(menus[openName].Refresh :: any, data)

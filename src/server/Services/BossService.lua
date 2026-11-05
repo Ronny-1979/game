@@ -19,6 +19,7 @@ local Remotes = require(Shared:WaitForChild("Remotes"))
 local DataService = require(script.Parent:WaitForChild("DataService"))
 local LevelService = require(script.Parent:WaitForChild("LevelService"))
 local TimeScaleService = require(script.Parent:WaitForChild("TimeScaleService"))
+local QuestEvents = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("QuestEvents"))
 
 local BossService = {}
 
@@ -514,6 +515,7 @@ local function defeat(b: Boss)
 			end)
 			LevelService.Grant(p, b.Cfg.Belohnung, if first then 2 else 1)
 			LevelService.CheckUnlocks(p)
+			QuestEvents.Fire(p, "Boss", { Zone = b.ZoneIndex })
 			Remotes.Event("Effect"):FireClient(p, "Finish", { Pos = b.Center })
 		end
 	end

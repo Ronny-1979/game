@@ -17,6 +17,7 @@ local PlayerService = require(script.Parent:WaitForChild("PlayerService"))
 local TimeScaleService = require(script.Parent:WaitForChild("TimeScaleService"))
 local EnemyService = require(script.Parent:WaitForChild("EnemyService"))
 local BossService = require(script.Parent:WaitForChild("BossService"))
+local QuestEvents = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("QuestEvents"))
 local Validate = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("Validate"))
 
 local AbilityService = {}
@@ -208,6 +209,7 @@ function AbilityService.Use(player: Player, name: string, dir: Vector3?)
 		end
 		byPlayer[name] = now + cd
 		Remotes.Event("AbilityUsed"):FireClient(player, name, cd)
+		QuestEvents.Fire(player, "Faehigkeit", { Name = name })
 	end
 end
 

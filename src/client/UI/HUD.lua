@@ -21,6 +21,8 @@ local Controllers = script.Parent.Parent:WaitForChild("Controllers")
 local DataController = require(Controllers:WaitForChild("DataController"))
 local AbilityController = require(Controllers:WaitForChild("AbilityController"))
 local SoundController = require(Controllers:WaitForChild("SoundController"))
+local QuestController = require(Controllers:WaitForChild("QuestController"))
+local Quests = require(Config:WaitForChild("Quests")) :: any
 
 local HUD = {}
 
@@ -36,6 +38,7 @@ function HUD.Build(UI: any)
 	local C = UI.C
 	local Theme = UI.Theme
 	local root: Frame = UI.Hud
+	local rescaleNow: () -> () = function() end
 	local touch = UI.IsTouch()
 	local scales: { UIScale } = {}
 
@@ -49,6 +52,24 @@ function HUD.Build(UI: any)
 	local xpBar = C.Bar({ Position = UDim2.fromOffset(80, 54), Size = UDim2.new(1, -92, 0, 22), Parent = stats }, Theme.Lilac)
 	local xpLabel = C.Label({ Text = "0 / 50 XP", Size = UDim2.fromScale(1, 1), TextColor3 = Theme.TextLight, TextStrokeTransparency = 0.5, MaxTextSize = 16, ZIndex = 3, Parent = xpBar.Frame })
 	local multi = C.Label({ Text = "", Size = UDim2.new(1, -16, 0, 24), Position = UDim2.fromOffset(10, 84), TextXAlignment = Enum.TextXAlignment.Left, MaxTextSize = 18, Parent = stats })
+
+	-- ===== Aufgaben-Anzeige (unter Energie) =====
+	local quest = C.Button({
+		Text = "",
+		Position = UDim2.fromOffset(12, 132),
+		Size = UDim2.fromOffset(270, 66),
+		BackgroundColor3 = Color3.fromRGB(255, 248, 215),
+		OnClick = function()
+			UI.Toggle("Aufgabe")
+		end,
+		Parent = root,
+	})
+	C.Stroke(quest, Theme.Copper, 3)
+	local questScale = addScale(quest)
+	table.insert(scales, questScale)
+	local questTitle = C.Label({ Text = "", Size = UDim2.new(1, -12, 0, 28), Position = UDim2.fromOffset(6, 3), TextXAlignment = Enum.TextXAlignment.Left, MaxTextSize = 20, Parent = quest })
+	local questInfo = C.Label({ Text = "", Size = UDim2.new(1, -12, 0, 26), Position = UDim2.fromOffset(6, 33), TextXAlignment = Enum.TextXAlignment.Left, TextColor3 = Theme.BrassDark, MaxTextSize = 16, Parent = quest })
+	local lastQuestIndex = -1
 
 	-- ===== Oben Mitte: Zone, Streckenzeit, Boss =====
 	local top = Instance.new("Frame")
@@ -72,8 +93,8 @@ function HUD.Build(UI: any)
 	local menu = Instance.new("Frame")
 	menu.BackgroundTransparency = 1
 	menu.AnchorPoint = Vector2.new(0, 0.5)
-	menu.Position = UDim2.new(0, 12, 0.56, 0)
-	menu.Size = UDim2.new(0, 150, 0.58, 0)
+	menu.Position = UDim2.new(0, 12, 0.62, 0)
+	menu.Size = UDim2.new(0, 150, 0.54, 0)
 	menu.Parent = root
 	table.insert(scales, addScale(menu))
 	local grid = Instance.new("UIGridLayout")
@@ -204,6 +225,7 @@ function HUD.Build(UI: any)
 			sc.Scale = s
 		end
 	end
+	rescaleNow = rescale
 	rescale()
 	if workspace.CurrentCamera then
 		workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(rescale)
@@ -222,6 +244,25 @@ function HUD.Build(UI: any)
 			local m = s.TotalEnergyMult
 			local mText = if m < 1000 then string.format("%.1f", m) else Util.FormatNumber(m)
 			multi.Text = ("✨ x%s Energie   ♻️ %d"):format(mText, data.Rebirths)
+		end
+		-- Aufgabe
+		local qi = data.Quest and data.Quest.Index or 1
+		local q = Quests.Liste[qi]
+		if q then
+			questTitle.Text = "📜 " .. q.Titel
+		else
+			questTitle.Text = "🏆 Alle Aufgaben geschafft!"
+			questInfo.Text = "Jetzt: Bestzeiten & Profi-Bahnen!"
+		end
+		if qi ~= lastQuestIndex then
+			-- neue Aufgabe: kurz aufploppen
+			if lastQuestIndex ~= -1 then
+				questScale.Scale *= 1.15
+				task.delay(0.25, function()
+					rescaleNow()
+				end)
+			end
+			lastQuestIndex = qi
 		end
 		if data.Class ~= lastClass then
 			lastClass = data.Class
@@ -262,6 +303,26 @@ function HUD.Build(UI: any)
 			timerLabel.Text = ("%s ⏱ %s"):format(diff and diff.Symbol or "", Util.FormatTime(workspace:GetServerTimeNow() - start))
 		else
 			timer.Visible = false
+		end
+		-- Aufgaben-Zeile 2: Fortschritt + Entfernung
+		local data = DataController.Data
+		local q = data and data.Quest and Quests.Liste[data.Quest.Index]
+		if q then
+			local parts = {}
+			local need = q.Anzahl or 1
+			if q.Art == "Level" then
+				table.insert(parts, ("Lv %d/%d"):format(data.Level, q.Wert or 1))
+			elseif need > 1 then
+				table.insert(parts, ("%d/%d"):format(data.Quest.Progress, need))
+			end
+			if QuestController.Hint then
+				table.insert(parts, "🧭 " .. QuestController.Hint)
+			elseif QuestController.Distance then
+				table.insert(parts, ("🧭 %d m"):format(math.floor(QuestController.Distance / 3.5 + 0.5)))
+			else
+				table.insert(parts, "Tippen für Infos")
+			end
+			questInfo.Text = table.concat(parts, "  ·  ")
 		end
 		-- Abklingzeiten
 		for _, s in slots do

@@ -18,6 +18,7 @@ local Remotes = require(Shared:WaitForChild("Remotes"))
 local DataService = require(script.Parent:WaitForChild("DataService"))
 local LevelService = require(script.Parent:WaitForChild("LevelService"))
 local TimeScaleService = require(script.Parent:WaitForChild("TimeScaleService"))
+local QuestEvents = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("QuestEvents"))
 
 local EnemyService = {}
 
@@ -40,6 +41,7 @@ type Enemy = {
 	HitCooldown: { [Player]: number },
 	Bar: Frame?,
 	Phase: number,
+	Zone: number,
 }
 
 local enemies: { Enemy } = {}
@@ -200,6 +202,7 @@ local function kill(e: Enemy, killer: Player?)
 		DataService.Update(killer, function(d)
 			d.Stats.Defeated += 1
 		end)
+		QuestEvents.Fire(killer, "Gegner", { Zone = e.Zone })
 	end
 	task.delay(e.Cfg.Respawnzeit, function()
 		e.Hp = e.MaxHp
@@ -289,6 +292,7 @@ local function spawnFromMarker(marker: Instance)
 			HitCooldown = {},
 			Bar = bar,
 			Phase = rng:NextNumber(0, 10),
+			Zone = (marker:GetAttribute("ZoneIndex") :: number?) or 1,
 		}
 		table.insert(enemies, e)
 	end

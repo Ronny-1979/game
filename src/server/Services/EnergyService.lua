@@ -18,6 +18,7 @@ local Tags = require(Shared:WaitForChild("Tags"))
 local Remotes = require(Shared:WaitForChild("Remotes"))
 local Util = require(Shared:WaitForChild("Util"))
 local DataService = require(script.Parent:WaitForChild("DataService"))
+local QuestEvents = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("QuestEvents"))
 local Validate = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("Validate"))
 
 local EnergyService = {}
@@ -84,6 +85,7 @@ local function setupCrystal(part: Instance)
 		local zoneIndex = (part:GetAttribute("ZoneIndex") :: number?) or 1
 		local amount = give(player, stats.ClickPower * zoneValue(zoneIndex), zoneIndex)
 		Remotes.Event("Effect"):FireClient(player, "Click", { Pos = part.Position, Amount = amount })
+		QuestEvents.Fire(player, "Kristall", { Zone = zoneIndex })
 	end)
 end
 

@@ -69,6 +69,23 @@ Angriffe: `"Stampfen"`, `"Zahnradregen"`, `"Schockwelle"` (drüberspringen!), `"
 * `Coop = { "Tuer", "Bruecke", "Konsole" }` – bis zu 3 Zwei-Spieler-Rätsel.
 * `Zones.Hinweise` (unten): Texte der Hinweis-Schilder in Zone 1.
 
+## 📜 Aufgaben (`Quests.lua`)
+Die Aufgaben-Kette führt neue Spieler durchs Spiel (Anzeige oben links + goldener Wegweiser).
+Neue Aufgabe einfügen – einfach an die passende Stelle in `Quests.Liste`:
+```lua
+{
+	Titel = "Pendel-Profi",
+	Text = "Schaffe den Pendel-Pass auf Profi!",
+	Tipp = "Verlangsamen (Q) hilft!",
+	Art = "Strecke", Zone = 3, Strecke = 1, Diff = "Profi",
+	Belohnung = { Energie = 20000, XP = 300 },
+	Ziel = { Zone = 3, Tag = "TrackStart", Attr = { TrackKey = "Z3_T1", Diff = "Profi" } },
+},
+```
+Alle Arten und Ziel-Tags stehen oben in der Datei. `Quests.Einfuehrung` = Willkommens-Seiten,
+`Quests.Tipps` = Tipps, die alle `TippIntervall` Sekunden erscheinen.
+⚠️ Aufgaben nur hinten anhängen oder einfügen, wenn noch niemand weit gespielt hat – gespeichert wird die Nummer der Aufgabe.
+
 ## 🎚️ Schwierigkeit (`Difficulty.lua`)
 Pro Stufe (Leicht/Normal/Profi): `Plattformgroesse`, `LueckeMin/LueckeMax` (Sprungweite), `Tempo` der Hindernisse,
 `Takt` der Zeitplattformen, `CheckpointAlle`, `Belohnung`, `EiChance`.

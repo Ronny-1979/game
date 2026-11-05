@@ -11,6 +11,7 @@ local Util = require(Shared:WaitForChild("Util"))
 local Progression = require(Shared:WaitForChild("Progression"))
 local DataService = require(script.Parent:WaitForChild("DataService"))
 local PetService = require(script.Parent:WaitForChild("PetService"))
+local QuestEvents = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("QuestEvents"))
 local Validate = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("Validate"))
 
 local UpgradeService = {}
@@ -32,6 +33,7 @@ function UpgradeService.Buy(player: Player, id: string): any
 	DataService.Update(player, function(d)
 		d.Upgrades[id] = lvl + 1
 	end)
+	QuestEvents.Fire(player, "Upgrade", { Id = id })
 	return { ok = true, level = lvl + 1 }
 end
 
@@ -58,6 +60,7 @@ function UpgradeService.Rebirth(player: Player): any
 		d.RebirthPoints += Settings.Rebirth.PunkteProRebirth
 	end)
 	PetService.UpdateAttribute(player)
+	QuestEvents.Fire(player, "Rebirth")
 	Remotes.Event("Effect"):FireAllClients("LevelUp", { UserId = player.UserId })
 	Remotes.Event("Toast"):FireClient(
 		player,

@@ -287,6 +287,9 @@ function DataService.Start()
 		Difficulty = function(v)
 			return v == "Leicht" or v == "Normal" or v == "Profi"
 		end,
+		IntroSeen = function(v)
+			return type(v) == "boolean"
+		end,
 	}
 	Remotes.OnEvent("ChangeSetting", 5, function(player, key, value)
 		if type(key) ~= "string" then

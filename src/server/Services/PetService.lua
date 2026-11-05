@@ -17,6 +17,7 @@ local Tags = require(Shared:WaitForChild("Tags"))
 local Remotes = require(Shared:WaitForChild("Remotes"))
 local Progression = require(Shared:WaitForChild("Progression"))
 local DataService = require(script.Parent:WaitForChild("DataService"))
+local QuestEvents = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("QuestEvents"))
 local Validate = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("Validate"))
 
 local PetService = {}
@@ -115,6 +116,9 @@ function PetService.Hatch(player: Player, eggId: string, free: boolean): any
 	end
 	local entry = PetService.GivePet(player, petType)
 	PetService.UpdateAttribute(player)
+	if entry then
+		QuestEvents.Fire(player, "Ei", { Egg = eggId })
+	end
 	if entry and free then
 		Remotes.Event("Toast"):FireClient(player, ("🥚 Gratis-Ei: %s!"):format(Pets.Liste[petType].Name), "gut")
 	end

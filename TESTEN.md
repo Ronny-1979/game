@@ -17,6 +17,14 @@ Tipp: Mit dem 🔧-Admin-Menü (im Studio immer da) kommt man schnell an Energie
 - [ ] Ohne API-Zugriff: Hinweis „Test-Modus“ oben rechts
 - [ ] Roblox-Chat ist ausgeblendet, 💬 Schnellnachrichten zeigen Sprechblasen über dem Kopf
 
+## 1b. Anleitung & Aufgaben
+- [ ] Nach der Klassenwahl erscheint die Einführung (6 Seiten), danach nicht mehr bei jedem Start
+- [ ] Oben links steht die Aufgabe mit Entfernung, goldener Strahl + hüpfender Pfeil zeigen zum Ziel
+- [ ] Ziel in anderer Zone → Wegweiser zeigt erst zum Teleporter/Portal (mit Hinweis)
+- [ ] Tippen auf die Aufgabe → Fenster mit Text, Tipp, Fortschritt, Belohnung, Wegweiser an/aus
+- [ ] Aufgabe erledigt → Toast + Belohnung + nächste Aufgabe; Tipps 💡 erscheinen ab und zu
+- [ ] Alter Spielstand: bereits erfüllte Aufgaben (Klasse, Level, Boss) werden sofort abgehakt
+
 ## 2. Hub
 - [ ] Shop (Prompt an der Theke): Upgrade kaufen, Preis steigt, „MAX“ bei Maximalstufe
 - [ ] Eier: Wiesen-Ei öffnen (150 ⚡), Pet erscheint und folgt; anderes Ei ohne Zone → Fehlermeldung

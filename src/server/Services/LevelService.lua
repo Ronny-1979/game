@@ -13,6 +13,7 @@ local Remotes = require(Shared:WaitForChild("Remotes"))
 local Progression = require(Shared:WaitForChild("Progression"))
 local DataService = require(script.Parent:WaitForChild("DataService"))
 local PetService = require(script.Parent:WaitForChild("PetService"))
+local QuestEvents = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("QuestEvents"))
 
 local LevelService = {}
 
@@ -60,6 +61,7 @@ function LevelService.AddXP(player: Player, amount: number, ignoreMult: boolean?
 		toast(player, ("⭐ Level %d! +%d Skill-Punkt"):format(data.Level, levelsGained * Settings.XP.SkillPunkteProLevel), "gut")
 		Remotes.Event("Effect"):FireAllClients("LevelUp", { UserId = player.UserId })
 		LevelService.CheckUnlocks(player)
+		QuestEvents.Fire(player, "Level", { Level = data.Level })
 	end
 end
 

@@ -15,6 +15,7 @@ local Remotes = require(Shared:WaitForChild("Remotes"))
 local Util = require(Shared:WaitForChild("Util"))
 local StatCalc = require(Shared:WaitForChild("StatCalc"))
 local DataService = require(script.Parent:WaitForChild("DataService"))
+local QuestEvents = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("QuestEvents"))
 local Validate = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("Validate"))
 
 local ClassService = {}
@@ -72,6 +73,7 @@ function ClassService.Start()
 			d.Class = classId
 		end)
 		Remotes.Event("Toast"):FireClient(player, ("%s Du bist jetzt %s!"):format(Classes[classId].Symbol, Classes[classId].Name), "gut")
+		QuestEvents.Fire(player, "Klasse")
 		return { ok = true }
 	end)
 
