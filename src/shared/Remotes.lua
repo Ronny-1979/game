@@ -44,6 +44,13 @@ Remotes.Functions = {
 	"GetLeaderboard",
 	"SkipQuest",
 	"ClaimDaily",
+	"FusePet",
+	"EnterTower",
+	"GetTowerBoard",
+	"EnterIsland",
+	"VisitIsland",
+	"PlaceDeco",
+	"RemoveDeco",
 	"Admin",
 }
 
@@ -130,8 +137,12 @@ function Remotes.OnEvent(name: string, perSecond: number, handler: (Player, ...a
 	end)
 end
 
+-- Alle Server-Handler (nur für automatische Tests im Studio, siehe AdminService)
+Remotes.Handlers = {} :: { [string]: (Player, ...any) -> any }
+
 -- Server: RemoteFunction beantworten. Handler gibt eine Tabelle {ok=..., msg=...} zurück.
 function Remotes.OnInvoke(name: string, perSecond: number, handler: (Player, ...any) -> any)
+	Remotes.Handlers[name] = handler
 	Remotes.Function(name).OnServerInvoke = function(player: Player, ...)
 		if not allow(player, name, perSecond) then
 			return { ok = false, msg = "Nicht so schnell! ⏳" }

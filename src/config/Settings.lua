@@ -86,6 +86,14 @@ Settings.Course = {
 	FirstClearBonus = 2, -- erste Runde gibt doppelte Belohnung
 }
 
+-- 🥇 Zeit-Medaillen: Jede Bahn hat eine Richtzeit (wird beim Bauen aus Länge + Hindernissen geschätzt).
+-- Zeit ≤ Richtzeit × Faktor → Medaille. Belohnung einmalig pro Medaille (Anteil der Strecken-Belohnung).
+Settings.Medals = {
+	{ Name = "Bronze", Symbol = "🥉", Faktor = 1.9, Belohnung = 0.3 },
+	{ Name = "Silber", Symbol = "🥈", Faktor = 1.4, Belohnung = 0.6 },
+	{ Name = "Gold", Symbol = "🥇", Faktor = 1.1, Belohnung = 1.2 },
+}
+
 -- 🤝 Co-op
 Settings.Coop = {
 	SoloTestMode = false, -- true = Rätsel klappen auch allein (nur zum Testen!)

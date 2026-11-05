@@ -23,6 +23,7 @@ local AbilityController = require(Controllers:WaitForChild("AbilityController"))
 local SoundController = require(Controllers:WaitForChild("SoundController"))
 local QuestController = require(Controllers:WaitForChild("QuestController"))
 local Quests = require(Config:WaitForChild("Quests")) :: any
+local Events = require(Config:WaitForChild("Events")) :: any
 
 local HUD = {}
 
@@ -70,6 +71,29 @@ function HUD.Build(UI: any)
 	local questTitle = C.Label({ Text = "", Size = UDim2.new(1, -12, 0, 28), Position = UDim2.fromOffset(6, 3), TextXAlignment = Enum.TextXAlignment.Left, MaxTextSize = 20, Parent = quest })
 	local questInfo = C.Label({ Text = "", Size = UDim2.new(1, -12, 0, 26), Position = UDim2.fromOffset(6, 33), TextXAlignment = Enum.TextXAlignment.Left, TextColor3 = Theme.BrassDark, MaxTextSize = 16, Parent = quest })
 	local lastQuestIndex = -1
+
+	-- ===== Event- und Freunde-Banner (unter der Aufgabe) =====
+	local banner = C.Frame({ Position = UDim2.fromOffset(12, 206), Size = UDim2.fromOffset(270, 34), BackgroundColor3 = Color3.fromRGB(255, 225, 150), Visible = false, Parent = root })
+	C.Stroke(banner, Theme.Boss, 3)
+	table.insert(scales, addScale(banner))
+	local bannerLabel = C.Label({ Text = "", Size = UDim2.new(1, -12, 1, -6), Position = UDim2.fromOffset(6, 3), TextXAlignment = Enum.TextXAlignment.Left, MaxTextSize = 16, Parent = banner })
+	local function updateBanner()
+		local parts = {}
+		local names = ReplicatedStorage:GetAttribute("EventNames")
+		if type(names) == "string" and names ~= "" then
+			table.insert(parts, "🎉 " .. names)
+		end
+		local friends = (player:GetAttribute("FriendCount") :: number?) or 0
+		if friends > 0 then
+			table.insert(parts, ("👥 %d Freund%s da: +%d %% ⚡"):format(friends, if friends == 1 then "" else "e", math.floor(math.min(friends * Events.Freunde.ProFreund, Events.Freunde.Maximal) * 100 + 0.5)))
+		end
+		banner.Visible = #parts > 0
+		bannerLabel.Text = table.concat(parts, "\n")
+		banner.Size = UDim2.fromOffset(270, if #parts > 1 or (names and #tostring(names) > 34) then 52 else 34)
+	end
+	ReplicatedStorage:GetAttributeChangedSignal("EventNames"):Connect(updateBanner)
+	player:GetAttributeChangedSignal("FriendCount"):Connect(updateBanner)
+	updateBanner()
 
 	-- ===== Oben Mitte: Zone, Streckenzeit, Boss =====
 	local top = Instance.new("Frame")
@@ -290,11 +314,23 @@ function HUD.Build(UI: any)
 	end
 
 	local function updateZone()
+		local ort = player:GetAttribute("Ort")
+		if ort == "Turm" then
+			zoneLabel.Text = ("🗼 Endlos-Turm · Etage %d"):format((player:GetAttribute("TowerFloor") :: number?) or 1)
+			return
+		elseif ort == "Insel" then
+			local owner = player:GetAttribute("IslandOwner")
+			zoneLabel.Text = if owner and owner ~= player.Name then ("🏡 Werkstatt von %s"):format(tostring(owner)) else "🏡 Meine Werkstatt"
+			return
+		end
 		local z = (player:GetAttribute("Zone") :: number?) or 0
 		local zone = Zones[z]
 		zoneLabel.Text = if zone then ("📍 %s"):format(zone.Name) else "📍 Hub-Insel"
 	end
 	player:GetAttributeChangedSignal("Zone"):Connect(updateZone)
+	player:GetAttributeChangedSignal("Ort"):Connect(updateZone)
+	player:GetAttributeChangedSignal("TowerFloor"):Connect(updateZone)
+	player:GetAttributeChangedSignal("IslandOwner"):Connect(updateZone)
 	updateZone()
 
 	Remotes.Event("BossUi").OnClientEvent:Connect(function(info: any)
@@ -305,7 +341,7 @@ function HUD.Build(UI: any)
 			SoundController.SetMusic("Boss")
 		else
 			boss.Visible = false
-			SoundController.SetMusic((player:GetAttribute("Zone") :: number?) or 0)
+			SoundController.UpdateZoneMusic()
 		end
 	end)
 

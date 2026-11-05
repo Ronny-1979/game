@@ -49,6 +49,9 @@ function ZoneService.TeleportTo(player: Player, pos: Vector3, zoneIndex: number,
 	end
 	player:SetAttribute("Zone", zoneIndex)
 	player:SetAttribute("RespawnPos", respawnPos or pos)
+	-- Sonder-Orte (Turm, eigene Werkstatt) verlässt man mit jedem Teleport
+	player:SetAttribute("Ort", nil)
+	player:SetAttribute("TowerFloor", nil)
 	pcall(function()
 		player:RequestStreamAroundAsync(pos, 5)
 	end)

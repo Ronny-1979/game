@@ -13,6 +13,9 @@ local Config = Shared:WaitForChild("Config")
 local Settings = require(Config:WaitForChild("Settings")) :: any
 local Difficulty = require(Config:WaitForChild("Difficulty")) :: any
 local Remotes = require(Shared:WaitForChild("Remotes"))
+local Tags = require(Shared:WaitForChild("Tags"))
+local Progression = require(Shared:WaitForChild("Progression"))
+local CollectionService = game:GetService("CollectionService")
 local DataService = require(script.Parent:WaitForChild("DataService"))
 local Validate = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("Validate"))
 
@@ -117,7 +120,22 @@ function LeaderboardService.Start()
 		end
 		local data = DataService.Get(player)
 		local mine = data and data.BestTimes[trackKey] and data.BestTimes[trackKey][diff]
-		return { ok = true, list = LeaderboardService.Get(trackKey, diff), mine = mine }
+		-- Medaillen-Zeiten dieser Bahn (Richtzeit steht am Startfeld)
+		local medals = nil
+		for _, start in CollectionService:GetTagged(Tags.TrackStart) do
+			if start:GetAttribute("TrackKey") == trackKey and start:GetAttribute("Diff") == diff then
+				local par = start:GetAttribute("Par")
+				if type(par) == "number" then
+					medals = {}
+					for m = 1, #Settings.Medals do
+						medals[m] = Progression.MedalTime(par, m)
+					end
+				end
+				break
+			end
+		end
+		local myMedal = data and data.Medals and data.Medals[trackKey .. "_" .. diff] or 0
+		return { ok = true, list = LeaderboardService.Get(trackKey, diff), mine = mine, medals = medals, myMedal = myMedal }
 	end)
 end
 

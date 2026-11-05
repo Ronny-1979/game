@@ -12,6 +12,8 @@ local order = {
 	"Controllers/ObstacleController",
 	"Controllers/CourseController",
 	"Controllers/PetController",
+	"Controllers/SecretController",
+	"Controllers/IslandController",
 	"Controllers/EffectController",
 	"Controllers/AbilityController",
 	"Controllers/PromptController",

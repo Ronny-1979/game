@@ -7,6 +7,7 @@ local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Config = Shared:WaitForChild("Config")
 local Zones = require(Config:WaitForChild("Zones")) :: any
 local Difficulty = require(Config:WaitForChild("Difficulty")) :: any
+local Settings = require(Config:WaitForChild("Settings")) :: any
 local Remotes = require(Shared:WaitForChild("Remotes"))
 local Util = require(Shared:WaitForChild("Util"))
 local Progression = require(Shared:WaitForChild("Progression"))
@@ -28,7 +29,7 @@ function MapMenu.Build(UI: any)
 
 	local lastSig = ""
 	local function refresh(data: any)
-		local sig = HttpService:JSONEncode({ data.Level, data.UnlockedZones, data.BossesDefeated, data.BestTimes, data.Settings.Difficulty })
+		local sig = HttpService:JSONEncode({ data.Level, data.UnlockedZones, data.BossesDefeated, data.BestTimes, data.Medals, data.Settings.Difficulty })
 		if sig == lastSig then
 			return
 		end
@@ -51,13 +52,25 @@ function MapMenu.Build(UI: any)
 		end
 
 		C.Clear(list)
-		local hub = C.Frame({ Size = UDim2.new(1, -6, 0, 60), BackgroundColor3 = Theme.Panel, LayoutOrder = 0, Parent = list })
+		local hub = C.Frame({ Size = UDim2.new(1, -6, 0, 60), BackgroundColor3 = Theme.Panel, LayoutOrder = -1, Parent = list })
 		C.Stroke(hub, Theme.Brass, 2)
 		C.Label({ Text = "🏝️ Hub-Insel – Shop, Eier, Rebirth, Skills", Size = UDim2.new(0.7, -10, 1, -8), Position = UDim2.fromOffset(10, 4), TextXAlignment = Enum.TextXAlignment.Left, MaxTextSize = 22, Parent = hub })
 		C.Button({ Text = "Hinreisen", AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, -8, 0.5, 0), Size = UDim2.new(0.25, 0, 0, 44), BackgroundColor3 = Theme.Info, OnClick = function()
 			UI.Request("TeleportZone", 0)
 			UI.Close()
 		end, Parent = hub })
+
+		-- Schnellzugang: Endlos-Turm und eigene Werkstatt
+		local extra = C.Frame({ Size = UDim2.new(1, -6, 0, 56), BackgroundTransparency = 1, LayoutOrder = 0, Parent = list })
+		C.Button({ Text = "🗼 Endlos-Turm", Size = UDim2.new(0.5, -4, 1, 0), BackgroundColor3 = Color3.fromRGB(170, 140, 235), OnClick = function()
+			UI.Open("Turm")
+		end, Parent = extra })
+		C.Button({ Text = "🏡 Meine Werkstatt", AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromScale(1, 0), Size = UDim2.new(0.5, -4, 1, 0), BackgroundColor3 = Theme.Good, OnClick = function()
+			local r = UI.Request("EnterIsland")
+			if r.ok then
+				UI.Close()
+			end
+		end, Parent = extra })
 
 		local diff = data.Settings.Difficulty
 		for i, zone in ipairs(Zones) do
@@ -94,8 +107,9 @@ function MapMenu.Build(UI: any)
 			for t, track in zone.Strecken do
 				local key = Progression.TrackKey(i, t)
 				local best = data.BestTimes[key] and data.BestTimes[key][diff]
+				local medal = Settings.Medals[(data.Medals and data.Medals[key .. "_" .. diff]) or 0]
 				C.Button({
-					Text = ("▶ %s\n%s"):format(track.Name, if best then ("🏆 " .. Util.FormatTime(best)) else "noch keine Zeit"),
+					Text = ("▶ %s\n%s%s"):format(track.Name, if best then ("🏆 " .. Util.FormatTime(best)) else "noch keine Zeit", if medal then " " .. medal.Symbol else ""),
 					Position = UDim2.new((t - 1) / 3, 22 - (t - 1) * 8, 0, 78),
 					Size = UDim2.new(1 / 3, -16, 0, 62),
 					BackgroundColor3 = if unlocked then Difficulty.Stufen[diff].Farbe else Theme.Locked,

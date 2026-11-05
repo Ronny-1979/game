@@ -18,15 +18,39 @@ local Zones = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Con
 local Builders = script.Parent:WaitForChild("Builders")
 local HubBuilder = require(Builders:WaitForChild("HubBuilder"))
 local ZoneBuilder = require(Builders:WaitForChild("ZoneBuilder"))
+local Parts = require(Builders:WaitForChild("Parts"))
 local LightingSetup = require(script.Parent:WaitForChild("Lighting"))
 
 local WorldBuilder = {}
 
-WorldBuilder.Version = 1
+WorldBuilder.Version = 2
 
 function WorldBuilder.ApplyLighting()
 	LightingSetup.Apply()
 end
+
+-- Gestein unter den Inseln je Ort (Terrain-Materialien) + pastellige Farben dafür
+local ROCKS = {
+	Hub = { Fels = Enum.Material.Rock, Fels2 = Enum.Material.Ground },
+	Wiese = { Fels = Enum.Material.Rock, Fels2 = Enum.Material.Ground },
+	Werkstatt = { Fels = Enum.Material.Sandstone, Fels2 = Enum.Material.Rock },
+	Schlucht = { Fels = Enum.Material.Slate, Fels2 = Enum.Material.Basalt },
+	Kristall = { Fels = Enum.Material.Glacier, Fels2 = Enum.Material.Slate },
+	Uhrwerk = { Fels = Enum.Material.Sandstone, Fels2 = Enum.Material.Brick },
+	Sternwarte = { Fels = Enum.Material.Basalt, Fels2 = Enum.Material.Slate },
+	Tiefsee = { Fels = Enum.Material.Limestone, Fels2 = Enum.Material.Salt },
+}
+local ROCK_COLORS = {
+	[Enum.Material.Rock] = Color3.fromRGB(180, 160, 145),
+	[Enum.Material.Ground] = Color3.fromRGB(155, 125, 100),
+	[Enum.Material.Sandstone] = Color3.fromRGB(225, 175, 130),
+	[Enum.Material.Slate] = Color3.fromRGB(150, 140, 175),
+	[Enum.Material.Basalt] = Color3.fromRGB(95, 90, 130),
+	[Enum.Material.Glacier] = Color3.fromRGB(175, 225, 245),
+	[Enum.Material.Brick] = Color3.fromRGB(205, 135, 100),
+	[Enum.Material.Limestone] = Color3.fromRGB(225, 215, 190),
+	[Enum.Material.Salt] = Color3.fromRGB(240, 236, 230),
+}
 
 function WorldBuilder.Build(): Folder
 	local t0 = os.clock()
@@ -38,10 +62,22 @@ function WorldBuilder.Build(): Folder
 	world.Name = "UhrwerkWelt"
 	world:SetAttribute("BuilderVersion", WorldBuilder.Version)
 
+	-- Terrain gehört komplett zur Welt: alte Felsen weg, Farben setzen
+	local terrain = workspace.Terrain
+	terrain:Clear()
+	for mat, color in ROCK_COLORS do
+		terrain:SetMaterialColor(mat, color)
+	end
+
+	Parts.TerrainStyle = ROCKS.Hub
 	HubBuilder.Build(world)
 	for i, zone in ipairs(Zones) do
+		Parts.TerrainStyle = ROCKS[zone.Id] or ROCKS.Hub
 		ZoneBuilder.Build(world, i, zone)
+		task.wait() -- Studio zwischendurch atmen lassen
 	end
+	-- zur Laufzeit gebaute Inseln (Werkstätten) nutzen wieder Part-Felsen
+	Parts.TerrainStyle = nil
 
 	-- andere SpawnLocations (z.B. aus der Vorlage) ausschalten, damit alle im Hub starten
 	for _, inst in workspace:GetDescendants() do

@@ -62,6 +62,20 @@ Pets.Liste = {
 	Stundenhase = { Name = "Stundenhase", Seltenheit = "Episch", Multiplikator = 11, Farbe = Color3.fromRGB(255, 240, 230), Form = "Zylinder", Beschreibung = "Hase mit Taschenuhr" },
 	Ewigkeitsuhr = { Name = "Ewigkeitsuhr", Seltenheit = "Legendaer", Multiplikator = 22, Farbe = Color3.fromRGB(255, 225, 120), Form = "Zahnrad", Beschreibung = "Die schönste Uhr der Insel" },
 
+	-- 🔭 Sternwarte-Ei
+	Kometli = { Name = "Kometli", Seltenheit = "Gewoehnlich", Multiplikator = 9, Farbe = Color3.fromRGB(255, 215, 140), Form = "Kugel", Beschreibung = "Kleiner Komet mit glühendem Schweif" },
+	Teleskopi = { Name = "Teleskopi", Seltenheit = "Gewoehnlich", Multiplikator = 10, Farbe = Color3.fromRGB(200, 190, 240), Form = "Zylinder", Beschreibung = "Guckt immer in die Sterne" },
+	Planetino = { Name = "Planetino", Seltenheit = "Selten", Multiplikator = 13, Farbe = Color3.fromRGB(255, 160, 120), Form = "Kugel", Beschreibung = "Ein Mini-Planet mit Zahnrad-Ring" },
+	Nebelkatze = { Name = "Nebel-Katze", Seltenheit = "Episch", Multiplikator = 18, Farbe = Color3.fromRGB(170, 130, 255), Form = "Wuerfel", Beschreibung = "Schnurrt wie ein Sternennebel" },
+	Sonnenuhrgreif = { Name = "Sonnenuhr-Greif", Seltenheit = "Legendaer", Multiplikator = 36, Farbe = Color3.fromRGB(255, 230, 110), Form = "Zahnrad", Beschreibung = "Goldener Greif mit Sonnenuhr-Flügeln" },
+
+	-- 🫧 Tiefsee-Ei
+	Blubberbot = { Name = "Blubberbot", Seltenheit = "Gewoehnlich", Multiplikator = 15, Farbe = Color3.fromRGB(150, 230, 240), Form = "Kugel", Beschreibung = "Macht ständig kleine Blasen" },
+	Seepferdticker = { Name = "Seepferd-Ticker", Seltenheit = "Gewoehnlich", Multiplikator = 16, Farbe = Color3.fromRGB(255, 190, 120), Form = "Zylinder", Beschreibung = "Seepferdchen mit Aufziehschlüssel" },
+	Krakenuhr = { Name = "Kraken-Uhr", Seltenheit = "Selten", Multiplikator = 21, Farbe = Color3.fromRGB(240, 120, 150), Form = "Wuerfel", Beschreibung = "Acht Arme, acht Zeiger" },
+	Perlenwal = { Name = "Perlen-Wal", Seltenheit = "Episch", Multiplikator = 30, Farbe = Color3.fromRGB(120, 170, 230), Form = "Kugel", Beschreibung = "Trägt eine leuchtende Perle" },
+	Tiefenchronometer = { Name = "Tiefen-Chronometer", Seltenheit = "Legendaer", Multiplikator = 60, Farbe = Color3.fromRGB(110, 240, 210), Form = "Zahnrad", Beschreibung = "Die älteste Uhr des Ozeans" },
+
 	-- ♻️ Rebirth-Ei
 	Zeitstern = { Name = "Zeitstern", Seltenheit = "Episch", Multiplikator = 8, Farbe = Color3.fromRGB(255, 250, 160), Form = "Kugel", Beschreibung = "Ein kleiner Stern, der tickt" },
 	Phoenixuhr = { Name = "Phönix-Uhr", Seltenheit = "Legendaer", Multiplikator = 18, Farbe = Color3.fromRGB(255, 120, 80), Form = "Zahnrad", Beschreibung = "Wird bei jedem Rebirth neu geboren" },
@@ -109,6 +123,22 @@ Pets.Eier = {
 		Farbe = Color3.fromRGB(245, 210, 120),
 		Chancen = { Zahnkrone = 45, Unruhchen = 35, Minutenmaus = 15, Stundenhase = 4.5, Ewigkeitsuhr = 0.5 },
 	},
+	SternwarteEi = {
+		Name = "Sternwarte-Ei",
+		Zone = 6,
+		Preis = 80000000,
+		Waehrung = "Energie",
+		Farbe = Color3.fromRGB(190, 180, 250),
+		Chancen = { Kometli = 45, Teleskopi = 35, Planetino = 15, Nebelkatze = 4.5, Sonnenuhrgreif = 0.5 },
+	},
+	TiefseeEi = {
+		Name = "Tiefsee-Ei",
+		Zone = 7,
+		Preis = 1000000000,
+		Waehrung = "Energie",
+		Farbe = Color3.fromRGB(140, 225, 220),
+		Chancen = { Blubberbot = 45, Seepferdticker = 35, Krakenuhr = 15, Perlenwal = 4.5, Tiefenchronometer = 0.5 },
+	},
 	RebirthEi = {
 		Name = "Rebirth-Ei",
 		Zone = 1,
@@ -119,7 +149,21 @@ Pets.Eier = {
 	},
 }
 
+--[[
+	✨ PET-FUSION
+	Drei gleiche Pets (gleiche Art + gleiche Stufe) verschmelzen zu einem Pet der nächsten Stufe.
+	Faktor = so viel stärker ist der Bonus des Pets (Bonus = Multiplikator - 1).
+	Beispiel: Tick (x1.15) als Gold → 1 + 0.15 * 3.5 = x1.53
+]]
+Pets.Fusion = {
+	Anzahl = 3, -- so viele gleiche Pets braucht man
+	Stufen = {
+		{ Name = "Gold", Symbol = "✨", Faktor = 3.5, Farbe = Color3.fromRGB(255, 205, 60) },
+		{ Name = "Regenbogen", Symbol = "🌈", Faktor = 12, Farbe = Color3.fromRGB(255, 120, 200) },
+	},
+}
+
 -- Reihenfolge der Eier an der Eier-Station im Hub
-Pets.EierReihenfolge = { "WiesenEi", "WerkstattEi", "SchluchtEi", "KristallEi", "UhrwerkEi", "RebirthEi" }
+Pets.EierReihenfolge = { "WiesenEi", "WerkstattEi", "SchluchtEi", "KristallEi", "UhrwerkEi", "SternwarteEi", "TiefseeEi", "RebirthEi" }
 
 return Pets

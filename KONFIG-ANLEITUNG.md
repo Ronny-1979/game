@@ -133,10 +133,36 @@ Boni und Skill-Knoten benutzen **Stats**: `{ Stat = "WalkSpeed", Plus = 2 }` ode
 
 In `Skills.Faehigkeiten` stehen die Grundwerte (Abklingzeit, Kosten, Dauer, Taste).
 
+## ✨ Pet-Fusion (`Pets.lua` → `Pets.Fusion`)
+`Anzahl` = wie viele gleiche Pets man braucht (Standard 3). Bei `Stufen` stehen Name, Symbol und `Faktor`
+(so viel stärker wird der Bonus des Pets). Mehr Stufen = einfach einen weiteren Eintrag anhängen.
+
+## 🥇 Zeit-Medaillen (`Settings.lua` → `Settings.Medals`)
+Jede Bahn hat eine geschätzte Richtzeit. `Faktor` = Richtzeit × Faktor ist die Zeit für die Medaille
+(größer = leichter). `Belohnung` = Anteil der Strecken-Belohnung, den es einmalig dafür gibt.
+
+## 🎉 Events (`Events.lua`)
+Wochen-Events nach Wochentag (`Tage`, 1 = Sonntag … 7 = Samstag), Saison-Events nach Datum (`Von`/`Bis`).
+Boni: `Energie`, `XP`, `Glueck` (seltene Pets öfter). `Deko = "Kuerbis"` oder `"Schnee"` schmückt den Hub.
+`Events.Freunde` = Freunde-Bonus. Zum Testen: Admin-Menü 🔧 → Event-Knöpfe.
+
+## 🔍 Geheimnisse (`Secrets.lua`)
+Positionen der goldenen Zahnräder (relativ zur Inselmitte), Rätsel-Tipps, Belohnung und Meilensteine.
+Nach dem Verschieben die Welt neu bauen. Die Stelle muss zu Fuß erreichbar sein!
+
+## 🗼 Endlos-Turm (`Tower.lua`)
+Ab welcher Etage es 🟡/🔴 wird, wie schnell es schwerer wird, wie viele Hindernisse pro Etage, Belohnung.
+Der Turm wird beim Serverstart neu gebaut – hier ist kein Welt-Neubau nötig.
+
+## 🏡 Werkstatt-Insel (`Deco.lua`)
+Der Deko-Katalog: `Preis` (× Energiewert der besten Zone), `Groesse` 1 oder 2, `Zone`/`Boss` = Freischaltung,
+`Modell` = Bauform aus `src/shared/DecoModels.lua`. Dazu Rastergröße, Höchstzahl und Werkstatt-Bonus.
+
 ## ⚙️ Spielwerte (`Settings.lua`)
 Admin-UserIds, Autosave-Intervall, XP-Kurve, Rebirth-Kosten, Boost-Zeiten, Schnellnachrichten, erlaubte Pet-Namen.
 `Settings.Coop.SoloTestMode = true` lässt Co-op-Rätsel zum Testen auch allein funktionieren.
 
 ## 🎵 Töne & Bilder (`Assets.lua`)
-Platzhalter durch eigene IDs ersetzen: Studio → Toolbox → Rechtsklick auf ein Audio → *Copy Asset ID* →
+Musik pro Zone (`Music[1]` … `Music[7]`), für Boss, Turm und Werkstatt, dazu alle Soundeffekte.
+Eigene IDs eintragen: Studio → Toolbox → Rechtsklick auf ein Audio → *Copy Asset ID* →
 `"rbxassetid://1234567"`. Leerer Text `""` = aus.

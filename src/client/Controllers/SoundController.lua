@@ -13,6 +13,7 @@ local SoundController = {}
 local cache: { [string]: Sound } = {}
 local music: Sound? = nil
 local currentMusicKey: any = nil
+SoundController.UpdateZoneMusic = function() end
 
 local function sfxVolume(): number
 	local d = DataController.Data
@@ -73,9 +74,18 @@ function SoundController.Init() end
 function SoundController.Start()
 	local player = Players.LocalPlayer
 	local function updateZone()
-		SoundController.SetMusic((player:GetAttribute("Zone") :: number?) or 0)
+		local ort = player:GetAttribute("Ort")
+		if ort == "Turm" then
+			SoundController.SetMusic("Turm")
+		elseif ort == "Insel" then
+			SoundController.SetMusic("Werkstatt")
+		else
+			SoundController.SetMusic((player:GetAttribute("Zone") :: number?) or 0)
+		end
 	end
+	SoundController.UpdateZoneMusic = updateZone
 	player:GetAttributeChangedSignal("Zone"):Connect(updateZone)
+	player:GetAttributeChangedSignal("Ort"):Connect(updateZone)
 	updateZone()
 	DataController.Changed:Connect(function()
 		if music then

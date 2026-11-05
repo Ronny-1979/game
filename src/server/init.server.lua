@@ -25,6 +25,7 @@ end
 -- 2) Services in fester Reihenfolge laden
 local order = {
 	"DataService",
+	"BonusService",
 	"PlayerService",
 	"LevelService",
 	"PetService",
@@ -44,6 +45,9 @@ local order = {
 	"BossService",
 	"AbilityService",
 	"CoopService",
+	"SecretService",
+	"TowerService",
+	"IslandService",
 	"ChatService",
 	"AdminService",
 }

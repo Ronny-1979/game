@@ -19,6 +19,8 @@ local Parts = require(script.Parent:WaitForChild("Parts"))
 local TrackBuilder = require(script.Parent:WaitForChild("TrackBuilder"))
 local CoopBuilder = require(script.Parent:WaitForChild("CoopBuilder"))
 local Decor = require(script.Parent:WaitForChild("Decor"))
+local SecretBuilder = require(script.Parent:WaitForChild("SecretBuilder"))
+local Backdrop = require(script.Parent:WaitForChild("Backdrop"))
 
 local ZoneBuilder = {}
 
@@ -52,7 +54,21 @@ end
 
 function ZoneBuilder.SpinningGear(parent: Instance, cf: CFrame, radius: number, color: Color3, speed: number)
 	local m = Parts.Obstacle(parent, "DekoZahnrad", "Spin", cf, { Axis = Vector3.yAxis, Speed = speed, Phase = 0 })
-	Parts.Gear(m, cf, radius, 0.8, math.max(8, math.floor(radius * 2)), color, false)
+	local list = Parts.Gear(m, cf, radius, 0.8, math.max(8, math.floor(radius * 2)), color, false)
+	-- kleine Funken an der Nabe (wirkt, als würde das Uhrwerk arbeiten)
+	local hub = list[1]
+	if hub and radius >= 4 then
+		local sparks = Instance.new("ParticleEmitter")
+		sparks.Rate = 2
+		sparks.Lifetime = NumberRange.new(0.4, 0.8)
+		sparks.Speed = NumberRange.new(4, 8)
+		sparks.SpreadAngle = Vector2.new(180, 180)
+		sparks.Acceleration = Vector3.new(0, -20, 0)
+		sparks.Size = NumberSequence.new(0.18, 0)
+		sparks.Color = ColorSequence.new(Color3.fromRGB(255, 220, 120), Color3.fromRGB(255, 150, 60))
+		sparks.LightEmission = 1
+		sparks.Parent = hub
+	end
 end
 
 function ZoneBuilder.Portal(parent: Instance, pos: Vector3, faceTo: Vector3, target: number, text: string, color: Color3): BasePart
@@ -361,6 +377,8 @@ function ZoneBuilder.Build(world: Instance, index: number, zone: any)
 	buildBoss(folder, index, zone, O)
 	buildCoop(folder, index, zone, O)
 	buildDecor(folder, index, zone, O)
+	SecretBuilder.BuildZone(folder, index, O)
+	Backdrop.Zone(folder, index, zone, O)
 end
 
 return ZoneBuilder

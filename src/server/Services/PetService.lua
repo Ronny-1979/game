@@ -16,7 +16,9 @@ local Util = require(Shared:WaitForChild("Util"))
 local Tags = require(Shared:WaitForChild("Tags"))
 local Remotes = require(Shared:WaitForChild("Remotes"))
 local Progression = require(Shared:WaitForChild("Progression"))
+local StatCalc = require(Shared:WaitForChild("StatCalc"))
 local DataService = require(script.Parent:WaitForChild("DataService"))
+local BonusService = require(script.Parent:WaitForChild("BonusService"))
 local QuestEvents = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("QuestEvents"))
 local Validate = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("Validate"))
 
@@ -44,7 +46,7 @@ function PetService.UpdateAttribute(player: Player)
 	for _, uid in data.Equipped do
 		local pet = findPet(data, uid)
 		if pet then
-			table.insert(list, { T = pet.Type, N = pet.Name })
+			table.insert(list, { T = pet.Type, N = pet.Name, S = StatCalc.PetTier(pet) })
 		end
 	end
 	player:SetAttribute("EquippedPets", HttpService:JSONEncode(list))
@@ -110,7 +112,18 @@ function PetService.Hatch(player: Player, eggId: string, free: boolean): any
 			end
 		end
 	end
-	local petType = Util.WeightedPick(egg.Chancen)
+	-- Glücks-Events: seltene Pets (Episch, Legendär) öfter
+	local chances = egg.Chancen
+	local luck = BonusService.LuckFactor()
+	if luck ~= 1 then
+		chances = {}
+		for id, w in egg.Chancen do
+			local def = Pets.Liste[id]
+			local rank = def and Pets.Seltenheiten[def.Seltenheit].Rang or 1
+			chances[id] = if rank >= 3 then w * luck else w
+		end
+	end
+	local petType = Util.WeightedPick(chances)
 	if not petType then
 		return { ok = false, msg = "Ei ist leer?!" }
 	end
@@ -125,6 +138,71 @@ function PetService.Hatch(player: Player, eggId: string, free: boolean): any
 	return { ok = entry ~= nil, pet = entry, msg = if entry then nil else "Inventar voll." }
 end
 
+--[[
+	Pet-Fusion: das gewählte Pet + (Anzahl - 1) weitere Pets derselben Art und Stufe
+	werden zu einem Pet der nächsten Stufe. Name und Ausrüstung des gewählten Pets bleiben.
+	Als „Futter“ werden zuerst nicht ausgerüstete Pets ohne Namen genommen.
+]]
+function PetService.Fuse(player: Player, uid: string): any
+	local data = DataService.Get(player)
+	if not data then
+		return { ok = false }
+	end
+	local pet = findPet(data, uid)
+	if not pet then
+		return { ok = false, msg = "Dieses Pet gehört dir nicht." }
+	end
+	local tier = StatCalc.PetTier(pet)
+	if tier >= #Pets.Fusion.Stufen then
+		return { ok = false, msg = "Dieses Pet ist schon auf der höchsten Stufe! 🌈" }
+	end
+	local need = Pets.Fusion.Anzahl - 1
+	local candidates = {}
+	for _, other in data.Pets do
+		if other.Id ~= uid and other.Type == pet.Type and StatCalc.PetTier(other) == tier then
+			table.insert(candidates, other)
+		end
+	end
+	if #candidates < need then
+		return { ok = false, msg = ("Du brauchst %d gleiche Pets dieser Stufe (hast %d)."):format(Pets.Fusion.Anzahl, #candidates + 1) }
+	end
+	-- unwichtigste zuerst verbrauchen: nicht ausgerüstet, ohne Namen
+	table.sort(candidates, function(a, b)
+		local ea, eb = isEquipped(data, a.Id), isEquipped(data, b.Id)
+		if ea ~= eb then
+			return not ea
+		end
+		return (a.Name == "") and b.Name ~= ""
+	end)
+	local used = {}
+	for i = 1, need do
+		used[candidates[i].Id] = true
+	end
+	local newTier = tier + 1
+	DataService.Update(player, function(d)
+		for i = #d.Pets, 1, -1 do
+			if used[d.Pets[i].Id] then
+				table.remove(d.Pets, i)
+			end
+		end
+		for i = #d.Equipped, 1, -1 do
+			if used[d.Equipped[i]] then
+				table.remove(d.Equipped, i)
+			end
+		end
+		local target = findPet(d, uid)
+		if target then
+			target.Stufe = newTier
+		end
+		d.Stats.Fused = (d.Stats.Fused or 0) + 1
+	end)
+	PetService.UpdateAttribute(player)
+	local stage = Pets.Fusion.Stufen[newTier]
+	Remotes.Event("Effect"):FireAllClients("Fusion", { UserId = player.UserId, Tier = newTier })
+	QuestEvents.Fire(player, "Fusion", { Tier = newTier })
+	return { ok = true, msg = ("%s %s-%s entstanden!"):format(stage.Symbol, stage.Name, Pets.Liste[pet.Type].Name), tier = newTier }
+end
+
 function PetService.Init() end
 
 function PetService.Start()
@@ -137,6 +215,13 @@ function PetService.Start()
 			return { ok = false, msg = "Unbekanntes Ei." }
 		end
 		return PetService.Hatch(player, eggId, false)
+	end)
+
+	Remotes.OnInvoke("FusePet", 2, function(player, uid)
+		if not Validate.String(uid, 20) then
+			return { ok = false }
+		end
+		return PetService.Fuse(player, uid)
 	end)
 
 	Remotes.OnInvoke("EquipPet", 6, function(player, uid)
@@ -186,9 +271,7 @@ function PetService.Start()
 		end
 		local sorted = table.clone(data.Pets)
 		table.sort(sorted, function(a, b)
-			local ma = Pets.Liste[a.Type] and Pets.Liste[a.Type].Multiplikator or 0
-			local mb = Pets.Liste[b.Type] and Pets.Liste[b.Type].Multiplikator or 0
-			return ma > mb
+			return StatCalc.PetValue(a) > StatCalc.PetValue(b)
 		end)
 		DataService.Update(player, function(d)
 			d.Equipped = {}

@@ -35,7 +35,7 @@ local entries: { [Model]: Entry } = {}
 local list: { Entry } = {}
 local player = Players.LocalPlayer
 
-local ATTRS = { "Axis", "Speed", "Phase", "Period", "Amp", "Offset", "OnTime" }
+local ATTRS = { "Axis", "Speed", "Phase", "Period", "Amp", "Offset", "OnTime", "Range" }
 
 local function rebuildList()
 	table.clear(list)
@@ -148,7 +148,9 @@ local function update()
 	local carryOld = if carry then carry.Last else nil
 
 	for _, e in list do
-		if e ~= carry and (e.Pos - camPos).Magnitude > maxDist then
+		-- Range = eigene Sichtweite (z.B. riesige Hintergrund-Zahnräder), bei "Niedrig" immer die kurze
+		local range = if low then maxDist else (e.Attrs.Range or maxDist)
+		if e ~= carry and (e.Pos - camPos).Magnitude > range then
 			continue
 		end
 		local kind = e.Kind

@@ -12,7 +12,7 @@
 	  Belohnung = { Energie = ..., XP = ..., Ei = "WiesenEi" }
 	  Optional  = true → Aufgabe kann im Aufgaben-Fenster übersprungen werden (ohne Belohnung)
 	  Ziel      = wohin der Wegweiser zeigt (optional)
-	              Zone = 0 (Hub) oder 1–5, Tag = Art des Ziels, Attr = genaues Ziel
+	              Zone = 0 (Hub) oder 1–7, Tag = Art des Ziels, Attr = genaues Ziel
 
 	Arten:
 	  "Klasse"     – eine Klasse wählen
@@ -227,6 +227,82 @@ Quests.Liste = {
 		Belohnung = { XP = 1000 },
 		Ziel = { Zone = 0, Tag = "MenuPrompt", Attr = { Menu = "Rebirth" } },
 	},
+	{
+		Titel = "Deine eigene Werkstatt 🏡",
+		Text = "Geh im Hub zu „Meine Werkstatt“ und stelle 3 Deko-Stücke auf deine Insel.",
+		Tipp = "Jedes Deko-Stück gibt dir dauerhaft etwas mehr Energie!",
+		Art = "Deko",
+		Anzahl = 3,
+		Belohnung = { Energie = 30000, XP = 600 },
+		Ziel = { Zone = 0, Tag = "MenuPrompt", Attr = { Menu = "Insel" } },
+	},
+	{
+		Titel = "Pet-Fusion ✨",
+		Text = "Verschmelze 3 gleiche Pets zu einem Gold-Pet (Pets-Menü → Fusion).",
+		Tipp = "Gold-Pets sind 3,5-mal so stark. Regenbogen-Pets sogar 12-mal!",
+		Art = "Fusion",
+		Belohnung = { Energie = 40000, XP = 700 },
+		Optional = true,
+	},
+	{
+		Titel = "Der Endlos-Turm 🗼",
+		Text = "Klettere im Endlos-Turm bis Etage 10.",
+		Tipp = "Alle 10 Etagen gibt es ein Gratis-Ei. Jeden Montag steht ein neuer Turm!",
+		Art = "Turm",
+		Wert = 10,
+		Belohnung = { Energie = 60000, XP = 900 },
+		Ziel = { Zone = 0, Tag = "MenuPrompt", Attr = { Menu = "Turm" } },
+	},
+	{
+		Titel = "Geheimnis-Jäger 🔍",
+		Text = "Finde 5 versteckte goldene Zahnräder (im Hub und in den Zonen).",
+		Tipp = "Im Erfolge-Menü 🏅 → Geheimnisse stehen Rätsel-Tipps.",
+		Art = "Geheimnis",
+		Anzahl = 5,
+		Belohnung = { Energie = 50000, XP = 800 },
+	},
+	{
+		Titel = "Gold-Medaille 🥇",
+		Text = "Schaffe irgendeine Bahn so schnell, dass du eine Gold-Medaille bekommst.",
+		Tipp = "Die Medaillen-Zeiten stehen in der Bestenliste 🏆. Leichte Bahnen sind kürzer!",
+		Art = "Medaille",
+		Wert = 3,
+		Belohnung = { Energie = 50000, XP = 800 },
+		Optional = true,
+	},
+	{
+		Titel = "Neue Zone: Sternen-Sternwarte",
+		Text = "Reise in die Sternwarte hoch über den Wolken (ab Level 40 oder nach Meister Unruh).",
+		Art = "Zone",
+		Wert = 6,
+		Belohnung = { Energie = 8000000, XP = 800 },
+		Ziel = { Zone = 0, Tag = "ZoneTeleporter", Attr = { ZoneIndex = 6 } },
+	},
+	{
+		Titel = "Boss: Komet-Kasimir",
+		Text = "Besiege Komet-Kasimir in der Boss-Arena der Sternwarte.",
+		Tipp = "Zu zweit oder zu dritt geht es viel leichter!",
+		Art = "Boss",
+		Wert = 6,
+		Belohnung = { Energie = 60000000, XP = 3000 },
+		Ziel = { Zone = 6, Tag = "BossArena", Attr = { ZoneIndex = 6 } },
+	},
+	{
+		Titel = "Neue Zone: Versunkenes Uhrwerk",
+		Text = "Tauche ab ins Versunkene Uhrwerk am Meeresgrund.",
+		Art = "Zone",
+		Wert = 7,
+		Belohnung = { Energie = 80000000, XP = 1200 },
+		Ziel = { Zone = 0, Tag = "ZoneTeleporter", Attr = { ZoneIndex = 7 } },
+	},
+	{
+		Titel = "Finale: Kapitän Ankerzahn",
+		Text = "Besiege Kapitän Ankerzahn und rette das Herz der Tiefe!",
+		Art = "Boss",
+		Wert = 7,
+		Belohnung = { Energie = 600000000, XP = 5000 },
+		Ziel = { Zone = 7, Tag = "BossArena", Attr = { ZoneIndex = 7 } },
+	},
 }
 
 -- 👋 Einführung beim ersten Start (Seiten zum Durchblättern)
@@ -236,6 +312,7 @@ Quests.Einfuehrung = {
 	{ Symbol = "🏁", Titel = "Strecken", Text = "Jede Strecke hat drei Bahnen: 🟢 Leicht, 🟡 Normal, 🔴 Profi. Je schwerer, desto mehr Belohnung. Checkpoints 🚩 speichern deinen Fortschritt." },
 	{ Symbol = "⏳", Titel = "Zeit-Fähigkeiten", Text = "Q = Verlangsamen 🐢   X = Zurückspulen ⏪   R = Sprint ⚡   F = Zeit-Wurf 🌀\nAuf Handy und Tablet sind es die runden Knöpfe unten rechts." },
 	{ Symbol = "🐾", Titel = "Pets & Upgrades", Text = "Im Hub gibt es den Shop 🛒 und die Eier-Station 🥚. Pets folgen dir und geben mehr Energie. Die Menü-Knöpfe sind links." },
+	{ Symbol = "🗼", Titel = "Turm & Werkstatt", Text = "Im Hub wartet der Endlos-Turm 🗼 – jede Woche ein neuer! Und in „Meine Werkstatt“ 🏡 baust du dir deine eigene Insel. Jedes Deko-Stück gibt dir mehr Energie." },
 	{ Symbol = "🤝", Titel = "Zusammen spielen", Text = "Ab Zone 2 gibt es Rätsel, die nur zu zweit gehen. Lade Freunde mit 👥 ein und schickt euch Schnellnachrichten mit 💬. Viel Spaß!" },
 }
 
@@ -251,6 +328,12 @@ Quests.Tipps = {
 	"Skill-Punkte 🌳 bekommst du bei jedem Level-Up.",
 	"Auf Profi 🔴 gibt es 2,5-mal so viel Belohnung.",
 	"Zu zweit sind Bosse viel leichter. 👥",
+	"3 gleiche Pets? Verschmelze sie im Pet-Menü zu einem ✨ Gold-Pet!",
+	"Spielst du mit Freunden auf einem Server, gibt es +10 % Energie pro Freund. 👥",
+	"Irgendwo glitzern goldene Zahnräder … 🔍 Tipps stehen bei 🏅 Erfolge.",
+	"Schaffst du die 🥇 Gold-Zeit? Die Zeiten stehen in der Bestenliste.",
+	"Jeden Montag steht ein neuer 🗼 Endlos-Turm – wie hoch kommst du?",
+	"Am Wochenende gibt es oft ⚡ Doppel-Energie!",
 }
 Quests.TippIntervall = 150 -- Sekunden zwischen zwei Tipps
 

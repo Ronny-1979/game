@@ -12,6 +12,7 @@ local Util = require(Shared:WaitForChild("Util"))
 local Remotes = require(Shared:WaitForChild("Remotes"))
 local Progression = require(Shared:WaitForChild("Progression"))
 local DataService = require(script.Parent:WaitForChild("DataService"))
+local BonusService = require(script.Parent:WaitForChild("BonusService"))
 local PetService = require(script.Parent:WaitForChild("PetService"))
 local QuestEvents = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("QuestEvents"))
 
@@ -43,7 +44,7 @@ function LevelService.AddXP(player: Player, amount: number, ignoreMult: boolean?
 	if not stats or not data or amount <= 0 then
 		return
 	end
-	local gain = math.floor(amount * (if ignoreMult then 1 else stats.XPMult) + 0.5)
+	local gain = math.floor(amount * (if ignoreMult then 1 else stats.XPMult * BonusService.XPFactor(player)) + 0.5)
 	local levelsGained = 0
 	DataService.Update(player, function(d)
 		d.XP += gain
@@ -78,7 +79,7 @@ function LevelService.Grant(player: Player, reward: any, factor: number?): (numb
 	local energy = 0
 	local xp = 0
 	if reward.Energie and reward.Energie > 0 then
-		energy = math.floor(reward.Energie * f * stats.TotalEnergyMult)
+		energy = math.floor(reward.Energie * f * stats.TotalEnergyMult * BonusService.EnergyFactor(player))
 		DataService.AddEnergy(player, energy)
 	end
 	if reward.XP and reward.XP > 0 then

@@ -140,10 +140,11 @@ end
 -- Ergebnis nach einer Strecke
 function UI.ShowCourseResult(data: any)
 	local Util = require(Shared:WaitForChild("Util"))
+	local Settings = require(Shared:WaitForChild("Config"):WaitForChild("Settings")) :: any
 	local panel = C.Frame({
 		AnchorPoint = Vector2.new(0.5, 0.5),
 		Position = UDim2.fromScale(0.5, 0.38),
-		Size = UDim2.fromOffset(360, 170),
+		Size = UDim2.fromOffset(380, 212),
 		BackgroundColor3 = Theme.Panel,
 		ZIndex = 30,
 		Parent = gui,
@@ -172,11 +173,24 @@ function UI.ShowCourseResult(data: any)
 		extra ..= "  ⭐ Erstes Mal: doppelte Belohnung!"
 	end
 	C.Label({ Text = extra, Size = UDim2.new(1, -20, 0, 30), Position = UDim2.fromOffset(10, 124), MaxTextSize = 20, ZIndex = 31, Parent = panel })
+	-- Zeit-Medaille + nächstes Ziel
+	local medalText = "Keine Medaille – versuch's schneller!"
+	local medal = data.Medal or 0
+	if medal > 0 then
+		local m = Settings.Medals[medal]
+		medalText = ("%s %s-Medaille%s"):format(m.Symbol, m.Name, if data.NewMedal then " – NEU!" else "")
+	end
+	local nextMedal = (data.BestMedal or medal) + 1
+	if data.MedalTimes and Settings.Medals[nextMedal] then
+		local m = Settings.Medals[nextMedal]
+		medalText ..= ("   · %s unter %s"):format(m.Symbol, Util.FormatTime(data.MedalTimes[nextMedal]))
+	end
+	C.Label({ Text = medalText, Size = UDim2.new(1, -20, 0, 34), Position = UDim2.fromOffset(10, 166), TextColor3 = if medal > 0 then Theme.BrassDark else Theme.Text, MaxTextSize = 20, ZIndex = 31, Parent = panel })
 	local scale = Instance.new("UIScale")
 	scale.Scale = 0.3
 	scale.Parent = panel
 	TweenService:Create(scale, TweenInfo.new(0.35, Enum.EasingStyle.Back), { Scale = 1 }):Play()
-	task.delay(4.5, function()
+	task.delay(if medal > 0 then 5.5 else 4.5, function()
 		TweenService:Create(scale, TweenInfo.new(0.25), { Scale = 0 }):Play()
 		task.wait(0.3)
 		panel:Destroy()
@@ -409,6 +423,8 @@ function UI.Init()
 		Intro = "IntroMenu",
 		Bonus = "DailyMenu",
 		Erfolge = "AchievementsMenu",
+		Turm = "TowerMenu",
+		Insel = "IslandMenu",
 	}
 	for name, moduleName in list do
 		local ok, mod = pcall(require, Menus:WaitForChild(moduleName))

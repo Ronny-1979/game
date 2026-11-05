@@ -63,9 +63,14 @@ Die Architektur (Module, Datenfluss, Remotes) steht in [ARCHITEKTUR.md](ARCHITEK
 
 ## Spielablauf (kurz)
 * **Aufgaben** oben links + goldener Wegweiser zeigen immer, was als Nächstes zu tun ist.
-* **Hub-Insel**: Upgrade-Shop, Pet-Eier, Rebirth-Altar, Skill-Lehrer, Bestenliste, 5 Zonen-Teleporter.
-* **Zonen 1–5**: je 3 Strecken mit 🟢 Leicht / 🟡 Normal / 🔴 Profi (nebeneinander), Energie-Insel, Gegner-Insel,
+* **Hub-Insel**: Upgrade-Shop, Pet-Eier, Rebirth-Altar, Skill-Lehrer, Bestenliste, 7 Zonen-Teleporter,
+  🗼 Endlos-Turm und 🏡 Meine Werkstatt.
+* **Zonen 1–7**: je 3 Strecken mit 🟢 Leicht / 🟡 Normal / 🔴 Profi (nebeneinander), Energie-Insel, Gegner-Insel,
   Boss-Arena, Portal zur nächsten Zone (ab Level X **oder** nach Boss-Sieg), ab Zone 2 Co-op-Rätsel.
+* **Zeit-Medaillen** 🥉🥈🥇 auf jeder Bahn, **Pet-Fusion** ✨🌈, **24 Geheimnisse** 🔍 (Tipps unter 🏅 Erfolge).
+* **Endlos-Turm** 🗼: Etage für Etage, jeden Montag ein neuer Turm, Wochen-Bestenliste.
+* **Meine Werkstatt** 🏡: eigene Insel mit Deko gestalten (gibt dauerhaft mehr Energie), Freunde besuchen.
+* **Events** 🎉 (Wochenende, Mittwoch, Freitag, Halloween, Winter, Sommer) und **Freunde-Bonus** 👥 laufen automatisch.
 
 ## Qualität / Werkzeuge
 ```

@@ -45,8 +45,20 @@ local function matches(q: any, kind: string, info: any): boolean
 		return true
 	elseif kind == "Gegner" then
 		return q.Zone == nil or info.Zone == q.Zone
+	elseif kind == "Turm" then
+		return (info.Floor or 0) >= (q.Wert or 1)
+	elseif kind == "Medaille" then
+		return (info.Medal or 0) >= (q.Wert or 1)
 	end
 	return true
+end
+
+local function count(t: any): number
+	local n = 0
+	for _ in t or {} do
+		n += 1
+	end
+	return n
 end
 
 -- Aufgaben, die man schon "hat" (z.B. Level erreicht), sofort abhaken
@@ -60,6 +72,21 @@ local function alreadyDone(q: any, data: any): boolean
 		return zone ~= nil and data.BossesDefeated[zone.Id] == true
 	elseif q.Art == "Rebirth" then
 		return data.Rebirths > 0
+	elseif q.Art == "Turm" then
+		return (data.Tower and data.Tower.Best or 0) >= (q.Wert or 1)
+	elseif q.Art == "Geheimnis" then
+		return count(data.Secrets) >= (q.Anzahl or 1)
+	elseif q.Art == "Fusion" then
+		return (data.Stats.Fused or 0) >= (q.Anzahl or 1)
+	elseif q.Art == "Deko" then
+		return #(data.Island and data.Island.Items or {}) >= (q.Anzahl or 1)
+	elseif q.Art == "Medaille" then
+		for _, m in data.Medals or {} do
+			if m >= (q.Wert or 1) then
+				return true
+			end
+		end
+		return false
 	end
 	return false
 end

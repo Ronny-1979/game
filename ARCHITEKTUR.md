@@ -60,10 +60,17 @@ src/client   -> StarterPlayerScripts.Client       (Controller, UI)
 | `CoopService` | Doppel-Türen, Gleichzeitig-Brücken, Zeit-Konsolen, Team-Belohnung. |
 | `ChatService` | Vorgefertigte Schnellnachrichten. |
 | `AdminService` | Test-Befehle für Admin-UserIds. |
+| `BonusService` | Wochen-/Saison-Events (Attribute an ReplicatedStorage) und Freunde-Bonus (`FriendCount`). |
+| `SecretService` | Versteckte goldene Zahnräder (Tag `Secret`), Belohnung + Meilensteine. |
+| `TowerService` | Endlos-Turm: Etagen bei Bedarf bauen (`TowerBuilder`), Wochen-Seed, Bestenlisten. |
+| `IslandService` | Eigene Werkstatt-Insel pro Spieler (zur Laufzeit), Deko platzieren/abbauen, Besuche. |
 
 ### Welt (Server)
 `World/WorldBuilder` (Einstieg, auch per Command Bar) → `Builders/Parts`, `Builders/Obstacles`,
-`Builders/TrackBuilder`, `Builders/HubBuilder`, `Builders/ZoneBuilder`, `Builders/CoopBuilder`, `World/Lighting`.
+`Builders/TrackBuilder`, `Builders/HubBuilder`, `Builders/ZoneBuilder`, `Builders/CoopBuilder`, `World/Lighting`,
+`Builders/SecretBuilder`, `Builders/Backdrop` (Kulissen), Terrain-Felsen über `Parts.TerrainStyle`.
+Zur Laufzeit: `Builders/TowerBuilder` (Turm-Etagen) und Werkstatt-Inseln im `IslandService`.
+Gemeinsam (Shared): `DecoModels` baut Deko für Server (echt) und Client (Vorschau).
 
 ### Client-Controller
 | Controller | Aufgabe |
@@ -77,6 +84,8 @@ src/client   -> StarterPlayerScripts.Client       (Controller, UI)
 | `SoundController` | Töne und Musik mit Lautstärke aus den Einstellungen. |
 | `PromptController` | ProximityPrompts öffnen Menüs (Shop, Eier, Skill-Lehrer …). |
 | `ChatController` | Schnellnachrichten als Sprechblasen, Roblox-Chat aus. |
+| `SecretController` | Blendet gefundene Geheimnis-Zahnräder lokal aus. |
+| `IslandController` | Bau-Vorschau im Raster, Platzieren/Drehen/Abbauen auf der eigenen Insel. |
 | `UI/*` | HUD, Toasts, Boss-Leiste und alle Menüs – komplett per Code. |
 
 ## Datenfluss
@@ -119,7 +128,11 @@ Spieler drückt Q ─▶ AbilityController ─▶ Remote "UseAbility"("Verlangsa
 
 **Client → Server (RemoteFunction, Antwort `{ok, msg, ...}`)**
 `BuyUpgrade`, `Rebirth`, `HatchEgg`, `EquipPet`, `UnequipPet`, `EquipBest`, `RenamePet`, `ReleasePet`,
-`ChooseClass`, `UnlockSkill`, `ResetSkills`, `TeleportZone`, `StartTrack`, `GetLeaderboard`, `Admin`.
+`ChooseClass`, `UnlockSkill`, `ResetSkills`, `TeleportZone`, `StartTrack`, `GetLeaderboard`, `SkipQuest`, `ClaimDaily`,
+`FusePet`, `EnterTower`, `GetTowerBoard`, `EnterIsland`, `VisitIsland`, `PlaceDeco`, `RemoveDeco`, `Admin`.
+
+Im Studio legt der AdminService zusätzlich `ServerStorage.StudioTest` (BindableFunction) an – damit lassen sich
+alle RemoteFunction-Handler für automatische Tests direkt aufrufen. Im echten Spiel gibt es sie nicht.
 
 Jeder Aufruf läuft durch `Remotes.OnEvent/OnInvoke` → Rate-Limit pro Spieler und Remote, `pcall` um den Handler.
 
@@ -129,13 +142,17 @@ Jeder Aufruf läuft durch `Remotes.OnEvent/OnInvoke` → Rate-Limit pro Spieler 
 Version, Level, XP, Class, Energy, TotalEnergy, Upgrades{}, Rebirths, RebirthPoints,
 Pets[{Id,Type,Name}], Equipped[Id], PetCounter, UnlockedZones{}, BossesDefeated{},
 BestTimes{[TrackKey]={Leicht,Normal,Profi}}, Completed{}, SkillPoints, Skills{}, Titles[], ActiveTitle,
-CoopSolved{}, Settings{Music,Sfx,Graphics,Difficulty}, Stats{PlayTime,Jumps,Defeated}
+CoopSolved{}, Settings{Music,Sfx,Graphics,Difficulty}, Stats{PlayTime,Jumps,Defeated},
+Medals{[Bahn]=1..3}, Secrets{[Id]=true}, Tower{Best,Week,WeekBest,Floors}, Island{Items[{Id,X,Z,R,P}]},
+Pets[i].Stufe (0 normal, 1 Gold, 2 Regenbogen), Stats.Fused
 ```
 Migration v1 → v2: `Pets` von Liste aus Namen zu Liste aus Tabellen, `Settings` ergänzt.
 
 ## Welt-Koordinaten
 
 * Hub-Insel: Mittelpunkt (0, 100, 0)
+* Endlos-Turm: ab (−3200, 100, 0), Etagen 55 Studs übereinander, alle 50 Etagen eine neue Säule (+420 in X)
+* Werkstatt-Inseln: ab (0, 100, 3400), Abstand 260, 4 pro Reihe
 * Zone *i*: Mittelpunkt (i · 1400, 100, 0)
   * Platz (Spawn, Portale) im Zentrum, Startterrasse bei z = +90
   * 3 Strecken bei x = −110 / 0 / +110, je 3 Bahnen (Leicht/Normal/Profi) nebeneinander in +z

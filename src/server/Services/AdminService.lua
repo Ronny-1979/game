@@ -112,9 +112,65 @@ Commands.Teleport = function(player, n)
 	return "Teleportiert"
 end
 
+-- Drei gleiche Pets (zum Ausprobieren der Fusion)
+Commands.FusionTest = function(player)
+	for _ = 1, 3 do
+		PetService.GivePet(player, "Tick")
+	end
+	PetService.UpdateAttribute(player)
+	return "3× Tick bekommen"
+end
+
+-- Event zum Testen erzwingen ("" = aus)
+Commands.Event = function(_player, id)
+	local BonusService = require(script.Parent:WaitForChild("BonusService"))
+	if type(id) ~= "string" or id == "" then
+		BonusService.Force(nil)
+		return "Test-Event aus"
+	end
+	return if BonusService.Force(id) then "Event aktiv: " .. id else "Unbekanntes Event"
+end
+
+-- Turm: beste Etage erhöhen (zum Testen der Start-Etagen)
+Commands.Turm = function(player, n)
+	local add = if Validate.Int(n, 1, 1000) then n else 10
+	DataService.Update(player, function(d)
+		d.Tower.Best += add
+		d.Tower.WeekBest = math.max(d.Tower.WeekBest, d.Tower.Best)
+		d.Tower.Week = (require(script.Parent:WaitForChild("TowerService")) :: any).CurrentWeek()
+	end)
+	return "Turm-Bestwert erhöht"
+end
+
+-- Geheimnisse: Positionen als Leuchtstrahlen anzeigen (nur für dich)
+Commands.Geheimnisse = function(player)
+	Remotes.Event("Effect"):FireClient(player, "ShowSecrets", {})
+	return "Geheimnisse markiert"
+end
+
 function AdminService.Init() end
 
 function AdminService.Start()
+	-- Nur im Studio: Test-Zugang für automatische Tests (BindableFunction in ServerStorage)
+	-- Aufruf: ServerStorage.StudioTest:Invoke("Invoke", Spielername, "RemoteName", ...) oder ("Data", Spielername)
+	if game:GetService("RunService"):IsStudio() then
+		local bf = Instance.new("BindableFunction")
+		bf.Name = "StudioTest"
+		bf.OnInvoke = function(kind: string, playerName: string, name: string?, ...)
+			local player = game:GetService("Players"):FindFirstChild(playerName)
+			if not player or not player:IsA("Player") then
+				return "kein Spieler"
+			end
+			if kind == "Data" then
+				return game:GetService("HttpService"):JSONEncode(DataService.Get(player))
+			elseif kind == "Invoke" and name and Remotes.Handlers[name] then
+				return Remotes.Handlers[name](player, ...)
+			end
+			return "unbekannt"
+		end
+		bf.Parent = game:GetService("ServerStorage")
+	end
+
 	Remotes.OnInvoke("Admin", 4, function(player, cmd, arg)
 		if not PlayerService.IsAdmin(player) then
 			warn("[Admin] Nicht erlaubt:", player.Name)

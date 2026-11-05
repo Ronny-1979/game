@@ -9,6 +9,7 @@ local Upgrades = require(Config:WaitForChild("Upgrades")) :: any
 local Classes = require(Config:WaitForChild("Classes")) :: any
 local Skills = require(Config:WaitForChild("Skills")) :: any
 local Pets = require(Config:WaitForChild("Pets")) :: any
+local Deco = require(Config:WaitForChild("Deco")) :: any
 local Progression = require(script.Parent:WaitForChild("Progression"))
 
 local StatCalc = {}
@@ -90,7 +91,32 @@ function StatCalc.FindNode(classId: string, nodeId: string): (any, number?, numb
 	return nil, nil, nil
 end
 
--- Pet-Multiplikator: 1 + Summe(Multiplikator - 1) * PetPower
+-- Fusions-Stufe eines Pets (0 = normal, 1 = Gold, 2 = Regenbogen)
+function StatCalc.PetTier(pet: any): number
+	local s = pet and pet.Stufe
+	if type(s) ~= "number" then
+		return 0
+	end
+	return math.clamp(math.floor(s), 0, #Pets.Fusion.Stufen)
+end
+
+-- Bonus eines einzelnen Pets (Multiplikator - 1, mit Fusions-Faktor)
+function StatCalc.PetBonus(pet: any): number
+	local def = Pets.Liste[pet.Type]
+	if not def then
+		return 0
+	end
+	local tier = StatCalc.PetTier(pet)
+	local factor = if tier > 0 then Pets.Fusion.Stufen[tier].Faktor else 1
+	return (def.Multiplikator - 1) * factor
+end
+
+-- Angezeigter Multiplikator eines Pets (z.B. x1.53)
+function StatCalc.PetValue(pet: any): number
+	return 1 + StatCalc.PetBonus(pet)
+end
+
+-- Pet-Multiplikator: 1 + Summe(Bonus der ausgerüsteten Pets) * PetPower
 function StatCalc.PetMultiplier(profile: any, petPower: number): number
 	local bonus = 0
 	local equipped = {}
@@ -99,10 +125,7 @@ function StatCalc.PetMultiplier(profile: any, petPower: number): number
 	end
 	for _, pet in profile.Pets or {} do
 		if equipped[pet.Id] then
-			local def = Pets.Liste[pet.Type]
-			if def then
-				bonus += (def.Multiplikator - 1)
-			end
+			bonus += StatCalc.PetBonus(pet)
 		end
 	end
 	return 1 + bonus * petPower
@@ -158,6 +181,11 @@ function StatCalc.Compute(profile: any): { [string]: number }
 	s.PlatformCooldown = math.max(1.5, s.PlatformCooldown)
 	s.SlowFactor = math.clamp(s.SlowFactor, 0.1, 1)
 	s.PetSlots = math.floor(s.PetSlots)
+
+	-- Werkstatt-Bonus: jedes Deko-Stück auf der eigenen Insel gibt etwas mehr Energie
+	local items = profile.Island and profile.Island.Items
+	s.IslandBonus = math.min((if items then #items else 0) * Deco.BonusProDeko, Deco.BonusMax)
+	s.EnergyMult *= 1 + s.IslandBonus
 
 	-- Gesamt-Multiplikator für Energie
 	s.PetMult = StatCalc.PetMultiplier(profile, s.PetPower)

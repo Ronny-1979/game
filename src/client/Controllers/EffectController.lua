@@ -5,6 +5,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local Debris = game:GetService("Debris")
 local RunService = game:GetService("RunService")
+local CollectionService = game:GetService("CollectionService")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Remotes = require(Shared:WaitForChild("Remotes"))
@@ -297,6 +298,101 @@ end
 
 Handlers.Finish = function(d)
 	burst(d.Pos + Vector3.new(0, 2, 0), 30, CONFETTI, 0.9, 30, false)
+end
+
+-- Boss besiegt: Konfetti-Regen über der Arena + Feuerwerk
+Handlers.BossWin = function(d)
+	local cam = workspace.CurrentCamera
+	if cam and (cam.CFrame.Position - d.Pos).Magnitude > 400 then
+		return
+	end
+	local low = lowGraphics()
+	local sky = part({ Size = Vector3.new(d.Radius * 2, 1, d.Radius * 2), CFrame = CFrame.new(d.Pos + Vector3.new(0, 45, 0)), Transparency = 1 })
+	local rain = Instance.new("ParticleEmitter")
+	rain.EmissionDirection = Enum.NormalId.Bottom
+	rain.Rate = if low then 60 else 180
+	rain.Lifetime = NumberRange.new(4, 6)
+	rain.Speed = NumberRange.new(6, 12)
+	rain.SpreadAngle = Vector2.new(30, 30)
+	rain.Rotation = NumberRange.new(0, 360)
+	rain.RotSpeed = NumberRange.new(-200, 200)
+	rain.Size = NumberSequence.new(0.45)
+	rain.Squash = NumberSequence.new(-0.6)
+	rain.Color = ColorSequence.new({
+		ColorSequenceKeypoint.new(0, CONFETTI[1]),
+		ColorSequenceKeypoint.new(0.25, CONFETTI[2]),
+		ColorSequenceKeypoint.new(0.5, CONFETTI[3]),
+		ColorSequenceKeypoint.new(0.75, CONFETTI[4]),
+		ColorSequenceKeypoint.new(1, CONFETTI[5]),
+	})
+	rain.Parent = sky
+	task.delay(5, function()
+		rain.Enabled = false
+	end)
+	task.delay(12, function()
+		sky:Destroy()
+	end)
+	-- Feuerwerk: Raketen steigen auf und platzen bunt
+	for i = 1, (if low then 4 else 9) do
+		task.delay(i * 0.45, function()
+			local a = rng:NextNumber(0, math.pi * 2)
+			local from = d.Pos + Vector3.new(math.cos(a) * d.Radius * 0.8, 2, math.sin(a) * d.Radius * 0.8)
+			local to = from + Vector3.new(rng:NextNumber(-8, 8), rng:NextNumber(35, 55), rng:NextNumber(-8, 8))
+			local rocket = part({ Shape = Enum.PartType.Ball, Size = Vector3.new(1, 1, 1), CFrame = CFrame.new(from), Color = CONFETTI[rng:NextInteger(1, #CONFETTI)], Material = Enum.Material.Neon })
+			local tween = TweenService:Create(rocket, TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { CFrame = CFrame.new(to) })
+			tween:Play()
+			tween.Completed:Connect(function()
+				local c = CONFETTI[rng:NextInteger(1, #CONFETTI)]
+				burst(to, 22, { c, Color3.new(1, 1, 1) }, 0.9, 32, false)
+				ringEffect(to, 10, c, 0.5)
+				rocket:Destroy()
+			end)
+		end)
+	end
+	SoundController.Play("LevelUp", 0.9)
+end
+
+-- Geheimnis gefunden: goldener Funkenregen
+Handlers.SecretFound = function(d)
+	burst(d.Pos, 24, { Color3.fromRGB(255, 205, 70), Color3.fromRGB(255, 250, 200) }, 0.7, 20, true)
+	ringEffect(d.Pos - Vector3.new(0, 1.2, 0), 8, Color3.fromRGB(255, 215, 90), 0.6)
+	SoundController.Play("LevelUp", 1.5)
+end
+
+-- Admin-Test: alle Geheimnisse mit hohen Lichtsäulen markieren (30 Sekunden)
+Handlers.ShowSecrets = function(_d)
+	for _, touch in CollectionService:GetTagged("Secret") do
+		if touch:IsA("BasePart") then
+			local beam = part({
+				Size = Vector3.new(1.2, 200, 1.2),
+				CFrame = CFrame.new(touch.Position + Vector3.new(0, 100, 0)),
+				Color = Color3.fromRGB(255, 215, 90),
+				Material = Enum.Material.Neon,
+				Transparency = 0.3,
+			})
+			task.delay(30, function()
+				beam:Destroy()
+			end)
+		end
+	end
+end
+
+-- Pet-Fusion: Funkenwirbel in der Farbe der neuen Stufe
+Handlers.Fusion = function(d)
+	local char = characterOf(d.UserId)
+	local root = char and char:FindFirstChild("HumanoidRootPart") :: BasePart?
+	if not root then
+		return
+	end
+	local colors = if d.Tier == 2
+		then { Color3.fromRGB(255, 90, 90), Color3.fromRGB(255, 230, 90), Color3.fromRGB(90, 220, 255), Color3.fromRGB(200, 120, 255) }
+		else { Color3.fromRGB(255, 205, 60), Color3.fromRGB(255, 245, 190) }
+	burst(root.Position + Vector3.new(0, 1, 3), 26, colors, 0.8, 18, false)
+	ringEffect(root.Position - Vector3.new(0, 3, 0), 10, colors[1], 0.7)
+	if d.UserId == player.UserId then
+		SoundController.Play("LevelUp", 1.3)
+		UI.Flash()
+	end
 end
 
 Handlers.Portal = function(_d)

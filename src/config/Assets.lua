@@ -52,7 +52,11 @@ Assets.Music = {
 	[3] = "rbxassetid://1844631856", -- Pendel-Schlucht: „Final Frontier“
 	[4] = "rbxassetid://1840358349", -- Kristall-Getriebe: „Weightless“ – schwebend, ruhig
 	[5] = "rbxassetid://1840513012", -- Uhrwerk: „Classic Action (A)“
+	[6] = "rbxassetid://9041843800", -- Sternwarte: „Whirlpool“ – weite, staunende Welten
+	[7] = "rbxassetid://1838969059", -- Versunkenes Uhrwerk: „Mysterious Discovery“
 	Boss = "rbxassetid://1841286238", -- Bosskampf: „Final Faceoff – Epic Orchestral Tension“
+	Turm = "rbxassetid://9046503137", -- Endlos-Turm: „Imminent Closure“ – heldenhaft
+	Werkstatt = "rbxassetid://1839864816", -- eigene Werkstatt-Insel: „Daisy Fresh“ – gemütlich
 }
 
 -- Bilder (Texturen). "" = keine Textur.

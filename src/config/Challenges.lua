@@ -61,4 +61,22 @@ Challenges[5] = {
 	{ Id = "Z5_Boss", Titel = "Unruh-Stopper", Text = "Meister Unruh 3-mal besiegen", Art = "Boss", Anzahl = 3, Belohnung = { Energie = 15000000, XP = 2000 } },
 }
 
+Challenges[6] = {
+	{ Id = "Z6_Leicht", Titel = "Sterngucker", Text = "Alle 3 Strecken auf 🟢 Leicht", Art = "AlleStrecken", Diff = "Leicht", Belohnung = { Energie = 30000000, XP = 1000 } },
+	{ Id = "Z6_Normal", Titel = "Kometen-Reiter", Text = "Alle 3 Strecken auf 🟡 Normal", Art = "AlleStrecken", Diff = "Normal", Belohnung = { Energie = 80000000, XP = 1600 } },
+	{ Id = "Z6_Profi", Titel = "Herr der Sterne", Text = "Alle 3 Strecken auf 🔴 Profi", Art = "AlleStrecken", Diff = "Profi", Belohnung = { Energie = 200000000, XP = 3500, Ei = "SternwarteEi" } },
+	{ Id = "Z6_Coop", Titel = "Sternbild", Text = "Alle Co-op-Rätsel der Sternwarte lösen", Art = "Coop", Belohnung = { Energie = 90000000, XP = 1700 } },
+	{ Id = "Z6_Gegner", Titel = "Sternschnuppen-Jäger", Text = "90 Gegner in der Sternwarte besiegen", Art = "Gegner", Anzahl = 90, Belohnung = { Energie = 60000000, XP = 1300 } },
+	{ Id = "Z6_Boss", Titel = "Kometen-Fänger", Text = "Komet-Kasimir 3-mal besiegen", Art = "Boss", Anzahl = 3, Belohnung = { Energie = 150000000, XP = 3000 } },
+}
+
+Challenges[7] = {
+	{ Id = "Z7_Leicht", Titel = "Schnorchler", Text = "Alle 3 Strecken auf 🟢 Leicht", Art = "AlleStrecken", Diff = "Leicht", Belohnung = { Energie = 300000000, XP = 1400 } },
+	{ Id = "Z7_Normal", Titel = "Tiefseetaucher", Text = "Alle 3 Strecken auf 🟡 Normal", Art = "AlleStrecken", Diff = "Normal", Belohnung = { Energie = 800000000, XP = 2200 } },
+	{ Id = "Z7_Profi", Titel = "Meeres-Legende", Text = "Alle 3 Strecken auf 🔴 Profi", Art = "AlleStrecken", Diff = "Profi", Belohnung = { Energie = 2000000000, XP = 5000, Ei = "TiefseeEi" } },
+	{ Id = "Z7_Coop", Titel = "Tauch-Team", Text = "Alle Co-op-Rätsel im Versunkenen Uhrwerk lösen", Art = "Coop", Belohnung = { Energie = 900000000, XP = 2400 } },
+	{ Id = "Z7_Gegner", Titel = "Anker-Lichter", Text = "100 Gegner im Versunkenen Uhrwerk besiegen", Art = "Gegner", Anzahl = 100, Belohnung = { Energie = 600000000, XP = 1800 } },
+	{ Id = "Z7_Boss", Titel = "Kapitäns-Bezwinger", Text = "Kapitän Ankerzahn 3-mal besiegen", Art = "Boss", Anzahl = 3, Belohnung = { Energie = 1500000000, XP = 4500 } },
+}
+
 return Challenges

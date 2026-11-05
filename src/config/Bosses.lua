@@ -96,6 +96,38 @@ local Bosses = {
 		},
 		Belohnung = { XP = 7000, Energie = 20000000, Ei = "UhrwerkEi", Titel = "Meister der Zeit" },
 	},
+	KometKasimir = {
+		Name = "Komet-Kasimir",
+		Leben = 14000,
+		Schaden = 21,
+		Groesse = 19,
+		Farbe = Color3.fromRGB(150, 135, 230),
+		Augenfarbe = Color3.fromRGB(255, 235, 140),
+		AngriffeBisMuede = 4,
+		MuedeZeit = 3,
+		Phasen = {
+			{ Angriffe = { "Zahnradregen", "Laserlinie", "Schockwelle" }, Warnzeit = 1.4, Pause = 1.6 },
+			{ Angriffe = { "Zahnradregen", "Ansturm", "Laserlinie", "Schockwelle" }, Warnzeit = 1.25, Pause = 1.4 },
+			{ Angriffe = { "Schockwelle", "Zahnradregen", "Laserlinie", "Ansturm", "Stampfen" }, Warnzeit = 1.12, Pause = 1.15 },
+		},
+		Belohnung = { XP = 12000, Energie = 200000000, Ei = "SternwarteEi", Titel = "Sternenwächter" },
+	},
+	KapitaenAnkerzahn = {
+		Name = "Kapitän Ankerzahn",
+		Leben = 22000,
+		Schaden = 22,
+		Groesse = 21,
+		Farbe = Color3.fromRGB(95, 175, 180),
+		Augenfarbe = Color3.fromRGB(255, 170, 110),
+		AngriffeBisMuede = 5,
+		MuedeZeit = 3,
+		Phasen = {
+			{ Angriffe = { "Ansturm", "Stampfen", "Schockwelle" }, Warnzeit = 1.35, Pause = 1.5 },
+			{ Angriffe = { "Ansturm", "Zahnradregen", "Schockwelle", "Laserlinie" }, Warnzeit = 1.2, Pause = 1.3 },
+			{ Angriffe = { "Schockwelle", "Laserlinie", "Ansturm", "Zahnradregen", "Stampfen" }, Warnzeit = 1.1, Pause = 1.1 },
+		},
+		Belohnung = { XP = 20000, Energie = 2000000000, Ei = "TiefseeEi", Titel = "Herz der Tiefe" },
+	},
 }
 
 return Bosses

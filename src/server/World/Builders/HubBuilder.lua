@@ -15,6 +15,8 @@ local Util = require(Shared:WaitForChild("Util"))
 local Parts = require(script.Parent:WaitForChild("Parts"))
 local ZoneBuilder = require(script.Parent:WaitForChild("ZoneBuilder"))
 local Decor = require(script.Parent:WaitForChild("Decor"))
+local SecretBuilder = require(script.Parent:WaitForChild("SecretBuilder"))
+local Backdrop = require(script.Parent:WaitForChild("Backdrop"))
 
 local HubBuilder = {}
 
@@ -98,7 +100,7 @@ end
 local function eggStation(parent: Instance, H: Vector3)
 	for k, eggId in Pets.EierReihenfolge do
 		local egg = Pets.Eier[eggId]
-		local pos = H + Vector3.new(62, 0, 55 - (k - 1) * 17)
+		local pos = H + Vector3.new(62, 0, 55 - (k - 1) * 15)
 		Parts.Cylinder(pos + Vector3.new(0, 2, 0), 4, 2, { Name = "EiSockel", Color = BRASS, Material = Enum.Material.Metal, Parent = parent })
 		local eggPart = Parts.Part({
 			Name = egg.Name,
@@ -163,9 +165,24 @@ local function rebirthAltar(parent: Instance, H: Vector3)
 	end
 end
 
+-- Position der Zonen-Teleporter: Halbkreis hinter dem Uhrturm (passt für beliebig viele Zonen)
+function HubBuilder.TeleporterPositions(H: Vector3): { Vector3 }
+	local list = {}
+	local n = #Zones
+	local from, to = math.rad(220), math.rad(320)
+	for i = 1, n do
+		local a = if n == 1 then (from + to) / 2 else from + (to - from) * (i - 1) / (n - 1)
+		table.insert(list, H + Vector3.new(math.cos(a) * 115, 0, math.sin(a) * 115))
+	end
+	return list
+end
+
 local function teleporters(parent: Instance, H: Vector3)
+	local positions = HubBuilder.TeleporterPositions(H)
 	for i, zone in ipairs(Zones) do
-		local pos = H + Vector3.new(-100 + (i - 1) * 50, 0, -108)
+		local pos = positions[i]
+		-- Bogen schaut zur Inselmitte
+		local cf = CFrame.lookAt(pos, Vector3.new(H.X, pos.Y, H.Z))
 		Parts.Cylinder(pos + Vector3.new(0, 0.6, 0), 6, 0.6, {
 			Name = "Teleporter_" .. zone.Id,
 			Color = zone.Farben.Boden,
@@ -177,12 +194,66 @@ local function teleporters(parent: Instance, H: Vector3)
 		})
 		Parts.Cylinder(pos + Vector3.new(0, 0.3, 0), 7, 0.3, { Name = "Ring", Color = zone.Farben.Akzent, Material = Enum.Material.Metal, Parent = parent })
 		for _, side in { -1, 1 } do
-			Parts.Part({ Name = "Bogen", Size = Vector3.new(1.2, 14, 1.2), CFrame = CFrame.new(pos + Vector3.new(side * 7, 7, 0)), Color = zone.Farben.Akzent, Material = Enum.Material.Metal, Parent = parent })
+			Parts.Part({ Name = "Bogen", Size = Vector3.new(1.2, 14, 1.2), CFrame = cf * CFrame.new(side * 7, 7, 0), Color = zone.Farben.Akzent, Material = Enum.Material.Metal, Parent = parent })
 		end
-		local top = Parts.Part({ Name = "Bogendach", Size = Vector3.new(15.2, 1.4, 1.4), CFrame = CFrame.new(pos + Vector3.new(0, 14, 0)), Color = zone.Farben.Akzent, Material = Enum.Material.Metal, Parent = parent })
+		local top = Parts.Part({ Name = "Bogendach", Size = Vector3.new(15.2, 1.4, 1.4), CFrame = cf * CFrame.new(0, 14, 0), Color = zone.Farben.Akzent, Material = Enum.Material.Metal, Parent = parent })
 		Parts.Billboard(top, ("%d · %s\nab Level %d"):format(i, zone.Name, zone.FreischaltLevel), 4, Vector2.new(240, 60))
 	end
 	Parts.Sign(parent, H + Vector3.new(0, 0, -86), "🌀 Zonen-Teleporter\nStell dich auf ein Feld!", 14, 4.5, Vector3.new(0, 0, 1))
+end
+
+-- Eingang zum Endlos-Turm: Station + kleiner Turm zum Angucken
+local function towerGate(parent: Instance, H: Vector3)
+	local pos = H + Vector3.new(48, 0, 96)
+	station(parent, pos, "Turm", "Hinein", "🗼 Endlos-Turm", Color3.fromRGB(190, 160, 255))
+	local base = H + Vector3.new(72, 0, 112)
+	local stone = Color3.fromRGB(235, 220, 195)
+	for i = 0, 5 do
+		local r = 6 - i * 0.6
+		Parts.Cylinder(base + Vector3.new(0, 6 + i * 6, 0), r, 6, { Name = "Turmstueck", Color = stone:Lerp(Color3.fromRGB(200, 180, 255), i * 0.08), Material = Enum.Material.Brick, Parent = parent })
+		Parts.Cylinder(base + Vector3.new(0, 6.3 + i * 6, 0), r + 0.6, 0.6, { Name = "Turmring", Color = BRASS, Material = Enum.Material.Metal, Parent = parent })
+	end
+	ZoneBuilder.SpinningGear(parent, CFrame.new(base + Vector3.new(0, 40, 0)), 4, BRASS, 0.5)
+	local top = Parts.Part({
+		Name = "Turmspitze",
+		Shape = Enum.PartType.Ball,
+		Size = Vector3.new(3, 3, 3),
+		CFrame = CFrame.new(base + Vector3.new(0, 44, 0)),
+		Color = Color3.fromRGB(200, 170, 255),
+		Material = Enum.Material.Neon,
+		CanCollide = false,
+		Parent = parent,
+	})
+	local light = Instance.new("PointLight")
+	light.Color = Color3.fromRGB(200, 170, 255)
+	light.Range = 20
+	light.Parent = top
+end
+
+-- Eingang zur eigenen Werkstatt-Insel
+local function islandGate(parent: Instance, H: Vector3)
+	local pos = H + Vector3.new(-48, 0, 96)
+	station(parent, pos, "Insel", "Öffnen", "🏡 Meine Werkstatt", Color3.fromRGB(150, 220, 160))
+	-- kleine Werkbank mit Werkzeug daneben
+	local bench = H + Vector3.new(-64, 0, 104)
+	Parts.Block(bench + Vector3.new(0, 3, 0), Vector3.new(6, 0.6, 3), { Name = "Werkbank", Color = Color3.fromRGB(190, 140, 95), Material = Enum.Material.WoodPlanks, Parent = parent })
+	for _, x in { -2.6, 2.6 } do
+		for _, z in { -1.1, 1.1 } do
+			Parts.Part({ Name = "Bein", Size = Vector3.new(0.5, 2.7, 0.5), CFrame = CFrame.new(bench + Vector3.new(x, 1.35, z)), Color = Color3.fromRGB(150, 105, 70), Material = Enum.Material.Wood, Parent = parent })
+		end
+	end
+	Parts.Part({ Name = "Hammerstiel", Size = Vector3.new(0.3, 0.3, 2), CFrame = CFrame.new(bench + Vector3.new(-1, 3.5, 0)) * CFrame.Angles(0, 0.4, 0), Color = Color3.fromRGB(150, 105, 70), Material = Enum.Material.Wood, Parent = parent })
+	Parts.Part({ Name = "Hammerkopf", Size = Vector3.new(0.6, 0.6, 1), CFrame = CFrame.new(bench + Vector3.new(-1.4, 3.6, -0.9)) * CFrame.Angles(0, 0.4, 0), Color = Color3.fromRGB(150, 150, 160), Material = Enum.Material.Metal, Parent = parent })
+	Parts.Gear(parent, CFrame.new(bench + Vector3.new(1.5, 3.5, 0)), 0.9, 0.3, 8, BRASS, false)
+end
+
+local function nearTeleporter(H: Vector3, pos: Vector3, dist: number): boolean
+	for _, p in HubBuilder.TeleporterPositions(H) do
+		if (Vector3.new(p.X, 0, p.Z) - Vector3.new(pos.X, 0, pos.Z)).Magnitude < dist then
+			return true
+		end
+	end
+	return false
 end
 
 function HubBuilder.Build(world: Instance)
@@ -210,6 +281,8 @@ function HubBuilder.Build(world: Instance)
 	rebirthAltar(folder, H)
 	eggStation(folder, H)
 	teleporters(folder, H)
+	towerGate(folder, H)
+	islandGate(folder, H)
 
 	Parts.Sign(folder, H + Vector3.new(0, 0, 52), "Willkommen auf der Uhrwerk-Insel! ⚙️\nRepariere das Uhrwerk mit deinem Team!", 18, 6, Vector3.new(0, 0, 1))
 	Parts.Sign(folder, H + Vector3.new(-24, 0, 70), "Menü-Knöpfe links ◀\nKarte 🗺️ = schnell reisen", 12, 4.5, Vector3.new(0, 0, 1))
@@ -217,15 +290,25 @@ function HubBuilder.Build(world: Instance)
 	for i = 1, 14 do
 		local a = i / 14 * math.pi * 2
 		local r = 128
-		tree(folder, H + Vector3.new(math.cos(a) * r, 0, math.sin(a) * r), Color3.fromRGB(150 + (i % 3) * 30, 210, 140 + (i % 2) * 60))
+		local pos = H + Vector3.new(math.cos(a) * r, 0, math.sin(a) * r)
+		if not nearTeleporter(H, pos, 20) then
+			tree(folder, pos, Color3.fromRGB(150 + (i % 3) * 30, 210, 140 + (i % 2) * 60))
+		end
 	end
 	-- Deko: Blumen & Co. am Rand, Wolken darunter, Mini-Inseln drumherum
 	local hubColors = { Boden = GRASS, Akzent = BRASS, Deko = Color3.fromRGB(255, 180, 200) }
 	Decor.Scatter(folder, H, 112, 146, 50, hubColors, 7, function(rel)
-		return rel.Z < -90 or (math.abs(rel.X) < 16 and rel.Z > 40)
+		for _, spot in { Vector3.new(72, 0, 112), Vector3.new(-64, 0, 104), Vector3.new(48, 0, 96), Vector3.new(-48, 0, 96) } do
+			if (rel - spot).Magnitude < 12 then
+				return true
+			end
+		end
+		return nearTeleporter(H, H + rel, 14) or (math.abs(rel.X) < 16 and rel.Z > 40)
 	end)
 	Decor.Clouds(folder, H, 150, 8)
 	Decor.FloatingIslands(folder, H, 250, 9, hubColors, 9)
+	SecretBuilder.BuildHub(folder, H)
+	Backdrop.Hub(folder, H)
 
 	for i = 1, 6 do
 		local a = i / 6 * math.pi * 2 + 0.3

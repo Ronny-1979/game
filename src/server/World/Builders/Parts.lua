@@ -124,6 +124,39 @@ function Parts.Sign(parent: Instance, pos: Vector3, text: string, width: number?
 	return model
 end
 
+--[[
+	Terrain-Stil für Inseln: { Fels = Material, Fels2 = Material }.
+	Gesetzt (vom WorldBuilder) → unter den Inseln wachsen echte Terrain-Felsen.
+	nil (z.B. zur Laufzeit gebaute Inseln) → Felsen aus Parts.
+]]
+Parts.TerrainStyle = nil :: { Fels: Enum.Material, Fels2: Enum.Material }?
+
+-- Organische Felsen aus Terrain unter einer Insel (Oberkante bleibt 6 Studs unter der Inseloberfläche)
+local function terrainRocks(topCenter: Vector3, radius: number, style: { Fels: Enum.Material, Fels2: Enum.Material })
+	local terrain = workspace.Terrain
+	local rng = Random.new(math.floor(topCenter.X * 7 + topCenter.Z * 13 + radius))
+	-- Platte direkt unter der Insel
+	terrain:FillCylinder(CFrame.new(topCenter - Vector3.new(0, 8, 0)), 6, radius * 0.97, style.Fels)
+	-- großer Hauptfels
+	local r1 = radius * 0.62
+	local c1 = topCenter - Vector3.new(0, r1 + 6, 0)
+	terrain:FillBall(c1, r1, style.Fels)
+	-- Beulen am Rand (machen die Kante unregelmäßig)
+	for i = 1, 5 do
+		local a = i / 5 * math.pi * 2 + rng:NextNumber(-0.4, 0.4)
+		local rr = radius * rng:NextNumber(0.2, 0.3)
+		local d = radius * rng:NextNumber(0.55, 0.7)
+		terrain:FillBall(topCenter + Vector3.new(math.cos(a) * d, -rr - 6, math.sin(a) * d), rr, if i % 2 == 0 then style.Fels2 else style.Fels)
+	end
+	-- nach unten spitz zulaufend (wie ein Zapfen)
+	local r2 = radius * 0.36
+	local c2 = c1 - Vector3.new(rng:NextNumber(-3, 3), r1 * 0.75, rng:NextNumber(-3, 3))
+	terrain:FillBall(c2, r2, style.Fels2)
+	local r3 = radius * 0.18
+	terrain:FillBall(c2 - Vector3.new(rng:NextNumber(-2, 2), r2 * 0.9, rng:NextNumber(-2, 2)), r3, style.Fels)
+	terrain:FillBall(c2 - Vector3.new(0, r2 * 0.9 + r3 * 1.1, 0), math.max(4, r3 * 0.5), style.Fels2)
+end
+
 -- Schwebende Insel: obere Scheibe + kleiner werdende Felsen darunter
 function Parts.Island(parent: Instance, topCenter: Vector3, radius: number, color: Color3, rimColor: Color3): Part
 	local top = Parts.Cylinder(topCenter, radius, 4, {
@@ -138,6 +171,10 @@ function Parts.Island(parent: Instance, topCenter: Vector3, radius: number, colo
 		Material = Enum.Material.Metal,
 		Parent = parent,
 	})
+	if Parts.TerrainStyle then
+		terrainRocks(topCenter, radius, Parts.TerrainStyle)
+		return top
+	end
 	local rock = Color3.fromRGB(175, 150, 130)
 	local r = radius * 0.85
 	local y = topCenter.Y - 4.5

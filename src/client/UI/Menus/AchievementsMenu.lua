@@ -7,6 +7,7 @@ local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Config = Shared:WaitForChild("Config")
 local Challenges = require(Config:WaitForChild("Challenges")) :: any
 local Badges = require(Config:WaitForChild("Badges")) :: any
+local Secrets = require(Config:WaitForChild("Secrets")) :: any
 local Zones = require(Config:WaitForChild("Zones")) :: any
 local Util = require(Shared:WaitForChild("Util"))
 local Goals = require(Shared:WaitForChild("Goals"))
@@ -65,10 +66,15 @@ function AchievementsMenu.Build(UI: any)
 			totalC += #l
 		end
 		local doneB = Util.Count(data.Badges)
-		for _, t in { { "Herausforderungen", ("🎯 Herausforderungen %d/%d"):format(doneC, totalC) }, { "Abzeichen", ("🏅 Abzeichen %d/%d"):format(doneB, #Badges) } } do
+		local doneS = Util.Count(data.Secrets or {})
+		for _, t in {
+			{ "Herausforderungen", ("🎯 Herausforderungen %d/%d"):format(doneC, totalC) },
+			{ "Abzeichen", ("🏅 Abzeichen %d/%d"):format(doneB, #Badges) },
+			{ "Geheimnisse", ("🔍 Geheimnisse %d/%d"):format(doneS, Goals.SecretTotal()) },
+		} do
 			C.Button({
 				Text = t[2],
-				Size = UDim2.new(0.5, -4, 1, 0),
+				Size = UDim2.new(1 / 3, -6, 1, 0),
 				BackgroundColor3 = if tab == t[1] then Theme.Copper else Theme.Locked,
 				OnClick = function()
 					tab = t[1]
@@ -85,7 +91,7 @@ function AchievementsMenu.Build(UI: any)
 		for i, z in ipairs(Zones) do
 			C.Button({
 				Text = ("%d %s"):format(i, if Progression.IsZoneUnlocked(data, i) then "" else "🔒"),
-				Size = UDim2.new(0.2, -6, 1, 0),
+				Size = UDim2.new(1 / #Zones, -6, 1, 0),
 				BackgroundColor3 = if i == zone then z.Farben.Akzent else Theme.Locked,
 				OnClick = function()
 					zone = i
@@ -134,19 +140,65 @@ function AchievementsMenu.Build(UI: any)
 		end
 	end
 
+	-- Geheimnisse: pro Ort gefunden/offen + Rätsel-Tipp
+	local function showSecrets(data: any)
+		C.Clear(list)
+		local found = data.Secrets or {}
+		local order = 0
+		local function place(title: string, color: Color3, prefix: string, entries: { any })
+			order += 1
+			local n = 0
+			for i in entries do
+				if found[prefix .. i] then
+					n += 1
+				end
+			end
+			local head = C.Frame({ Size = UDim2.new(1, -6, 0, 34), BackgroundColor3 = color, LayoutOrder = order, Parent = list })
+			C.Label({ Text = ("%s   %d/%d"):format(title, n, #entries), Size = UDim2.new(1, -12, 1, -6), Position = UDim2.fromOffset(6, 3), TextXAlignment = Enum.TextXAlignment.Left, TextColor3 = Theme.TextLight, TextStrokeTransparency = 0.5, MaxTextSize = 20, Parent = head })
+			for i, e in entries do
+				order += 1
+				local ok = found[prefix .. i] == true
+				local row = C.Frame({ Size = UDim2.new(1, -6, 0, 30), BackgroundColor3 = if ok then Theme.Mint else Theme.Panel, LayoutOrder = order, Parent = list })
+				C.Label({ Text = (if ok then "✅ " else "❓ ") .. e.Hinweis, Size = UDim2.new(1, -16, 1, -4), Position = UDim2.fromOffset(12, 2), TextXAlignment = Enum.TextXAlignment.Left, MaxTextSize = 16, Parent = row })
+			end
+		end
+		place("🏝️ Hub-Insel", Theme.Brass, "Hub_", Secrets.Hub)
+		for i, z in ipairs(Zones) do
+			if Progression.IsZoneUnlocked(data, i) then
+				place(("%d · %s"):format(i, z.Name), z.Farben.Akzent, ("Z%d_"):format(i), Secrets.Zone)
+			else
+				order += 1
+				local row = C.Frame({ Size = UDim2.new(1, -6, 0, 34), BackgroundColor3 = Theme.Locked, LayoutOrder = order, Parent = list })
+				C.Label({ Text = ("🔒 %d · %s"):format(i, z.Name), Size = UDim2.new(1, -12, 1, -6), Position = UDim2.fromOffset(6, 3), TextXAlignment = Enum.TextXAlignment.Left, MaxTextSize = 20, Parent = row })
+			end
+		end
+		order += 1
+		local info = C.Frame({ Size = UDim2.new(1, -6, 0, 60), BackgroundColor3 = Theme.PanelDark, LayoutOrder = order, Parent = list })
+		local lines = {}
+		for _, m in Secrets.Meilensteine do
+			table.insert(lines, (if Util.Count(found) >= m.Anzahl then "✅ " else "🎁 ") .. m.Text)
+		end
+		C.Label({ Text = table.concat(lines, "\n"), Size = UDim2.new(1, -12, 1, -6), Position = UDim2.fromOffset(6, 3), TextXAlignment = Enum.TextXAlignment.Left, MaxTextSize = 15, Parent = info })
+	end
+
 	refresh = function(data: any)
-		local sig = HttpService:JSONEncode({ tab, zone, data.Challenges, data.Badges, data.ZoneStats, data.Completed, data.Level })
+		local sig = HttpService:JSONEncode({ tab, zone, data.Challenges, data.Badges, data.ZoneStats, data.Completed, data.Level, data.Secrets })
 		if sig == lastSig then
 			return
 		end
 		lastSig = sig
 		buildTabs(data)
 		local isChallenges = tab == "Herausforderungen"
+		local isSecrets = tab == "Geheimnisse"
 		zoneRow.Visible = isChallenges
-		list.Visible = isChallenges
-		grid.Visible = not isChallenges
+		list.Visible = isChallenges or isSecrets
+		list.Position = UDim2.fromOffset(0, if isChallenges then 96 else 52)
+		list.Size = UDim2.new(1, 0, 1, if isChallenges then -96 else -52)
+		grid.Visible = not (isChallenges or isSecrets)
 		if isChallenges then
 			showChallenges(data)
+		elseif isSecrets then
+			showSecrets(data)
 		else
 			showBadges(data)
 		end

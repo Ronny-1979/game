@@ -490,6 +490,25 @@ end
 
 Obstacles.Builders = B
 
+-- Geschätzte Wartezeit (Sekunden) pro Hindernis – für die Richtzeit der Zeit-Medaillen
+function Obstacles.WaitEstimate(kind: string, ctx: Ctx): number
+	local takt = ctx.Takt
+	local w = {
+		Sprung = 0.3,
+		Zahnrad = 1.6,
+		Pendel = 1.8,
+		Foerderband = 1.2,
+		Bewegt = 2.2,
+		Zeitplattform = takt * 0.55,
+		Wackel = 0.8,
+		Laser = takt * 0.55,
+		Sprungpad = 0.6,
+		Funken = 1.2,
+		Drehring = 2.4,
+	}
+	return w[kind] or 1
+end
+
 function Obstacles.Build(kind: string, ctx: Ctx, cur: Vector3): Vector3
 	local fn = B[kind] or B.Sprung
 	Obstacles.Hint(ctx, kind, cur)

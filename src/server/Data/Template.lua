@@ -20,13 +20,14 @@ local Template = {
 	Upgrades = upgradeLevels,
 	Rebirths = 0,
 	RebirthPoints = 0,
-	Pets = {}, -- { {Id="P1", Type="Tick", Name=""} }
+	Pets = {}, -- { {Id="P1", Type="Tick", Name="", Stufe=0} }  Stufe: 0 normal, 1 Gold, 2 Regenbogen
 	Equipped = {}, -- { "P1" }
 	PetCounter = 0,
 	UnlockedZones = { Wiese = true },
 	BossesDefeated = {},
 	BestTimes = {}, -- ["Z1_T1"] = { Leicht = 32.5 }
 	Completed = {}, -- ["Z1_T1_Leicht"] = true
+	Medals = {}, -- ["Z1_T1_Leicht"] = 3 (1 Bronze, 2 Silber, 3 Gold)
 	SkillPoints = 0,
 	Skills = {},
 	Titles = {},
@@ -38,7 +39,10 @@ local Template = {
 	ZoneStats = {}, -- ["Wiese"] = { Gegner = 0, Kristall = 0, Boss = 0 }
 	Challenges = {}, -- ["Z1_Profi"] = true
 	Badges = {}, -- ["Level10"] = true
-	Stats = { PlayTime = 0, Defeated = 0, Courses = 0, Hatched = 0 },
+	Secrets = {}, -- ["Z1_2"] = true (gefundene Geheimnisse)
+	Tower = { Best = 0, Week = 0, WeekBest = 0, Floors = 0 }, -- Endlos-Turm
+	Island = { Items = {} }, -- Werkstatt-Insel: { {Id="Baum", X=3, Z=5, R=0, P=60} }
+	Stats = { PlayTime = 0, Defeated = 0, Courses = 0, Hatched = 0, Fused = 0 },
 }
 
 return Template

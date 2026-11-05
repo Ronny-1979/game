@@ -1,7 +1,7 @@
 --!strict
 -- Gemeinsame Typen
 
-export type PetEntry = { Id: string, Type: string, Name: string }
+export type PetEntry = { Id: string, Type: string, Name: string, Stufe: number? }
 
 export type Profile = {
 	Version: number,
@@ -27,7 +27,7 @@ export type Profile = {
 	CoopSolved: { [string]: boolean },
 	Settings: { Music: number, Sfx: number, Graphics: string, Difficulty: string, IntroSeen: boolean },
 	Quest: { Index: number, Progress: number },
-	Stats: { PlayTime: number, Defeated: number, Courses: number, Hatched: number },
+	Stats: { PlayTime: number, Defeated: number, Courses: number, Hatched: number, Fused: number },
 }
 
 export type Reply = { ok: boolean, msg: string?, [string]: any }

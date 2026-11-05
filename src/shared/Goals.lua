@@ -111,8 +111,32 @@ function Goals.BadgeValue(art: string, data: any): number
 		return data.Stats.Hatched
 	elseif art == "Zonen" then
 		return count(data.UnlockedZones)
+	elseif art == "Fusionen" then
+		return data.Stats.Fused or 0
+	elseif art == "Regenbogen" then
+		local n = 0
+		for _, p in data.Pets do
+			if (p.Stufe or 0) >= 2 then
+				n += 1
+			end
+		end
+		return n
+	elseif art == "Medaillen" then
+		return count(data.Medals)
+	elseif art == "Geheimnisse" then
+		return count(data.Secrets)
+	elseif art == "Turm" then
+		return data.Tower and data.Tower.Best or 0
+	elseif art == "Deko" then
+		return data.Island and data.Island.Items and #data.Island.Items or 0
 	end
 	return 0
+end
+
+-- Anzahl aller versteckten Zahnräder (Hub + jede Zone)
+function Goals.SecretTotal(): number
+	local Secrets = require(Config:WaitForChild("Secrets")) :: any
+	return #Secrets.Hub + #Secrets.Zone * #Zones
 end
 
 -- Tagesnummer (UTC) für tägliche Belohnungen

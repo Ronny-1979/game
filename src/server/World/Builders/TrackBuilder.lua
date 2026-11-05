@@ -136,7 +136,9 @@ function TrackBuilder.BuildLane(parent: Instance, o: LaneOptions): Model
 	-- Abschnitte
 	local order = makeOrder(o.Track.Hindernisse, o.Track.Abschnitte, rng)
 	local cp = 0
+	local waits = 0
 	for s, kind in order do
+		waits += Obstacles.WaitEstimate(kind, ctx)
 		cur = Obstacles.Build(kind, ctx, cur)
 		if s % P.CheckpointAlle == 0 and s < #order then
 			cp += 1
@@ -187,8 +189,11 @@ function TrackBuilder.BuildLane(parent: Instance, o: LaneOptions): Model
 	})
 	Parts.Billboard(back, "↩ Zurück zum Platz", 3, Vector2.new(160, 40))
 
+	local length = (finish.Position - start.Position).Magnitude
 	start:SetAttribute("CheckpointCount", cp)
-	start:SetAttribute("Length", (finish.Position - start.Position).Magnitude)
+	start:SetAttribute("Length", length)
+	-- Richtzeit für Zeit-Medaillen: Laufweg (ca. 12 Studs/s mit Springen) + Wartezeiten + kleiner Puffer
+	start:SetAttribute("Par", math.floor((length / 12 + waits + cp * 0.8 + 2) * 10 + 0.5) / 10)
 	return lane
 end
 

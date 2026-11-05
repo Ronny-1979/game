@@ -10,36 +10,41 @@ local Settings = require(Config:WaitForChild("Settings")) :: any
 local Controllers = script.Parent.Parent.Parent:WaitForChild("Controllers")
 local DataController = require(Controllers:WaitForChild("DataController"))
 local PetController = require(Controllers:WaitForChild("PetController"))
+local StatCalc = require(Shared:WaitForChild("StatCalc"))
 
 local PetMenu = {}
 
 local FORM_ICON = { Kugel = "⚪", Wuerfel = "🟧", Zylinder = "🥫", Zahnrad = "⚙️" }
 
+-- x1.15 / x12.4 / x1.2K – kurz und lesbar
+function PetMenu.FormatMult(v: number): string
+	if v >= 1000 then
+		return string.format("%.1fK", v / 1000)
+	elseif v >= 100 then
+		return string.format("%d", math.floor(v + 0.5))
+	end
+	local text = string.format("%.2f", v)
+	text = string.gsub(text, "0+$", "")
+	text = string.gsub(text, "%.$", "")
+	return text
+end
+
 -- kleine 3D-Vorschau eines Pets
-function PetMenu.Preview(parent: GuiObject, petType: string): ViewportFrame
+function PetMenu.Preview(parent: GuiObject, petType: string, tier: number?): ViewportFrame
 	local vp = Instance.new("ViewportFrame")
 	vp.BackgroundTransparency = 1
 	vp.Size = UDim2.fromScale(1, 1)
 	vp.LightColor = Color3.fromRGB(255, 240, 220)
 	vp.Ambient = Color3.fromRGB(180, 170, 160)
 	vp.Parent = parent
-	local model = PetController.BuildModel(petType, nil)
+	local model = PetController.BuildModel(petType, nil, tier)
 	if model then
 		-- Teile wie im Spiel anordnen
-		for _, p in model:GetChildren() do
-			if p:IsA("BasePart") then
-				local off = p:GetAttribute("Off")
-				if typeof(off) == "Vector3" then
-					p.CFrame = CFrame.new(off) * (if p.Name == "Zahnrad" then CFrame.Angles(0, 0, math.rad(90)) else CFrame.identity)
-				else
-					local form = p:GetAttribute("Form")
-					p.CFrame = if form == "Zylinder" then CFrame.Angles(0, 0, math.rad(90)) elseif form == "Zahnrad" then CFrame.Angles(0, math.rad(90), 0) else CFrame.identity
-				end
-			end
-		end
+		PetController.PoseStatic(model, 0.4)
 		model.Parent = vp
+		local zoom = 1 + 0.15 * (tier or 0)
 		local cam = Instance.new("Camera")
-		cam.CFrame = CFrame.lookAt(Vector3.new(2.2, 1.6, -4.2), Vector3.new(0, 0.3, 0))
+		cam.CFrame = CFrame.lookAt(Vector3.new(2.2, 1.6, -4.2) * zoom, Vector3.new(0, 0.3, 0))
 		cam.FieldOfView = 45
 		cam.Parent = vp
 		vp.CurrentCamera = cam
@@ -76,7 +81,7 @@ function PetMenu.Build(UI: any)
 	actions.BackgroundTransparency = 1
 	actions.AnchorPoint = Vector2.new(0, 1)
 	actions.Position = UDim2.new(0, 8, 1, -8)
-	actions.Size = UDim2.new(1, -16, 0, 160)
+	actions.Size = UDim2.new(1, -16, 0, 196)
 	actions.Parent = detail
 	local al = Instance.new("UIListLayout")
 	al.Padding = UDim.new(0, 6)
@@ -128,14 +133,17 @@ function PetMenu.Build(UI: any)
 		end
 		local def = Pets.Liste[pet.Type]
 		local rarity = Pets.Seltenheiten[def.Seltenheit]
-		PetMenu.Preview(previewHolder, pet.Type)
-		dName.Text = if pet.Name ~= "" then ("%s (%s)"):format(pet.Name, def.Name) else def.Name
-		dName.TextColor3 = rarity.Farbe:Lerp(Theme.Text, 0.35)
-		dInfo.Text = ("%s · x%s Energie\n%s"):format(rarity.Name, tostring(def.Multiplikator), def.Beschreibung)
+		local tier = StatCalc.PetTier(pet)
+		local stage = if tier > 0 then Pets.Fusion.Stufen[tier] else nil
+		PetMenu.Preview(previewHolder, pet.Type, tier)
+		local prefix = if stage then stage.Symbol .. " " .. stage.Name .. "-" else ""
+		dName.Text = if pet.Name ~= "" then ("%s (%s%s)"):format(pet.Name, prefix, def.Name) else prefix .. def.Name
+		dName.TextColor3 = (if stage then stage.Farbe else rarity.Farbe):Lerp(Theme.Text, 0.35)
+		dInfo.Text = ("%s · x%s Energie\n%s"):format(rarity.Name, PetMenu.FormatMult(StatCalc.PetValue(pet)), def.Beschreibung)
 		local equipped = table.find(data.Equipped, pet.Id) ~= nil
 		C.Button({
 			Text = if equipped then "📦 Ablegen" else "✅ Ausrüsten",
-			Size = UDim2.new(1, 0, 0, 46),
+			Size = UDim2.new(1, 0, 0, 43),
 			BackgroundColor3 = if equipped then Theme.Copper else Theme.Good,
 			LayoutOrder = 1,
 			OnClick = function()
@@ -145,7 +153,7 @@ function PetMenu.Build(UI: any)
 		})
 		C.Button({
 			Text = "🏷️ Umbenennen",
-			Size = UDim2.new(1, 0, 0, 46),
+			Size = UDim2.new(1, 0, 0, 43),
 			BackgroundColor3 = Theme.Info,
 			LayoutOrder = 2,
 			OnClick = function()
@@ -156,7 +164,7 @@ function PetMenu.Build(UI: any)
 		local release: TextButton
 		release = C.Button({
 			Text = "👋 Freilassen",
-			Size = UDim2.new(1, 0, 0, 46),
+			Size = UDim2.new(1, 0, 0, 43),
 			BackgroundColor3 = Theme.Bad,
 			LayoutOrder = 3,
 			OnClick = function()
@@ -177,6 +185,33 @@ function PetMenu.Build(UI: any)
 			end,
 			Parent = actions,
 		})
+		-- Fusion: 3 gleiche Pets derselben Stufe → nächste Stufe
+		if tier < #Pets.Fusion.Stufen then
+			local same = 0
+			for _, other in data.Pets do
+				if other.Type == pet.Type and StatCalc.PetTier(other) == tier then
+					same += 1
+				end
+			end
+			local nextStage = Pets.Fusion.Stufen[tier + 1]
+			local need = Pets.Fusion.Anzahl
+			local ready = same >= need
+			C.Button({
+				Text = ("%s Fusion zu %s (%d/%d)"):format(nextStage.Symbol, nextStage.Name, math.min(same, need), need),
+				Size = UDim2.new(1, 0, 0, 43),
+				BackgroundColor3 = if ready then nextStage.Farbe else Theme.Locked,
+				TextColor3 = if ready then Theme.Text else Theme.TextLight,
+				LayoutOrder = 0,
+				OnClick = function()
+					if not ready then
+						UI.Toast(("Du brauchst %d gleiche %s (gleiche Stufe). Öffne mehr Eier!"):format(need, def.Name), "info")
+						return
+					end
+					UI.Request("FusePet", pet.Id)
+				end,
+				Parent = actions,
+			})
+		end
 	end
 
 	local lastSig = ""
@@ -203,14 +238,14 @@ function PetMenu.Build(UI: any)
 			if ea ~= eb then
 				return ea
 			end
-			local ma = Pets.Liste[a.Type] and Pets.Liste[a.Type].Multiplikator or 0
-			local mb = Pets.Liste[b.Type] and Pets.Liste[b.Type].Multiplikator or 0
-			return ma > mb
+			return StatCalc.PetValue(a) > StatCalc.PetValue(b)
 		end)
 		for i, pet in sorted do
 			local def = Pets.Liste[pet.Type]
 			if def then
 				local rarity = Pets.Seltenheiten[def.Seltenheit]
+				local tier = StatCalc.PetTier(pet)
+				local stage = if tier > 0 then Pets.Fusion.Stufen[tier] else nil
 				local equipped = table.find(data.Equipped, pet.Id) ~= nil
 				local card = C.Button({
 					Text = "",
@@ -222,11 +257,14 @@ function PetMenu.Build(UI: any)
 					end,
 					Parent = grid,
 				})
-				C.Stroke(card, rarity.Farbe, 3)
+				C.Stroke(card, if stage then stage.Farbe else rarity.Farbe, if stage then 4 else 3)
 				local icon = C.Frame({ Size = UDim2.fromOffset(52, 52), Position = UDim2.new(0.5, -26, 0, 4), BackgroundColor3 = def.Farbe, Radius = 26, Parent = card })
 				C.Label({ Text = FORM_ICON[def.Form] or "⚙️", Size = UDim2.fromScale(0.7, 0.7), Position = UDim2.fromScale(0.15, 0.15), MaxTextSize = 26, Parent = icon })
 				C.Label({ Text = if pet.Name ~= "" then pet.Name else def.Name, Size = UDim2.new(1, -4, 0, 22), Position = UDim2.fromOffset(2, 60), MaxTextSize = 16, Parent = card })
-				C.Label({ Text = "x" .. tostring(def.Multiplikator), Size = UDim2.new(1, -4, 0, 20), Position = UDim2.fromOffset(2, 82), TextColor3 = rarity.Farbe:Lerp(Theme.Text, 0.4), MaxTextSize = 16, Parent = card })
+				C.Label({ Text = "x" .. PetMenu.FormatMult(StatCalc.PetValue(pet)), Size = UDim2.new(1, -4, 0, 20), Position = UDim2.fromOffset(2, 82), TextColor3 = rarity.Farbe:Lerp(Theme.Text, 0.4), MaxTextSize = 16, Parent = card })
+				if stage then
+					C.Label({ Text = stage.Symbol, Size = UDim2.fromOffset(24, 24), AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -2, 0, 2), MaxTextSize = 20, Parent = card })
+				end
 				if equipped then
 					C.Label({ Text = "✅", Size = UDim2.fromOffset(24, 24), Position = UDim2.fromOffset(2, 2), MaxTextSize = 20, Parent = card })
 				end

@@ -18,6 +18,7 @@ local Tags = require(Shared:WaitForChild("Tags"))
 local Remotes = require(Shared:WaitForChild("Remotes"))
 local Util = require(Shared:WaitForChild("Util"))
 local DataService = require(script.Parent:WaitForChild("DataService"))
+local BonusService = require(script.Parent:WaitForChild("BonusService"))
 local QuestEvents = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("QuestEvents"))
 local Validate = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("Validate"))
 
@@ -53,7 +54,7 @@ local function give(player: Player, base: number, zoneIndex: number): number
 	if not stats then
 		return 0
 	end
-	local amount = base * stats.TotalEnergyMult * EnergyService.BoostFactor(zoneIndex)
+	local amount = base * stats.TotalEnergyMult * EnergyService.BoostFactor(zoneIndex) * BonusService.EnergyFactor(player)
 	amount = math.max(1, math.floor(amount))
 	DataService.AddEnergy(player, amount)
 	return amount

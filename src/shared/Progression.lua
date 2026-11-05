@@ -70,4 +70,53 @@ function Progression.TrackKey(zoneIndex: number, trackIndex: number): string
 	return ("Z%d_T%d"):format(zoneIndex, trackIndex)
 end
 
+-- Höchste freigeschaltete Zone (1 … #Zones)
+function Progression.BestZone(profile: any): number
+	local best = 1
+	for i = 1, #Zones do
+		if Progression.IsZoneUnlocked(profile, i) then
+			best = i
+		end
+	end
+	return best
+end
+
+-- Werkstatt-Deko: Preis (passt sich der besten Zone an) und Freischaltung
+function Progression.DecoPrice(item: any, profile: any): number
+	local zone = Zones[Progression.BestZone(profile)]
+	return math.floor((item.Preis or 0) * zone.Energiewert)
+end
+
+function Progression.DecoUnlocked(item: any, profile: any): (boolean, string?)
+	if item.Zone and not Progression.IsZoneUnlocked(profile, item.Zone) then
+		local z = Zones[item.Zone]
+		return false, ("🔒 ab Zone %d (%s)"):format(item.Zone, z and z.Name or "?")
+	end
+	if item.Boss and not (profile.BossesDefeated and profile.BossesDefeated[item.Boss]) then
+		local idx = Progression.ZoneIndexById(item.Boss)
+		return false, ("🔒 Boss von Zone %d besiegen"):format(idx or 0)
+	end
+	return true, nil
+end
+
+-- Zeit für eine Medaille (1 = Bronze, 2 = Silber, 3 = Gold) bei Richtzeit "par"
+function Progression.MedalTime(par: number, medal: number): number
+	local m = Settings.Medals[medal]
+	return if m then math.floor(par * m.Faktor * 10 + 0.5) / 10 else math.huge
+end
+
+-- Beste Medaille für eine Zeit (0 = keine)
+function Progression.MedalFor(seconds: number, par: number?): number
+	if not par or par <= 0 then
+		return 0
+	end
+	local best = 0
+	for i = 1, #Settings.Medals do
+		if seconds <= Progression.MedalTime(par, i) then
+			best = i
+		end
+	end
+	return best
+end
+
 return Progression

@@ -17,6 +17,7 @@ local Difficulty = require(Config:WaitForChild("Difficulty")) :: any
 local Tags = require(Shared:WaitForChild("Tags"))
 local Util = require(Shared:WaitForChild("Util"))
 local Remotes = require(Shared:WaitForChild("Remotes"))
+local Progression = require(Shared:WaitForChild("Progression"))
 local DataService = require(script.Parent:WaitForChild("DataService"))
 local LevelService = require(script.Parent:WaitForChild("LevelService"))
 local PetService = require(script.Parent:WaitForChild("PetService"))
@@ -35,6 +36,7 @@ type Course = {
 	Checkpoint: number,
 	Count: number,
 	Length: number,
+	Par: number,
 	Name: string,
 }
 local courses: { [Player]: Course } = {}
@@ -87,8 +89,11 @@ local function onStart(part: BasePart, player: Player)
 		Checkpoint = 0,
 		Count = (part:GetAttribute("CheckpointCount") :: number?) or 0,
 		Length = (part:GetAttribute("Length") :: number?) or 100,
+		Par = 0,
 		Name = (part:GetAttribute("TrackName") :: string?) or key,
 	}
+	-- Richtzeit für Medaillen (ältere Welten ohne Attribut: grob aus der Länge schätzen)
+	c.Par = (part:GetAttribute("Par") :: number?) or (c.Length / 9 + c.Count + 3)
 	courses[player] = c
 	player:SetAttribute("CourseKey", key)
 	player:SetAttribute("CourseDiff", diff)
@@ -170,6 +175,31 @@ local function onFinish(part: BasePart, player: Player)
 
 	LevelService.Grant(player, track.Belohnung, factor)
 	QuestEvents.Fire(player, "Strecke", { Zone = c.Zone, Track = c.Track, Diff = c.Diff })
+
+	-- Zeit-Medaillen: jede neue Stufe gibt einmalig eine Extra-Belohnung
+	local medal = Progression.MedalFor(elapsed, c.Par)
+	local oldMedal = (data.Medals and data.Medals[completedKey]) or 0
+	if medal > oldMedal then
+		local bonus = 0
+		for m = oldMedal + 1, medal do
+			bonus += Settings.Medals[m].Belohnung
+		end
+		DataService.Update(player, function(d)
+			d.Medals[completedKey] = medal
+		end)
+		local info = Settings.Medals[medal]
+		task.delay(1.2, function()
+			if player.Parent then
+				Remotes.Event("Toast"):FireClient(player, ("%s %s-Medaille auf %s!"):format(info.Symbol, info.Name, c.Name), "gut")
+				LevelService.Grant(player, track.Belohnung, bonus * diffCfg.Belohnung)
+			end
+		end)
+		QuestEvents.Fire(player, "Medaille", { Medal = medal, Zone = c.Zone })
+	end
+	local medalTimes = {}
+	for m = 1, #Settings.Medals do
+		medalTimes[m] = Progression.MedalTime(c.Par, m)
+	end
 	if math.random() < diffCfg.EiChance and zone.Ei then
 		PetService.Hatch(player, zone.Ei, true)
 	end
@@ -181,6 +211,10 @@ local function onFinish(part: BasePart, player: Player)
 		First = first,
 		Name = c.Name,
 		Diff = c.Diff,
+		Medal = medal,
+		NewMedal = medal > oldMedal,
+		BestMedal = math.max(medal, oldMedal),
+		MedalTimes = medalTimes,
 	})
 	Remotes.Event("Effect"):FireAllClients("Finish", { Pos = part.Position })
 	if newBest and old then

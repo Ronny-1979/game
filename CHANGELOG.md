@@ -1,5 +1,33 @@
 # Changelog
 
+## [1.3.0] – 2026-11-05
+### Neu
+- **Zone 6 „Sternen-Sternwarte“ und Zone 7 „Versunkenes Uhrwerk“** – je 3 Strecken, 3 Gegner-Arten, Boss
+  (Komet-Kasimir, Kapitän Ankerzahn), Ei mit 5 Pets, 6 Herausforderungen, Co-op-Rätsel, eigene Musik
+- **Pet-Fusion** (`Pets.lua` → `Fusion`): 3 gleiche Pets → ✨ Gold (×3,5 Bonus) → 🌈 Regenbogen (×12 Bonus)
+- **Schönere Pets**: Füßchen, Bäckchen, Aufziehschlüssel, Ohren, Antenne, Zahnrad-Zähne; Flügel (episch),
+  Krone (legendär), Gold-Glanz und Regenbogen-Farben nach der Fusion
+- **Zeit-Medaillen** 🥉🥈🥇 für jede Bahn (Richtzeit aus Länge + Hindernissen), Extra-Belohnung pro Medaille,
+  Anzeige im Ergebnis, auf der Karte und in der Bestenliste
+- **Wochen-Events** (`Events.lua`): Doppel-Energie-Wochenende, Doppel-XP-Mittwoch, Glücks-Freitag,
+  Halloween 🎃 (Kürbisse im Hub), Winter ❄️ (Schneefall), Sommerferien – Banner im HUD
+- **Freunde-Bonus**: +10 % Energie pro Freund auf dem Server (max. +50 %)
+- **24 Geheimnisse** (`Secrets.lua`): versteckte goldene Zahnräder im Hub und in jeder Zone, Belohnung + Meilensteine,
+  Rätsel-Tipps im Erfolge-Menü
+- **Endlos-Turm** 🗼 (`Tower.lua`): Etagen werden bei Bedarf gebaut, jeden Montag ein neuer Turm,
+  Start auf jeder erreichten 10er-Etage, Wochen- und Rekord-Bestenliste
+- **Eigene Werkstatt-Insel** 🏡 (`Deco.lua`): 24 Deko-Stücke (inkl. Boss-Pokale), Bauen im Raster, Abbauen,
+  andere Werkstätten besuchen, Werkstatt-Bonus (+0,5 % Energie pro Deko, max. +25 %)
+- 5 neue Aufgaben (Werkstatt, Fusion, Turm, Geheimnisse, Gold-Medaille) + 4 für die neuen Zonen, 10 neue Abzeichen
+- **Grafik**: Terrain-Felsen unter allen Inseln, riesige Uhren und Zahnräder im Hintergrund jeder Zone,
+  Zonen-Kulissen (Riesen-Blumen, Schornsteine mit Dampf, Felsnadeln mit Riesen-Pendel, Kristalltürme,
+  Planeten, Seetang mit Blasen), Funken an Zahnrädern, Konfetti-Regen + Feuerwerk beim Boss-Sieg
+- Hub: 7 Teleporter im Halbkreis, Stationen „Endlos-Turm“ und „Meine Werkstatt“, Karte mit Schnellzugang
+### Geändert
+- Abzeichen „Alle …“ zählen jetzt 7 Zonen (21 Profi-Bahnen, 16 Co-op-Rätsel, 42 Herausforderungen)
+- Profil um `Medals`, `Secrets`, `Tower`, `Island`, `Stats.Fused` erweitert (alte Spielstände werden automatisch ergänzt)
+- ⚠️ Welt neu bauen nötig (Command Bar), dabei wird das Terrain neu erzeugt
+
 ## [1.2.1] – 2026-11-05
 ### Neu
 - Hintergrundmusik für Hub, alle 5 Zonen und den Bosskampf (APM Music, Creator Store)

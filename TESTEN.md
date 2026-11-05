@@ -67,10 +67,24 @@ Tipp: Mit dem 🔧-Admin-Menü (im Studio immer da) kommt man schnell an Energie
 - [ ] Allein: Hinweis „nur zusammen“ (oder `SoloTestMode = true` zum Testen)
 - [ ] 👥 Einladen öffnet das Roblox-Einladefenster (nur im veröffentlichten Spiel)
 
-## 6. Zonen 2–5
+## 6. Zonen 2–7
 - [ ] Admin: „Alle Zonen frei“ → jede Zone per Karte erreichbar, alle 3 Strecken je Bahn schaffbar
-- [ ] Förderbänder (Z2), Pendel (Z3), Drehringe + Laser (Z4), Mischung (Z5)
+- [ ] Förderbänder (Z2), Pendel (Z3), Drehringe + Laser (Z4), Mischung (Z5), Sternwarte (Z6), Tiefsee (Z7)
 - [ ] Jeder Boss besiegbar (zu zweit testen), Portal führt zur nächsten Zone
+
+## 6b. Neue Funktionen (1.3)
+- [ ] Pets: Admin „3× gleiches Pet“ → im Pet-Menü „Fusion zu Gold (3/3)“ → ein ✨ Gold-Pet, glänzt golden
+- [ ] Strecke schaffen → Ergebnis zeigt Medaille + nächstes Ziel, Karte zeigt 🥇/🥈/🥉
+- [ ] Bestenliste zeigt die Medaillen-Zeiten der Bahn
+- [ ] Admin: Event-Knopf → Banner links im HUD, Energie doppelt; „Test-Event aus“ → Banner weg
+- [ ] Halloween-Event → Kürbisse im Hub; Winter-Event → Schneefall
+- [ ] Geheimnis im Hub (hinter dem Uhrturm) berühren → Belohnung, Zahnrad verschwindet; 🏅 Erfolge → Geheimnisse
+- [ ] Hub → 🗼 Endlos-Turm → „Etage 1“ → Ausgang erreicht → Etage 2; Absturz → zurück auf die Etagen-Startplatte
+- [ ] Turm: „↩ Hub“-Feld bringt zurück; Admin „Turm: Etage +10“ → Start auf Etage 11 möglich
+- [ ] Hub → 🏡 Meine Werkstatt → „Zur Werkstatt“ → Katalog → Deko wählen → Vorschau grün/rot, T dreht, Klick baut
+- [ ] Abbauen-Modus: Deko anklicken → verschwindet, Energie zurück; Werkstatt-Bonus im Menü steigt/sinkt
+- [ ] Zweiter Spieler: „Werkstätten besuchen“ → landet auf der fremden Insel, darf dort nichts bauen
+- [ ] Boss besiegen → Konfetti-Regen + Feuerwerk; danach Pokal im Werkstatt-Katalog frei
 
 ## 7. Sicherheit (optional mit Exploit-Testwerkzeug)
 - [ ] Admin-Befehl als Nicht-Admin (UserId entfernen, `AdminInStudio = false`) → „Keine Admin-Rechte“

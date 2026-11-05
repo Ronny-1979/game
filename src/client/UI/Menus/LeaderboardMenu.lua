@@ -6,6 +6,7 @@ local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Config = Shared:WaitForChild("Config")
 local Zones = require(Config:WaitForChild("Zones")) :: any
 local Difficulty = require(Config:WaitForChild("Difficulty")) :: any
+local Settings = require(Config:WaitForChild("Settings")) :: any
 local Util = require(Shared:WaitForChild("Util"))
 local Progression = require(Shared:WaitForChild("Progression"))
 
@@ -41,7 +42,7 @@ function LeaderboardMenu.Build(UI: any)
 		C.Clear(trackRow)
 		C.Clear(diffRow)
 		for i, z in ipairs(Zones) do
-			C.Button({ Text = tostring(i), Size = UDim2.new(0.2, -6, 1, 0), BackgroundColor3 = if i == zone then z.Farben.Akzent else Theme.Locked, OnClick = function()
+			C.Button({ Text = tostring(i), Size = UDim2.new(1 / #Zones, -6, 1, 0), BackgroundColor3 = if i == zone then z.Farben.Akzent else Theme.Locked, OnClick = function()
 				zone = i
 				load()
 			end, Parent = zoneRow })
@@ -77,7 +78,17 @@ function LeaderboardMenu.Build(UI: any)
 		end
 		if r.mine then
 			local mine = C.Frame({ Size = UDim2.new(1, -6, 0, 42), BackgroundColor3 = Theme.Mint, LayoutOrder = 0, Parent = list })
-			C.Label({ Text = ("⭐ Deine Bestzeit: %s"):format(Util.FormatTime(r.mine)), Size = UDim2.new(1, -12, 1, -6), Position = UDim2.fromOffset(6, 3), MaxTextSize = 22, Parent = mine })
+			local m = Settings.Medals[r.myMedal or 0]
+			C.Label({ Text = ("⭐ Deine Bestzeit: %s%s"):format(Util.FormatTime(r.mine), if m then "  " .. m.Symbol else ""), Size = UDim2.new(1, -12, 1, -6), Position = UDim2.fromOffset(6, 3), MaxTextSize = 22, Parent = mine })
+		end
+		-- Medaillen-Zeiten
+		if r.medals then
+			local parts = {}
+			for i = #Settings.Medals, 1, -1 do
+				table.insert(parts, ("%s %s"):format(Settings.Medals[i].Symbol, Util.FormatTime(r.medals[i])))
+			end
+			local box = C.Frame({ Size = UDim2.new(1, -6, 0, 38), BackgroundColor3 = Theme.PanelDark, LayoutOrder = 0, Parent = list })
+			C.Label({ Text = "Medaillen-Zeiten:   " .. table.concat(parts, "    "), Size = UDim2.new(1, -12, 1, -6), Position = UDim2.fromOffset(6, 3), MaxTextSize = 19, Parent = box })
 		end
 		if #r.list == 0 then
 			C.Label({ Text = "Noch keine Zeiten – sei die/der Erste! 🏁", Size = UDim2.new(1, 0, 0, 40), LayoutOrder = 1, Parent = list })

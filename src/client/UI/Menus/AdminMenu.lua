@@ -6,6 +6,7 @@ local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Config = Shared:WaitForChild("Config")
 local Zones = require(Config:WaitForChild("Zones")) :: any
 local Pets = require(Config:WaitForChild("Pets")) :: any
+local Events = require(Config:WaitForChild("Events")) :: any
 
 local AdminMenu = {}
 
@@ -41,6 +42,17 @@ function AdminMenu.Build(UI: any)
 	for _, eggId in Pets.EierReihenfolge do
 		cmd("🥚 " .. Pets.Eier[eggId].Name, Pets.Eier[eggId].Farbe:Lerp(Theme.BrassDark, 0.3), "Ei", eggId)
 	end
+	cmd("Level 50", Theme.Lilac, "Level", 50)
+	cmd("🥚 3× gleiches Pet (Fusion-Test)", Theme.Mint, "FusionTest", nil)
+	for _, e in Events.Woche do
+		cmd("🎉 " .. e.Name, Theme.Boss, "Event", e.Id)
+	end
+	for _, e in Events.Saison do
+		cmd("🎉 " .. e.Name, Theme.Boss, "Event", e.Id)
+	end
+	cmd("🎉 Test-Event aus", Theme.Locked, "Event", "")
+	cmd("🗼 Turm: Etage +10", Theme.Copper, "Turm", 10)
+	cmd("🔍 Alle Geheimnisse zeigen", Theme.Copper, "Geheimnisse", nil)
 	cmd("⚠️ Profil zurücksetzen", Theme.Bad, "Reset", nil)
 	return { Frame = win }
 end

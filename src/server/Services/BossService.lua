@@ -500,6 +500,7 @@ local function defeat(b: Boss)
 	b.Tired = false
 	sendUi(b)
 	Remotes.Event("Effect"):FireAllClients("GearBurst", { Pos = b.Root.Position, Size = b.Cfg.Groesse / 2.5 })
+	Remotes.Event("Effect"):FireAllClients("BossWin", { Pos = b.Center, Radius = 55 })
 	b.Model.Parent = nil
 	local zone = Zones[b.ZoneIndex]
 	toastArena(b, ("🎉 %s ist in Zahnräder zerfallen! Super gemacht!"):format(b.Cfg.Name), "boss")
