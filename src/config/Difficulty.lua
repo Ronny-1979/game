@@ -26,6 +26,10 @@ Difficulty.Stufen = {
 		Wackelwinkel = 6, -- Grad
 		PendelWinkel = 38, -- Grad
 		LaserHoehen = { 1.5 }, -- nur ein tiefer Laser (darüber springen geht immer)
+		SprungpadHoehe = 5, -- so viel höher liegt die Plattform hinter der Sprungfeder (ohne Feder schafft man ca. 6)
+		SprungpadRadius = 3.4, -- Größe der Sprungfeder
+		Zeitplattformen = 3, -- so viele blinkende Plattformen hintereinander
+		Seitenversatz = 2, -- seitliches Versetzen der Plattformen (Studs)
 		CheckpointAlle = 2, -- alle 2 Abschnitte ein Checkpoint
 		Belohnung = 1.0, -- Belohnungs-Multiplikator
 		EiChance = 0.05, -- 5 % Chance auf ein Gratis-Ei
@@ -44,6 +48,10 @@ Difficulty.Stufen = {
 		Wackelwinkel = 10,
 		PendelWinkel = 50,
 		LaserHoehen = { 1.5, 4.5 },
+		SprungpadHoehe = 8,
+		SprungpadRadius = 2.8,
+		Zeitplattformen = 4,
+		Seitenversatz = 3.5,
 		CheckpointAlle = 2,
 		Belohnung = 1.6,
 		EiChance = 0.1,
@@ -62,6 +70,10 @@ Difficulty.Stufen = {
 		Wackelwinkel = 15,
 		PendelWinkel = 60,
 		LaserHoehen = { 1.5, 4.5 },
+		SprungpadHoehe = 10,
+		SprungpadRadius = 2.4,
+		Zeitplattformen = 5,
+		Seitenversatz = 4,
 		CheckpointAlle = 3,
 		Belohnung = 2.5,
 		EiChance = 0.2,
@@ -73,7 +85,7 @@ Difficulty.Stufen = {
 Difficulty.MaxLuecke = 8.5
 -- Kleinste erlaubte Plattform
 Difficulty.MinPlattform = 4.5
--- Seitliches Versetzen der Plattformen (Studs)
+-- Seitliches Versetzen der Plattformen (Studs), falls eine Stufe keinen eigenen Wert hat
 Difficulty.Seitenversatz = 4
 
 return Difficulty

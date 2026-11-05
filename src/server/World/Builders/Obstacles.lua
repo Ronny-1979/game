@@ -61,7 +61,7 @@ function Obstacles.NextY(ctx: Ctx, gap: number, y: number): number
 end
 
 function Obstacles.NextX(ctx: Ctx): number
-	local side = Difficulty.Seitenversatz
+	local side = ctx.P.Seitenversatz or Difficulty.Seitenversatz
 	local x = ctx.LastX + ctx.Rng:NextNumber(-1, 1) * side
 	x = math.clamp(x, ctx.LaneX - side, ctx.LaneX + side)
 	ctx.LastX = x
@@ -294,7 +294,7 @@ end
 B.Zeitplattform = function(ctx, cur)
 	local period = ctx.Takt
 	local onTime = period * ctx.P.AnAnteil
-	for i = 1, 5 do
+	for i = 1, ctx.P.Zeitplattformen or 5 do
 		local s = ctx.Size * 0.9
 		local gap = Obstacles.Gap(ctx, 0.85)
 		local y = Obstacles.NextY(ctx, gap, cur.Y)
@@ -393,20 +393,24 @@ B.Sprungpad = function(ctx, cur)
 	local s = math.max(ctx.Size * 1.1, 7)
 	local gap = Obstacles.Gap(ctx)
 	local y = cur.Y
+	local rise = ctx.P.SprungpadHoehe or 10
+	-- Federkraft passend zur Höhe: ca. 8 Studs über die Zielplattform hinaus (genug Flugzeit zum Landen)
+	local up = math.floor(math.sqrt(2 * workspace.Gravity * (rise + 8)) + 0.5)
 	local padTop = Vector3.new(ctx.LaneX, y, cur.Z + gap + s / 2)
 	plat(ctx, padTop, s, s)
-	Parts.Cylinder(padTop + Vector3.new(0, 0.4, 0), 2.4, 0.4, {
+	Parts.Cylinder(padTop + Vector3.new(0, 0.4, 0), ctx.P.SprungpadRadius or 2.4, 0.4, {
 		Name = "Sprungfeder",
 		Color = Color3.fromRGB(120, 255, 140),
 		Material = Enum.Material.Neon,
 		CanCollide = false,
 		Tags = { Tags.JumpPad },
-		Attrs = { Up = 82, Forward = 22, Dir = Vector3.zAxis },
+		Attrs = { Up = up, Forward = 14, Dir = Vector3.zAxis },
 		Parent = ctx.Folder,
 	})
-	local s2 = math.max(ctx.Size * 1.2, 8)
-	local y2 = y + 10
-	local z2 = padTop.Z + 9 + s2 / 2
+	local s2 = math.max(ctx.Size * 1.4, 10)
+	local y2 = y + rise
+	-- Zielplattform beginnt kurz hinter der Feder (die Feder löst schon am vorderen Rand aus)
+	local z2 = padTop.Z + 4 + s2 / 2
 	plat(ctx, Vector3.new(ctx.LaneX, y2, z2), s2, s2, ctx.Colors.Akzent)
 	ctx.LastX = ctx.LaneX
 	return Vector3.new(ctx.LaneX, y2, z2 + s2 / 2)

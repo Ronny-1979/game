@@ -40,7 +40,7 @@ local Zones = {
 		Energiewert = 1, -- Energie pro Kristall-Klick (vor Multiplikatoren)
 		Tutorial = true, -- zeigt Hinweis-Schilder
 		Strecken = {
-			{ Name = "Erste Schritte", Abschnitte = 8, Hindernisse = { "Sprung", "Zeitplattform", "Sprungpad" }, Belohnung = { Energie = 80, XP = 40 } },
+			{ Name = "Erste Schritte", Abschnitte = 6, Hindernisse = { "Sprung", "Sprungpad", "Sprung", "Zeitplattform" }, Belohnung = { Energie = 80, XP = 40 } },
 			{ Name = "Zahnrad-Hüpfer", Abschnitte = 10, Hindernisse = { "Sprung", "Zahnrad", "Wackel" }, Belohnung = { Energie = 120, XP = 60 } },
 			{ Name = "Funkelpfad", Abschnitte = 12, Hindernisse = { "Sprung", "Zahnrad", "Zeitplattform", "Funken" }, Belohnung = { Energie = 180, XP = 90 } },
 		},

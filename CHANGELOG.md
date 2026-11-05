@@ -7,7 +7,11 @@
 ### Geändert
 - Alle Schwierigkeiten leichter (`Difficulty.lua`): kürzere Lücken, größere Plattformen, langsamere Hindernisse,
   Zeitplattformen länger sichtbar, mehr Checkpoints
-- Spätere Zonen werden nur noch sanft schwerer; Plattform nach der Sprungfeder 10 statt 12 Studs höher
+- Spätere Zonen werden nur noch sanft schwerer
+- Sprungfedern je Stufe: Zielplattform Leicht +5 (auch ohne Feder schaffbar), Normal +8, Profi +10;
+  größere Feder, Federkraft passt zur Höhe, Zielplattform direkt hinter der Feder (vorher landete man davor)
+- Weniger Zeitplattformen hintereinander (Leicht 3, Normal 4, Profi 5), Leicht weniger seitlich versetzt
+- Erste Strecke „Erste Schritte“: 6 statt 8 Abschnitte, mehr normale Sprünge
 - ⚠️ Welt neu bauen nötig (Command Bar)
 
 ## [1.3.1] – 2026-11-05
