@@ -8,7 +8,7 @@ local Settings = {}
 
 -- 🔐 Admins: Trage hier eure Roblox-UserIds ein (Zahl aus der Profil-URL).
 -- Beispiel: Settings.AdminUserIds = { 12345678, 87654321 }
-Settings.AdminUserIds = {}
+Settings.AdminUserIds = { 3265010963 }
 -- Im Roblox Studio darf jeder Admin-Befehle nutzen (praktisch zum Testen).
 Settings.AdminInStudio = true
 
