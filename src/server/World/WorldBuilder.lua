@@ -85,6 +85,19 @@ function WorldBuilder.Build(): Folder
 			inst.Enabled = false
 		end
 	end
+	-- die graue Grundplatte der Studio-Vorlage würde man unter den Inseln sehen → unsichtbar machen
+	local baseplate = workspace:FindFirstChild("Baseplate")
+	if baseplate and baseplate:IsA("BasePart") then
+		baseplate.Transparency = 1
+		baseplate.CanCollide = false
+		baseplate.CanQuery = false
+		baseplate.CanTouch = false
+		for _, child in baseplate:GetChildren() do
+			if child:IsA("Texture") or child:IsA("Decal") then
+				child.Transparency = 1
+			end
+		end
+	end
 	world.Parent = workspace
 	LightingSetup.Apply()
 

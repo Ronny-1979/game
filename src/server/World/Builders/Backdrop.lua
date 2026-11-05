@@ -212,7 +212,7 @@ Extras.Tiefsee = function(f, O, C, rng)
 		for s = 1, segs do
 			deco({
 				Name = "Tang",
-				Size = Vector3.new(6, h / segs + 2, 2),
+				Size = Vector3.new(14, h / segs + 2, 3),
 				CFrame = pivot * CFrame.new(math.sin(s * 1.3 + i) * 4, (s - 0.5) * h / segs, 0) * CFrame.Angles(0, 0, math.sin(s + i) * 0.1),
 				Color = Color3.fromRGB(80, 170, 120):Lerp(Color3.fromRGB(140, 220, 150), s / segs),
 				Material = Enum.Material.Grass,
@@ -235,15 +235,15 @@ Extras.Tiefsee = function(f, O, C, rng)
 		p.LightEmission = 0.5
 		p.Parent = emitterPart
 	end
-	-- Lichtstrahlen von oben (schräge, durchsichtige Säulen)
+	-- Lichtstrahlen von oben – nur hinten in der Kulisse, damit sie nicht durchs Spielfeld gehen
 	for i = 1, 5 do
 		deco({
 			Name = "Lichtstrahl",
-			Size = Vector3.new(30, 500, 6),
-			CFrame = CFrame.new(O + Vector3.new(-400 + i * 150, 120, rng:NextNumber(-250, 150))) * CFrame.Angles(0, rng:NextNumber(0, 3), math.rad(18)),
+			Size = Vector3.new(40, 420, 4),
+			CFrame = CFrame.new(O + Vector3.new(-480 + i * 160, 100, rng:NextNumber(-560, -440))) * CFrame.Angles(0, 0, math.rad(14)),
 			Color = Color3.fromRGB(220, 255, 250),
 			Material = Enum.Material.Neon,
-			Transparency = 0.93,
+			Transparency = 0.96,
 			Parent = f,
 		})
 	end
