@@ -33,7 +33,6 @@ function AdminMenu.Build(UI: any)
 	cmd("Level 10", Theme.Lilac, "Level", 10)
 	cmd("Level 30", Theme.Lilac, "Level", 30)
 	cmd("+10 Skillpunkte", Theme.Lilac, "SkillPunkte", 10)
-	cmd("+5 Rebirth-Punkte", Theme.Copper, "RebirthPunkte", 5)
 	cmd("Alle Zonen frei", Theme.Good, "AlleZonen", nil)
 	cmd("🎁 Bonus zurücksetzen", Theme.Good, "Bonus", nil)
 	for i, z in ipairs(Zones) do

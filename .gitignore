@@ -10,3 +10,4 @@ sourcemap.json
 /packages
 /.vscode/settings.json
 .DS_Store
+/rojo.exe

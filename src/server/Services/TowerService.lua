@@ -21,6 +21,7 @@ local Remotes = require(Shared:WaitForChild("Remotes"))
 local Util = require(Shared:WaitForChild("Util"))
 local Progression = require(Shared:WaitForChild("Progression"))
 local DataService = require(script.Parent:WaitForChild("DataService"))
+local PadSensor = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("PadSensor"))
 local LevelService = require(script.Parent:WaitForChild("LevelService"))
 local PetService = require(script.Parent:WaitForChild("PetService"))
 local ZoneService = require(script.Parent:WaitForChild("ZoneService"))
@@ -276,9 +277,8 @@ function TowerService.Start()
 	local function hook(tag: string, fn: (BasePart, Player) -> ())
 		local function connect(part: Instance)
 			if part:IsA("BasePart") then
-				part.Touched:Connect(function(hit)
-					local player = Util.PlayerFromPart(hit)
-					if player and DataService.Get(player) then
+				PadSensor.OnStep(part, function(player)
+					if DataService.Get(player) then
 						fn(part, player)
 					end
 				end)

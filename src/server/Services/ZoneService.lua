@@ -15,6 +15,7 @@ local Tags = require(Shared:WaitForChild("Tags"))
 local Signal = require(Shared:WaitForChild("Signal"))
 local Remotes = require(Shared:WaitForChild("Remotes"))
 local Util = require(Shared:WaitForChild("Util"))
+local PadSensor = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("PadSensor"))
 local Progression = require(Shared:WaitForChild("Progression"))
 local DataService = require(script.Parent:WaitForChild("DataService"))
 local PlayerService = require(script.Parent:WaitForChild("PlayerService"))
@@ -100,11 +101,7 @@ local function connectPad(part: Instance, getTarget: () -> number)
 	if not part:IsA("BasePart") then
 		return
 	end
-	part.Touched:Connect(function(hit)
-		local player = Util.PlayerFromPart(hit)
-		if not player then
-			return
-		end
+	PadSensor.OnStep(part, function(player)
 		local now = os.clock()
 		if (debounce[player] or 0) > now then
 			return

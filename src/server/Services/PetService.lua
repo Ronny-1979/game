@@ -99,17 +99,8 @@ function PetService.Hatch(player: Player, eggId: string, free: boolean): any
 		if not near then
 			return { ok = false, msg = "Geh näher an das Ei heran." }
 		end
-		if egg.Waehrung == "Rebirth" then
-			if data.RebirthPoints < egg.Preis then
-				return { ok = false, msg = "Du brauchst Rebirth-Punkte ♻️" }
-			end
-			DataService.Update(player, function(d)
-				d.RebirthPoints -= egg.Preis
-			end)
-		else
-			if not DataService.Spend(player, egg.Preis) then
-				return { ok = false, msg = "Nicht genug Energie ⚡" }
-			end
+		if not DataService.Spend(player, egg.Preis) then
+			return { ok = false, msg = "Nicht genug Energie ⚡" }
 		end
 	end
 	-- Glücks-Events: seltene Pets (Episch, Legendär) öfter

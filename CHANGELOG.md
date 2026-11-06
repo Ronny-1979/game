@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.3] – 2026-11-05
+### Behoben
+- Checkpoints, Start-/Zielfelder, Zonen-Teleporter, Portale, Rückweg-Felder, Turm-Ausgänge, Geheimnisse und
+  Koop-Belohnungen lösen jetzt sofort aus, sobald man den Rand betritt – vorher oft erst ganz am Ende des Feldes,
+  weil Roblox-Figuren leicht über dem Boden schweben und `Touched` dann nicht feuert.
+  Neu: `server/Util/PadSensor.lua` prüft 10x pro Sekunde mit einer Box um die Figur; `Touched` bleibt zusätzlich aktiv.
+- Kein Welt-Neubau nötig.
+
 ## [1.3.2] – 2026-11-05
 ### Behoben
 - Sprungfedern lösten nicht aus (die Erkennung reichte nicht bis zu den Füßen) – dahinter lag eine

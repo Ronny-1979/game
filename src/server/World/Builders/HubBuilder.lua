@@ -117,11 +117,25 @@ local function eggStation(parent: Instance, H: Vector3)
 		mesh.MeshType = Enum.MeshType.Sphere
 		mesh.Scale = Vector3.new(1, 1.3, 1)
 		mesh.Parent = eggPart
-		local price = if egg.Waehrung == "Rebirth" then ("%d ♻️"):format(egg.Preis) else (Util.FormatNumber(egg.Preis) .. " ⚡")
+		local price = Util.FormatNumber(egg.Preis) .. " ⚡"
 		Parts.Prompt(eggPart, "Öffnen", ("%s – %s"):format(egg.Name, price))
 		Parts.Billboard(eggPart, ("🥚 %s\n%s"):format(egg.Name, price), 5, Vector2.new(180, 55))
 	end
-	Parts.Sign(parent, H + Vector3.new(48, 0, 72), "🥚 Pet-Eier-Station\nJede Zone hat ihr eigenes Ei!", 13, 4.5, Vector3.new(-1, 0, 0))
+end
+
+-- Baut nur die Eier neu (beim Serverstart), damit neue oder umbenannte Eier
+-- auch ohne "Welt neu bauen" im Spiel stehen.
+function HubBuilder.RefreshEggStation(world: Instance)
+	local hub = world:FindFirstChild("Hub")
+	if not hub then
+		return
+	end
+	for _, child in hub:GetChildren() do
+		if child.Name == "EiSockel" or child:GetAttribute("EggId") ~= nil then
+			child:Destroy()
+		end
+	end
+	eggStation(hub, Settings.HubCenter)
 end
 
 local function teacher(parent: Instance, H: Vector3)
@@ -280,6 +294,7 @@ function HubBuilder.Build(world: Instance)
 	teacher(folder, H)
 	rebirthAltar(folder, H)
 	eggStation(folder, H)
+	Parts.Sign(folder, H + Vector3.new(48, 0, 72), "🥚 Pet-Eier-Station\nJede Zone hat ihr eigenes Ei!", 13, 4.5, Vector3.new(-1, 0, 0))
 	teleporters(folder, H)
 	towerGate(folder, H)
 	islandGate(folder, H)

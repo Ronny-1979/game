@@ -30,9 +30,9 @@ Secrets.Belohnung = { EnergieFaktor = 400, XP = 80 }
 
 -- Extra-Belohnung, wenn man so viele gefunden hat
 Secrets.Meilensteine = {
-	{ Anzahl = 6, Belohnung = { RebirthPunkte = 1 }, Text = "6 Geheimnisse: +1 Rebirth-Punkt ♻️" },
+	{ Anzahl = 6, Belohnung = { XP = 500 }, Text = "6 Geheimnisse: +500 XP ⭐" },
 	{ Anzahl = 12, Belohnung = { Ei = "BestesEi" }, Text = "12 Geheimnisse: Gratis-Ei! 🥚" },
-	{ Anzahl = 24, Belohnung = { Titel = "Meisterdetektiv", RebirthPunkte = 3 }, Text = "Alle Geheimnisse: Titel „Meisterdetektiv“ 🕵️" },
+	{ Anzahl = 24, Belohnung = { Titel = "Meisterdetektiv" }, Text = "Alle Geheimnisse: Titel „Meisterdetektiv“ 🕵️" },
 }
 
 return Secrets

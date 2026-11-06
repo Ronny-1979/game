@@ -24,6 +24,7 @@ local PetService = require(script.Parent:WaitForChild("PetService"))
 local ZoneService = require(script.Parent:WaitForChild("ZoneService"))
 local LeaderboardService = require(script.Parent:WaitForChild("LeaderboardService"))
 local QuestEvents = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("QuestEvents"))
+local PadSensor = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("PadSensor"))
 
 local CourseService = {}
 
@@ -225,9 +226,8 @@ end
 local function hook(tag: string, handler: (BasePart, Player) -> ())
 	local function connect(part: Instance)
 		if part:IsA("BasePart") then
-			part.Touched:Connect(function(hit)
-				local player = Util.PlayerFromPart(hit)
-				if player and DataService.Get(player) then
+			PadSensor.OnStep(part, function(player)
+				if DataService.Get(player) then
 					handler(part, player)
 				end
 			end)

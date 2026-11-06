@@ -20,6 +20,11 @@ if Settings.RebuildWorldOnStart or not workspace:FindFirstChild("UhrwerkWelt") t
 	end
 else
 	WorldBuilder.ApplyLighting()
+	-- Eier immer frisch aus der Konfig, auch wenn die gespeicherte Welt älter ist
+	local ok, err = pcall(WorldBuilder.RefreshEggs)
+	if not ok then
+		warn("[Server] Eier-Station-Fehler:", err)
+	end
 end
 
 -- 2) Services in fester Reihenfolge laden

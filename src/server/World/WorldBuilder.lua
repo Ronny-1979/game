@@ -52,6 +52,14 @@ local ROCK_COLORS = {
 	[Enum.Material.Salt] = Color3.fromRGB(240, 236, 230),
 }
 
+-- Eier-Station aus der aktuellen Konfig neu bauen (läuft bei jedem Serverstart)
+function WorldBuilder.RefreshEggs()
+	local world = workspace:FindFirstChild("UhrwerkWelt")
+	if world then
+		HubBuilder.RefreshEggStation(world)
+	end
+end
+
 function WorldBuilder.Build(): Folder
 	local t0 = os.clock()
 	local old = workspace:FindFirstChild("UhrwerkWelt")

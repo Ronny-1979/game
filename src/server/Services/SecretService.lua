@@ -15,6 +15,7 @@ local Util = require(Shared:WaitForChild("Util"))
 local Goals = require(Shared:WaitForChild("Goals"))
 local Progression = require(Shared:WaitForChild("Progression"))
 local DataService = require(script.Parent:WaitForChild("DataService"))
+local PadSensor = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("PadSensor"))
 local LevelService = require(script.Parent:WaitForChild("LevelService"))
 local QuestEvents = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("QuestEvents"))
 
@@ -86,11 +87,8 @@ function SecretService.Init() end
 function SecretService.Start()
 	local function connect(part: Instance)
 		if part:IsA("BasePart") then
-			part.Touched:Connect(function(hit)
-				local player = Util.PlayerFromPart(hit)
-				if player then
-					onTouch(part, player)
-				end
+			PadSensor.OnStep(part, function(player)
+				onTouch(part, player)
 			end)
 		end
 	end

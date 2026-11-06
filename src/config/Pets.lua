@@ -5,7 +5,7 @@
 	  Multiplikator (1.5 = +50 % Energie), Farbe, Form ("Kugel", "Wuerfel", "Zylinder", "Zahnrad"),
 	  Beschreibung (wie es aussieht).
 
-	Eier: Preis + Waehrung ("Energie" oder "Rebirth" = Rebirth-Punkte),
+	Eier: Preis (in Energie), Zone (ab welcher Zone man es kaufen kann),
 	  Chancen = Gewichte (größere Zahl = häufiger). Prozent werden automatisch berechnet.
 
 	Beispiel für ein neues Pet:
@@ -76,7 +76,14 @@ Pets.Liste = {
 	Perlenwal = { Name = "Perlen-Wal", Seltenheit = "Episch", Multiplikator = 30, Farbe = Color3.fromRGB(120, 170, 230), Form = "Kugel", Beschreibung = "Trägt eine leuchtende Perle" },
 	Tiefenchronometer = { Name = "Tiefen-Chronometer", Seltenheit = "Legendaer", Multiplikator = 60, Farbe = Color3.fromRGB(110, 240, 210), Form = "Zahnrad", Beschreibung = "Die älteste Uhr des Ozeans" },
 
-	-- ♻️ Rebirth-Ei
+	-- 💰 Schatzkammer-Ei
+	Silberwecker = { Name = "Platin-Wecker", Seltenheit = "Gewoehnlich", Multiplikator = 25, Farbe = Color3.fromRGB(225, 230, 240), Form = "Kugel", Beschreibung = "Blank polierter Platin-Wecker" },
+	Muenzmops = { Name = "Münzmops", Seltenheit = "Gewoehnlich", Multiplikator = 27, Farbe = Color3.fromRGB(240, 200, 90), Form = "Wuerfel", Beschreibung = "Kleiner Mops aus Goldmünzen" },
+	Diamantuhr = { Name = "Diamant-Taschenuhr", Seltenheit = "Selten", Multiplikator = 36, Farbe = Color3.fromRGB(180, 240, 255), Form = "Zylinder", Beschreibung = "Taschenuhr mit funkelnden Diamanten" },
+	Tresorbot = { Name = "Tresor-Bot", Seltenheit = "Episch", Multiplikator = 50, Farbe = Color3.fromRGB(120, 200, 130), Form = "Wuerfel", Beschreibung = "Ein Tresor auf Beinen mit Zahlenschloss" },
+	Millionaersuhr = { Name = "Milliardärs-Uhr", Seltenheit = "Legendaer", Multiplikator = 100, Farbe = Color3.fromRGB(255, 215, 0), Form = "Zahnrad", Beschreibung = "Pures Gold mit Diamant-Zeigern" },
+
+	-- alte Pets aus dem früheren Rebirth-Ei (bleiben, damit Spieler sie behalten)
 	Zeitstern = { Name = "Zeitstern", Seltenheit = "Episch", Multiplikator = 8, Farbe = Color3.fromRGB(255, 250, 160), Form = "Kugel", Beschreibung = "Ein kleiner Stern, der tickt" },
 	Phoenixuhr = { Name = "Phönix-Uhr", Seltenheit = "Legendaer", Multiplikator = 18, Farbe = Color3.fromRGB(255, 120, 80), Form = "Zahnrad", Beschreibung = "Wird bei jedem Rebirth neu geboren" },
 	Galaxis = { Name = "Galaxis-Ticker", Seltenheit = "Legendaer", Multiplikator = 30, Farbe = Color3.fromRGB(120, 100, 230), Form = "Zylinder", Beschreibung = "Hat eine Galaxie im Bauch" },
@@ -139,13 +146,13 @@ Pets.Eier = {
 		Farbe = Color3.fromRGB(140, 225, 220),
 		Chancen = { Blubberbot = 45, Seepferdticker = 35, Krakenuhr = 15, Perlenwal = 4.5, Tiefenchronometer = 0.5 },
 	},
-	RebirthEi = {
-		Name = "Rebirth-Ei",
-		Zone = 1,
-		Preis = 1,
-		Waehrung = "Rebirth",
-		Farbe = Color3.fromRGB(255, 150, 120),
-		Chancen = { Zeitstern = 70, Phoenixuhr = 25, Galaxis = 5 },
+	MilliardenEi = {
+		Name = "Schatzkammer-Ei",
+		Zone = 7,
+		Preis = 10000000000,
+		Waehrung = "Energie",
+		Farbe = Color3.fromRGB(255, 215, 60),
+		Chancen = { Silberwecker = 45, Muenzmops = 35, Diamantuhr = 15, Tresorbot = 4.5, Millionaersuhr = 0.5 },
 	},
 }
 
@@ -164,6 +171,6 @@ Pets.Fusion = {
 }
 
 -- Reihenfolge der Eier an der Eier-Station im Hub
-Pets.EierReihenfolge = { "WiesenEi", "WerkstattEi", "SchluchtEi", "KristallEi", "UhrwerkEi", "SternwarteEi", "TiefseeEi", "RebirthEi" }
+Pets.EierReihenfolge = { "WiesenEi", "WerkstattEi", "SchluchtEi", "KristallEi", "UhrwerkEi", "SternwarteEi", "TiefseeEi", "MilliardenEi" }
 
 return Pets

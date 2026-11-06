@@ -222,7 +222,7 @@ Quests.Liste = {
 	{
 		Titel = "Neu geboren ♻️",
 		Text = "Mache deinen ersten Rebirth am Rebirth-Altar am Uhrturm-Platz (ab Level 15).",
-		Tipp = "Rebirth-Punkte bekommst du für das besondere Rebirth-Ei.",
+		Tipp = "Jeder Rebirth gibt dir für immer mehr Energie!",
 		Art = "Rebirth",
 		Belohnung = { XP = 1000 },
 		Ziel = { Zone = 0, Tag = "MenuPrompt", Attr = { Menu = "Rebirth" } },

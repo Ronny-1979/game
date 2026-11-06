@@ -85,7 +85,7 @@ function EggMenu.Build(UI: any)
 		end
 		title.Text = egg.Name
 		eggIcon.TextColor3 = egg.Farbe
-		price.Text = if egg.Waehrung == "Rebirth" then ("Preis: %d ♻️ Rebirth-Punkt"):format(egg.Preis) else ("Preis: %s ⚡"):format(Util.FormatNumber(egg.Preis))
+		price.Text = ("Preis: %s ⚡"):format(Util.FormatNumber(egg.Preis))
 		for i, entry in Util.Chances(egg.Chancen) do
 			local def = Pets.Liste[entry.Id]
 			if def then

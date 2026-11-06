@@ -21,6 +21,7 @@ local DataService = require(script.Parent:WaitForChild("DataService"))
 local LevelService = require(script.Parent:WaitForChild("LevelService"))
 local TimeScaleService = require(script.Parent:WaitForChild("TimeScaleService"))
 local QuestEvents = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("QuestEvents"))
+local PadSensor = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("PadSensor"))
 
 local CoopService = {}
 
@@ -206,11 +207,8 @@ local function setupPuzzle(area: Instance)
 	end
 
 	for _, r in pz.Rewards do
-		r.Touched:Connect(function(hit)
-			local player = Util.PlayerFromPart(hit)
-			if player then
-				reward(pz, player)
-			end
+		PadSensor.OnStep(r, function(player)
+			reward(pz, player)
 		end)
 	end
 end

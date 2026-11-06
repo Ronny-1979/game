@@ -16,7 +16,7 @@ Daily.Belohnungen = {
 	{ Symbol = "⚡", Energie = 500, XP = 80 },
 	{ Symbol = "🥚", Energie = 400, XP = 100, Ei = "BestesEi" },
 	{ Symbol = "⚡", Energie = 900, XP = 150 },
-	{ Symbol = "🎉", Energie = 2000, XP = 300, Ei = "BestesEi", RebirthPunkte = 1 },
+	{ Symbol = "🎉", Energie = 2000, XP = 300, Ei = "BestesEi" },
 }
 
 return Daily

@@ -19,6 +19,7 @@ local Util = require(Shared:WaitForChild("Util"))
 local Progression = require(Shared:WaitForChild("Progression"))
 local DecoModels = require(Shared:WaitForChild("DecoModels"))
 local DataService = require(script.Parent:WaitForChild("DataService"))
+local PadSensor = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("PadSensor"))
 local ZoneService = require(script.Parent:WaitForChild("ZoneService"))
 local QuestEvents = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("QuestEvents"))
 local Validate = require(script.Parent.Parent:WaitForChild("Util"):WaitForChild("Validate"))
@@ -206,11 +207,7 @@ function IslandService.Start()
 
 	local function leavePad(part: Instance)
 		if part:IsA("BasePart") then
-			part.Touched:Connect(function(hit)
-				local player = Util.PlayerFromPart(hit)
-				if not player then
-					return
-				end
+			PadSensor.OnStep(part, function(player)
 				local now = os.clock()
 				if (debounce[player] or 0) > now then
 					return
